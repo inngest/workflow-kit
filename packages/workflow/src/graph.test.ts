@@ -1,5 +1,5 @@
 import { bfs, newDAG } from "./graph";
-import { type Instance, InstanceEdge } from "./types";
+import { type Workflow, WorkflowEdge } from "./types";
 
 describe("newDAG validation", () => {
   it("validates disconnected actions", () => {
@@ -41,7 +41,7 @@ describe("newDAG validation", () => {
 });
 
 test("bfs with an empty graph", async () => {
-  const dag = newDAG({ actions: [], edges: [] } as Instance);
+  const dag = newDAG({ actions: [], edges: [] } as Workflow);
   expect(dag.order).toEqual(1);
 
   let hits = 0;

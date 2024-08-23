@@ -2,9 +2,9 @@ export {
   type RunArgs,
   type EngineOptions,
   type EngineAction,
-  type InstanceAction,
+  type WorkflowAction,
   type Loader,
-  type Instance,
+  type Workflow,
 } from "./types";
 
 export { Engine } from "./engine";

@@ -3,9 +3,9 @@ import {
   type RunArgs,
   type EngineOptions,
   type EngineAction,
-  type InstanceAction,
+  type WorkflowAction,
   type Loader,
-  type Instance,
+  type Workflow,
   DAG,
 } from "./types";
 import { bfs, newDAG } from './graph';
@@ -63,7 +63,7 @@ export class Engine {
 
   /**
    * Graph returns a graph for the given workflow instance, and also ensures that the given
-   * workflow Instance is valid and has no errors.
+   * Workflow is valid and has no errors.
    *
    * It checks for cycles, disconnected vertices and edges, references are valid, and that
    * actions exist within the workflow instance.
@@ -71,7 +71,7 @@ export class Engine {
    * If the JSON is invalid, this throws an error.
    *
    */
-  graph(flow: Instance): DAG {
+  graph(flow: Workflow): DAG {
     for (let action of flow.actions) {
       if (!this.#actionKinds.has(action.kind)) {
         throw new Error("Workflow instance references unknown action kind: " + action.kind);
@@ -89,26 +89,32 @@ export class Engine {
   }
 
   /**
-   * run executes a new Instance of a workflow durably, using the step tooling provided.
+   * run executes a new Workflow of a workflow durably, using the step tooling provided.
    *
    */
-  run = async ({ event, step, instance }: RunArgs): Promise<any> => {
+  run = async ({ event, step, workflow }: RunArgs): Promise<any> => {
     const { loader } = this.#options;
-    if (!instance && !loader) {
-      throw new Error("Cannot run workflows without an instance specified.");
+    if (!workflow && !loader) {
+      throw new Error("Cannot run workflows without a workflow instance specified.");
     }
-    if (!instance && loader) {
+    if (!workflow && loader) {
       // Always load the workflow within a step so that it's declarative.
-      instance = await step.run(
+      workflow = await step.run(
         "Load workflow configuration",
-        async () => await loader(event),
+        async () => {
+          try {
+            return await loader(event);
+          } catch(e) {
+            // TODO: Is this an WorkflowNotFound error?
+          }
+        },
       );
     }
-    if (!instance) {
+    if (!workflow) {
       throw new Error("No workflow instance specified.");
     }
 
-    let graph = this.graph(instance);
+    let graph = this.graph(workflow);
 
     // Workflows use `step.run` to manage implicit step state, orchestration, and
     // execution, storing the ouput of each action within a custom state object for
@@ -119,7 +125,7 @@ export class Engine {
     let state = new ExecutionState({
       engine: this,
       graph,
-      instance,
+      workflow,
       event,
       step,
     });
@@ -130,13 +136,13 @@ export class Engine {
 export interface ExecutionOpts {
   engine: Engine;
   graph: DAG;
-  instance: Instance;
+  workflow: Workflow;
   event: any;
   step: any;
 }
 
 /**
- * ExecutionState iterates through a given workflow Instance and graph, ensuring that we call
+ * ExecutionState iterates through a given Workflow and graph, ensuring that we call
  * each action within the graph in order, durably.
  *
  * Because each action in a workflow can reference previous action's outputs and event data, it
@@ -157,7 +163,7 @@ export class ExecutionState {
  }
 
   execute = async () => {
-    const { event, step, graph, instance, engine } = this.#opts;
+    const { event, step, graph, workflow, engine } = this.#opts;
 
     await bfs(graph, async (action, edge) => {
       if (edge.if && !this.ref(edge.if)) {
@@ -177,19 +183,27 @@ export class ExecutionState {
       }
 
       // Invoke the action directly.
+      //
+      // Note: The handler should use Inngest's step API within handlers, ensuring
+      // that nodes in the workflow execute once, durably.
       const result = await base.handler({
         event,
         step,
-        instance,
-        action: this.resolveInputs(action),
+        workflow,
+        workflowAction: this.resolveInputs(action),
       });
 
-      // And set our state.
+      // And set our state.  This may be a previously memoized output.
       this.#state.set(action.id, result);
     });
   }
 
-  resolveInputs = (action: InstanceAction) => {
+  /**
+   * resolveInputs itarates through the action configuration, updating any referenced
+   * variables within the config.
+   *
+   */
+  resolveInputs = (action: WorkflowAction) => {
     // For each action, check to see if it references any prior input.
     action.inputs ??= {};
     for (let key in action.inputs) {

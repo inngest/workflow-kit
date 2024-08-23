@@ -6,14 +6,26 @@ describe("Engine.graph", () => {
     actions: [
       {
         kind: "send-email",
-        handler: async ({ event, step, action }) => {
-          await step.run("send the damn email", async () => {
+        handler: async ({ event, step, workflow, workflowAction }) => {
+          return await step.run("send the damn email", async () => {
             // ...
+            return "email-id-here"
           })
-        }
+        },
+        inputs: {
+          email: {
+            // TODO: Define how the UI should work here.
+          },
+        },
+        outputs: {
+          emailId: "TODO",
+        },
       }
     ]
   });
+
+  //
+  // 
 
   /** TODO **/
   it("validates unknown action kinds", () => {});

@@ -1,10 +1,10 @@
 import { DirectedGraph } from "graphology";
 import hasCycle from 'graphology-dag/has-cycle';
-import { InstanceAction, type Instance, type InstanceEdge, type Node, type Edge, type DAG } from "./types";
+import { WorkflowAction, type Workflow, type WorkflowEdge, type Node, type Edge, type DAG } from "./types";
 
 const sourceNodeID = "$source";
 
-export const newDAG = (flow: Instance): DAG => {
+export const newDAG = (flow: Workflow): DAG => {
   const g = new DirectedGraph<Node, Edge>();
 
   // Always add the triggering event as a source node.
@@ -39,7 +39,7 @@ export const newDAG = (flow: Instance): DAG => {
   return g;
 }
 
-export const bfs = async (graph: DAG, cb: (node: InstanceAction, edge: InstanceEdge) => Promise<any>): Promise<any> => {
+export const bfs = async (graph: DAG, cb: (node: WorkflowAction, edge: WorkflowEdge) => Promise<any>): Promise<any> => {
   if (graph.order <= 1) {
     // Only the event/source exists; do nothing.
     return;
@@ -80,7 +80,7 @@ export const bfs = async (graph: DAG, cb: (node: InstanceAction, edge: InstanceE
         throw new Error(`Error finding edge during DAG iteration: ${next} -> ${node.id}`);
       }
 
-      await cb(node.action, edge.value.attributes.edge as InstanceEdge);
+      await cb(node.action, edge.value.attributes.edge as WorkflowEdge);
     }
   }
 
