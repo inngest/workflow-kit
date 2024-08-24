@@ -1,4 +1,3 @@
-import jsonpath from "jsonpath";
 import {
   type RunArgs,
   type EngineOptions,
@@ -9,15 +8,20 @@ import {
   DAG,
 } from "./types";
 import { bfs, newDAG } from './graph';
+import jsonpath from "jsonpath";
+import { Type } from '@sinclair/typebox'
+import { Value, AssertError } from '@sinclair/typebox/value'
 
 export class Engine {
   #options: EngineOptions;
 
   #actionKinds: Set<string>;
+  #actionMap: Record<string, EngineAction>
 
   constructor(options: EngineOptions) {
     this.#options = options;
     this.#actionKinds = new Set();
+    this.#actionMap = {};
     this.actions = this.#options.actions || [];
   }
 
@@ -25,8 +29,8 @@ export class Engine {
    * Returns all actions added to the engine
    *
    */
-  get actions(): Array<EngineAction> {
-    return this.#options.actions || [];
+  get actions(): Record<string, EngineAction> {
+    return this.#actionMap;
   }
 
   /**
@@ -41,6 +45,7 @@ export class Engine {
         throw new Error(`Duplicate action kind: ${action.kind}`);
       }
       this.#actionKinds.add(action.kind);
+      this.#actionMap[action.kind] = action;
     }
   }
 
@@ -73,18 +78,36 @@ export class Engine {
    */
   graph(flow: Workflow): DAG {
     for (let action of flow.actions) {
+
+      // Validate that the action kind exists within the engine.
       if (!this.#actionKinds.has(action.kind)) {
         throw new Error("Workflow instance references unknown action kind: " + action.kind);
       }
-      // TODO: Validate types, configuration, and so on.
+
+      // Validate that the workflow action's input types match the expected
+      // types defined on the engine's action
+      for (const [name, input] of Object.entries((this.#actionMap[action.kind]?.inputs || {}))) {
+        const wval = (action.inputs || {})[name];
+
+        // If this is a ref, we can't yet validate as we don't have state.
+        if (!isRef(wval)) {
+          try {
+            Value.Assert(input.type, wval)
+          } catch(e) {
+            throw new Error(`Action '${action.id}' has an invalid input for '${name}': ${(e as AssertError).message}`);
+          }
+
+          continue
+        }
+
+        // TODO: Ensure that ref is valid.
+
+        // TODO: Attempt to grab the output type of the action this is referencing, if this
+        // is an action, and validate that (recursively)
+      }
     }
 
     const graph = newDAG(flow);
-
-    // TODO: Validation
-    // - BFS walk of each action, and ensure any refs to prior actions have already
-    //   been visited.
-
     return graph
   }
 
@@ -184,7 +207,7 @@ export class ExecutionState {
 
       // Find the base action from the workflow class.  This includes the handler
       // to invoke.
-      const base = engine.actions.find((a) => a.kind === action.kind);
+      const base = engine.actions[action.kind];
       if (!base) {
         throw new Error(`Unable to find workflow action for kind: ${action.kind}`);
       }
@@ -220,13 +243,8 @@ export class ExecutionState {
   }
 
   ref = (value: any) => {
-    if (typeof(value) !== "string" || value.indexOf("!ref($.") !== 0) {
-      return value
-    }
-
-    const lastChar = value.substring(value.length-1)
-    if (lastChar !== ")") {
-      return value
+    if (!isRef(value)) {
+      return value;
     }
 
     let path = value.replace("!ref(", "")
@@ -251,4 +269,11 @@ export class ExecutionState {
     }
     return result;
   }
+}
+
+function isRef(input: string) {
+  if (typeof(input) !== "string" || input.indexOf("!ref($.") !== 0) {
+    return false
+  }
+  return input.substring(input.length-1) === ")"
 }
