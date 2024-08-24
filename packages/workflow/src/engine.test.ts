@@ -8,14 +8,6 @@ describe("Engine.graph", () => {
       {
         kind: "send-email",
         handler: async () => {}, // noop
-        inputs: {
-          email: {
-            // TODO: Define how the UI should work here.
-          },
-        },
-        outputs: {
-          emailId: "TODO",
-        },
       }
     ]
   });
@@ -84,7 +76,6 @@ describe("Engine.graph", () => {
     );
   })
 
-
   it("validates parent refs", () => {});
   it("validates action input types", () => {});
 });
@@ -107,12 +98,12 @@ describe("ExecutionState.ref", () => {
       },
     );
 
-    expect(state.ref("$ref:$.event.data.userId")).toEqual(1);
-    expect(state.ref("$ref:$.event.data.likes")).toEqual(["a"]);
-    expect(state.ref("$ref:$.state.action_a")).toEqual("test");
-    expect(state.ref("$ref:$.state.action_b")).toEqual({ ok: true });
+    expect(state.ref("!ref($.event.data.userId)")).toEqual(1);
+    expect(state.ref("!ref($.event.data.likes)")).toEqual(["a"]);
+    expect(state.ref("!ref($.state.action_a)")).toEqual("test");
+    expect(state.ref("!ref($.state.action_b)")).toEqual({ ok: true });
 
-    expect(state.ref("$ref:$.state.not_found")).toEqual(undefined);
+    expect(state.ref("!ref($.state.not_found)")).toEqual(undefined);
 
     expect(state.ref("lol")).toEqual("lol");
     expect(state.ref(123)).toEqual(123);

@@ -1,4 +1,5 @@
 import { DirectedGraph } from "graphology";
+import { TSchema } from '@sinclair/typebox'
 
 export interface EngineOptions {
   actions?: Array<EngineAction>;
@@ -31,12 +32,30 @@ export interface EngineAction {
   kind: string;
   handler: ActionHandler;
 
-  // TODO: Types
-  inputs?: Record<string, any>
-  outputs?: Record<string, any>
+  /**
+   * Inputs define input variables which can be configured by the workflow UI. 
+   *
+   */
+  inputs?: Record<string, ActionInput>
 
-  // TODO: UI
+  /**
+   * Outputs define the responses from the action, including the type, name, and
+   * an optional description
+   */
+  outputs?: TSchema | Record<string, ActionOutput>,
 };
+
+export interface ActionInput {
+  type: TSchema,
+  description?: string;
+
+  // TODO: UI components for each input.
+}
+
+export interface ActionOutput {
+  type: TSchema,
+  description?: string;
+}
 
 /**
  * Workflow represents a defined workflow configuration, with a chain or DAG of actions
@@ -69,7 +88,15 @@ export interface WorkflowAction {
   name?: string;
   description?: string;
 
-  // TODO: Types.
+  /**
+   * Inputs is a list of configured inputs for the EngineAction.
+   *
+   * The record key is the key of the EngineAction inoput name, and
+   * the value is the variable's value.
+   *
+   * This will be type checked to match the EngineAction type before
+   * save and before execution.
+   */
   inputs?: Record<string, any>;
 }
 

@@ -2,13 +2,13 @@ import { DirectedGraph } from "graphology";
 import hasCycle from 'graphology-dag/has-cycle';
 import { WorkflowAction, type Workflow, type WorkflowEdge, type Node, type Edge, type DAG } from "./types";
 
-const sourceNodeID = "$source";
+export const SourceNodeID = "$source";
 
 export const newDAG = (flow: Workflow): DAG => {
   const g = new DirectedGraph<Node, Edge>();
 
   // Always add the triggering event as a source node.
-  g.mergeNode(sourceNodeID, { id: sourceNodeID, kind: sourceNodeID });
+  g.mergeNode(SourceNodeID, { id: SourceNodeID, kind: SourceNodeID });
 
   for (let action of flow.actions) {
     if (g.hasNode(action.id)) {
@@ -30,12 +30,12 @@ export const newDAG = (flow: Workflow): DAG => {
     throw new Error("Workflow instance must be a DAG;  the given workflow has at least one cycle.");
   }
 
-  if (g.outDegree(sourceNodeID) === 0) {
+  if (g.outDegree(SourceNodeID) === 0) {
     throw new Error("Workflow has no starting actions");
   }
 
   g.forEachNode((id, attrs) => {
-    if (id !== sourceNodeID && g.inEdges(id).length === 0) {
+    if (id !== SourceNodeID && g.inEdges(id).length === 0) {
       throw new Error(`An action is disconnected and will never run: ${attrs?.action?.id || id}`);
     }
   });
@@ -49,7 +49,7 @@ export const bfs = async (graph: DAG, cb: (node: WorkflowAction, edge: WorkflowE
     return;
   };
 
-  const queue: Array<string> = [sourceNodeID];
+  const queue: Array<string> = [SourceNodeID];
   const seen = new Set<string>();
 
   while (queue.length > 0) {

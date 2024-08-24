@@ -92,7 +92,7 @@ export class Engine {
    * run executes a new Workflow of a workflow durably, using the step tooling provided.
    *
    */
-  run = async ({ event, step, workflow }: RunArgs): Promise<any> => {
+  run = async ({ event, step, workflow }: RunArgs): Promise<ExecutionState> => {
     const { loader } = this.#options;
     if (!workflow && !loader) {
       throw new Error("Cannot run workflows without a workflow instance specified.");
@@ -129,7 +129,10 @@ export class Engine {
       event,
       step,
     });
+
     await state.execute();
+
+    return state;
   }
 }
 
@@ -160,7 +163,11 @@ export class ExecutionState {
   constructor(opts: ExecutionOpts, state?: Record<string, any>) {
     this.#opts = opts;
     this.#state = new Map(Object.entries(state || {}));
- }
+  }
+
+  get state(): Map<string, any> {
+    return this.#state;
+  }
 
   execute = async () => {
     const { event, step, graph, workflow, engine } = this.#opts;
@@ -213,10 +220,18 @@ export class ExecutionState {
   }
 
   ref = (value: any) => {
-    if (typeof(value) !== "string" || value.indexOf("$ref:$") !== 0) {
+    if (typeof(value) !== "string" || value.indexOf("!ref($.") !== 0) {
       return value
     }
-    let path = value.replace("$ref:", "")
+
+    const lastChar = value.substring(value.length-1)
+    if (lastChar !== ")") {
+      return value
+    }
+
+    let path = value.replace("!ref(", "")
+    path = path.substring(0, path.length-1) // remove ")"
+
     // This is a reference.  Grab the JSON path from the ref by removing "$ref:"
     // and grabbing the item from state.
     const result = jsonpath.query({
