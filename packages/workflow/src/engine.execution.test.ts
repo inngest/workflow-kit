@@ -22,9 +22,7 @@ test("execution", async () => {
             description: "Denominator",
           },
         },
-        outputs: {
-          result: { type: Type.Number() },
-        }
+        outputs: Type.Number(),
       }
     ]
   });
