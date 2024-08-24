@@ -1,7 +1,8 @@
 import { bfs, newDAG } from "./graph";
-import { type Workflow, WorkflowEdge } from "./types";
+import { type Workflow } from "./types";
 
 describe("newDAG validation", () => {
+
   it("validates disconnected actions", () => {
     const t = () => newDAG({
       actions: [{ id: "a", kind: "test" }, { id: "b", kind: "test" }],
@@ -9,6 +10,7 @@ describe("newDAG validation", () => {
     })
     expect(t).toThrow(/An action is disconnected and will never run: b/)
   });
+
   it("correctly detects cycles", () => {
     const t = () => newDAG({
       actions: [{ id: "a", kind: "test" }, { id: "b", kind: "test" }],
@@ -16,6 +18,7 @@ describe("newDAG validation", () => {
     })
     expect(t).toThrow(/workflow has at least one cycle/)
   });
+
   it("validates duplicate action ids", () => {
     const t = () => newDAG({
       actions: [{ id: "a", kind: "test" }, { id: "a", kind: "test" }],
@@ -31,6 +34,7 @@ describe("newDAG validation", () => {
     })
     expect(t).toThrow("Workflow references an unknown action: wat_is_this")
   });
+
   it("validates invalid edges with invalid from", () => {
     const t = () => newDAG({
       actions: [{ id: "a", kind: "test" }],
@@ -38,16 +42,6 @@ describe("newDAG validation", () => {
     })
     expect(t).toThrow("Workflow references an unknown action: wat_is_this")
   });
-});
-
-test("bfs with an empty graph", async () => {
-  const dag = newDAG({ actions: [], edges: [] } as Workflow);
-  expect(dag.order).toEqual(1);
-
-  let hits = 0;
-  await bfs(dag, async (node, edge) => { hits++; });
-  expect(hits).toEqual(0);
-
 });
 
 test("bfs with a single node", async () => {

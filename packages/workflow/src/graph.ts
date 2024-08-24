@@ -27,7 +27,11 @@ export const newDAG = (flow: Workflow): DAG => {
   }
 
   if (hasCycle(g)) {
-    throw new Error("Workflow instances must be a DAG;  the given workflow has at least one cycle.");
+    throw new Error("Workflow instance must be a DAG;  the given workflow has at least one cycle.");
+  }
+
+  if (g.outDegree(sourceNodeID) === 0) {
+    throw new Error("Workflow has no starting actions");
   }
 
   g.forEachNode((id, attrs) => {

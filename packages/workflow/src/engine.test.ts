@@ -1,4 +1,5 @@
 import { ExecutionState, type ExecutionOpts, Engine } from "./engine";
+import { Workflow } from "./types";
 
 describe("Engine.graph", () => {
 
@@ -6,12 +7,7 @@ describe("Engine.graph", () => {
     actions: [
       {
         kind: "send-email",
-        handler: async ({ event, step, workflow, workflowAction }) => {
-          return await step.run("send the damn email", async () => {
-            // ...
-            return "email-id-here"
-          })
-        },
+        handler: async () => {}, // noop
         inputs: {
           email: {
             // TODO: Define how the UI should work here.
@@ -24,11 +20,71 @@ describe("Engine.graph", () => {
     ]
   });
 
-  //
-  // 
+  it("validates unknown action kinds", () => {
+    const wf: Workflow = {
+      actions: [
+        { id: "a", kind: "not-found-in-engine" }
+      ],
+      edges: [
+        { from: "$source", to: "a" },
+      ],
+    }
 
-  /** TODO **/
-  it("validates unknown action kinds", () => {});
+    expect(() => engine.graph(wf)).toThrow(
+      "Workflow instance references unknown action kind"
+    );
+  });
+
+  it ("validates that there are source edges", () => {
+    const wf: Workflow = {
+      actions: [
+        { id: "a", kind: "send-email" },
+        { id: "b", kind: "send-email" },
+      ],
+      edges: [
+        { from: "a", to: "b" },
+      ],
+    }
+
+    expect(() => engine.graph(wf)).toThrow(
+      "Workflow has no starting actions"
+    );
+  })
+
+  it ("validates that there are no disconnected actions", () => {
+    const wf: Workflow = {
+      actions: [
+        { id: "a", kind: "send-email" },
+        { id: "b", kind: "send-email" },
+      ],
+      edges: [
+        { from: "$source", to: "a" },
+      ],
+    }
+
+    expect(() => engine.graph(wf)).toThrow(
+      "An action is disconnected and will never run: b"
+    );
+  })
+
+
+  it ("validates that there are no cycles or self-references", () => {
+    const wf: Workflow = {
+      actions: [
+        { id: "a", kind: "send-email" },
+        { id: "b", kind: "send-email" },
+      ],
+      edges: [
+        { from: "a", to: "a" },
+      ],
+    }
+
+    expect(() => engine.graph(wf)).toThrow(
+      "Workflow instance must be a DAG;  the given workflow has at least one cycle."
+    );
+  })
+
+
   it("validates parent refs", () => {});
   it("validates action input types", () => {});
 });
