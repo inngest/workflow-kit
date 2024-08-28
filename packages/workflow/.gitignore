@@ -11,3 +11,5 @@ src/version.ts
 coverage/
 
 tsdoc-metadata.json
+
+*storybook.log
