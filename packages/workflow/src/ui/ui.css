@@ -1,0 +1,84 @@
+.wf-cursor-pointer {
+  cursor: pointer;
+}
+
+.wf-editor {
+  font-family: var(--font-family);
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f7;
+}
+
+
+.wf-node {
+  display: block;
+  background: #fff;
+  border: 1px solid #e7e7e5;
+  border-radius: 0.5rem;
+
+  cursor: pointer;
+
+  width: 180px;
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+}
+
+.wf-trigger-node-empty {
+  color: #555;
+}
+
+.wf-editor .wf-add-handle {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  overflow: visible;
+}
+
+.wf-editor .wf-add-handle > div {
+  margin-top: 1px;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fff;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid #e7e7e5;
+  border-left: 1px solid #e7e7e5;
+  transform: rotate(-45deg);
+  /*transform: rotate(-45deg) translate(-56%, 0);*/
+}
+
+.wf-editor .wf-add-handle > div:hover {
+  opacity: 1;
+  background-color: #fafafa;
+  /* Move up the Y axis by one */
+  transform: rotate(-45deg) translateY(-1px) translateX(1px);
+  transition: all 0.3s ease-in-out;
+}
+
+.wf-editor .wf-add-handle > div > svg {
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+.wf-editor .wf-target-handle {
+  background-color: #e7e7e5;
+  border: 1px solid #f9f9f7;
+  cursor: pointer;
+  height: 2px;
+  width: 2px;
+  margin-top: 1px;
+}

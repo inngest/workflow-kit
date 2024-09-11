@@ -13,6 +13,7 @@ export default {
   args: {
     workflow: undefined,
     trigger: undefined,
+    direction: "right" | "down",
   },
 };
 
@@ -20,6 +21,7 @@ export const Blank = {
   args: {
     workflow: undefined,
     trigger: undefined,
+    direction: "right",
   }
 };
 
