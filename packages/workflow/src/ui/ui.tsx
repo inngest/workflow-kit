@@ -28,7 +28,6 @@ type Props = {
 }
 
 export const Editor = ({ workflow, trigger, onChange }) => {
-  // TODO: Data manipulation.
 
   const nodeTypes = useMemo(() => ({
     trigger: TriggerNode,
@@ -54,7 +53,8 @@ const nodes = ({ workflow, trigger }) => {
   }
 }
 
-const TriggerNode = ({ event }) => {
+const TriggerNode = ({ trigger }) => {
+
 
   // TODO
   return (
