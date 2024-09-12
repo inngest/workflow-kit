@@ -63,6 +63,10 @@ export interface ActionOutput {
  *
  */
 export interface Workflow {
+  name?: string;
+  description?: string;
+  metadata?: Record<string, any>;
+
   actions: Array<WorkflowAction>
   edges: Array<WorkflowEdge>
 };

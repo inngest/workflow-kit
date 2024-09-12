@@ -28,7 +28,7 @@ export const Sidebar = (props: SidebarProps) => {
 export const SidebarFooter = () => {
   return (
     <div className="wf-sidebar-footer">
-      <button>Save</button>
+      {/* TODO: Add stuff */}
     </div>
   )
 }
@@ -52,9 +52,46 @@ const useSidebarContent = () => {
     )
   }
 
+  if (selectedNode === undefined) {
+    return (
+      <>
+        <SidebarWorkflowForm />
+        <SidebarFooter />
+      </>
+    )
+  }
+
   return (
     <div>
       {selectedNode?.type}
     </div>
   )
 }
+
+export const SidebarWorkflowForm = () => {
+  const { workflow, onChangeWorkflow } = useProvider();
+
+  return (
+    <div className="wf-sidebar-form">
+      <label>
+        Workflow name
+        <input
+          type="text"
+          defaultValue={workflow?.name}
+          placeholder="Untitled workflow"
+          onBlur={(e) => {
+            onChangeWorkflow({ ...workflow, name: e.target.value });
+          }}
+        />
+      </label>
+      <label>
+        Description
+        <textarea
+          placeholder="Add a short description..."
+          defaultValue={workflow?.description}
+          rows={4}
+        />
+      </label>
+    </div>
+  )
+} 

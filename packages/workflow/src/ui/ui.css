@@ -79,11 +79,6 @@
   width: 2px;
 }
 
-.wf-node-selected {
-  outline: 1px solid #8db8f4;
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.08);
-}
-
 .wf-editor .wf-node .wf-add-handle > div {
   opacity: 0;
   transition: all 0.15s ease-in-out;
@@ -136,6 +131,11 @@
   margin-top: 1px;
 }
 
+.wf-node-selected {
+  outline: 1px solid #d3e0f3;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
 /**
  * Sidebar
  */
@@ -167,6 +167,38 @@
 .wf-sidebar-footer {
   margin-top: 20px;
 }
+
+.wf-sidebar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--sidebar-content-padding);
+}
+
+.wf-sidebar-form > label {
+  display: flex;
+  flex-direction: column;
+  font-size: calc(var(--font-size) * 0.9);
+  font-family: var(--font-family);
+  line-height: 1.8;
+  margin: 10px 0 0 0;
+}
+
+.wf-sidebar-form input, .wf-sidebar-form textarea {
+  font-family: var(--font-family);
+  padding: 8px;
+  border: 1px solid #f0f0ef;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+.wf-sidebar-form input::placeholder,
+.wf-sidebar-form textarea::placeholder {
+  color: #999;
+  opacity: 0.7;
+  font-size: calc(var(--font-size) * 0.9);
+}
+
 
 /** Utilities **/
 
