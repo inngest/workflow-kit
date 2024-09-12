@@ -54,8 +54,6 @@ export const TriggerNode = ({ trigger, onTriggerClick, direction }: TriggerNodeP
  * @param direction - The direction of the workflow, used to determine how handles are placed.
  */
 export const ActionNode = ({ action, direction }: { action: WorkflowAction, direction: Direction }) => {
-  // TODO
-  console.log("action", action, direction);
   return (
     <div className='wf-node wf-action-node'>
         <Handle {...targetHandleProps(direction)} />

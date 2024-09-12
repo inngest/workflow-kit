@@ -116,7 +116,6 @@ const EditorUI = ({ workflow, trigger, onChange, onTriggerClick, direction }: Ed
       width: w, // use viewport width
       height: h, // use viewport height
     }
-    console.log("fitRect", fitRect);
 
     flow.fitBounds(fitRect);
   }, [nodesInitialized]);
