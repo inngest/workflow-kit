@@ -1,20 +1,20 @@
 import React from 'react';
 
-import { Editor } from '../ui/ui';
-import './ui.css';
+import { Editor, Provider } from '../ui/';
+import './ui.storybook.css';
 import '@xyflow/react/dist/style.css';
 import '../ui/ui.css';
 
 export const UI = ({ workflow, event, direction }) => (
   <div className="sb-wrap">
-    <Editor
-      workflow={workflow}
-      event={event}
-      onTriggerClick={() => {
-        console.log('trigger clicked');
-      }}
-      direction={direction}
-    />
+    <Provider workflow={workflow} trigger={event} onChange={() => {}}>
+      <Editor
+        onTriggerClick={() => {
+          console.log('trigger clicked');
+        }}
+        direction={direction}
+      />
+    </Provider>
   </div>
 );
 

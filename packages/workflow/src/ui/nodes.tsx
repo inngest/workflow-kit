@@ -7,7 +7,7 @@ import { WorkflowAction } from "../types";
 import { TriggerProps, Direction } from "./ui";
 
 
-type TriggerNodeProps = TriggerProps & {
+export type TriggerNodeProps = TriggerProps & {
   onTriggerClick?: () => void;
   direction: Direction;
 };

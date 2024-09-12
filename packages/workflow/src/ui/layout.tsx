@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import Dagre from '@dagrejs/dagre';
 import { Node, Edge, Rect } from '@xyflow/react';
-import { type Direction } from './ui';
+import { type Direction } from './Editor';
 
 type LayoutArgs = {
   nodes: Node[];

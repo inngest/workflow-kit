@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useContext } from 'react';
 import {
   ReactFlow,
   useNodesState,
@@ -11,42 +11,20 @@ import {
 } from '@xyflow/react';
 import { Workflow, WorkflowAction } from "../types";
 import { useLayout } from './layout';
-import { TriggerNode, ActionNode } from './nodes';
+import { TriggerNode, ActionNode } from './Nodes';
+import { useTrigger, useWorkflow } from './Provider';
 
-export const Provider = () => {
-  return (
-    <div>
-    </div>
-  );
-}
-
-type EditorProps = WorkflowProps & TriggerProps & {
+export type EditorProps = {
   direction: Direction;
-
-  // onChange is called when the workflow is changed via any interactivity
-  // with the workflow editor.  This may be called many times on any update.
-  //
-  // Note that this does not imply that you must save the workflow.  You may
-  // store the workflow in an internal state and only save when the user
-  // hits a save button.
-  onChange?: (w: Workflow) => {};
 
   // Allows users to customize the onClick handler on the event.
   onTriggerClick?: () => void;
 
   // Allows users to customize the onClick handler on the action nodes.
-  onActionClick?: (action: WorkflowAction) => void;
+  // onActionClick?: (action: WorkflowAction) => void;
 
   // TODO: spacing
   // TODO: branching boolean; by default it's a linear workflow.
-}
-
-export type TriggerProps = {
-  trigger?: any; // TODO: Define trigger type.
-}
-
-type WorkflowProps = {
-  workflow?: Workflow;
 }
 
 export type Direction = "right" | "down";
@@ -62,7 +40,10 @@ export const Editor = (props: EditorProps) => {
   );
 }
 
-const EditorUI = ({ workflow, trigger, onChange, onTriggerClick, direction }: EditorProps) => {
+const EditorUI = ({ onTriggerClick, direction }: EditorProps) => {
+  const workflow = useWorkflow();
+  const trigger = useTrigger();
+
   const flow = useReactFlow();
   const nodesInitialized = useNodesInitialized();
 
@@ -148,6 +129,14 @@ const EditorUI = ({ workflow, trigger, onChange, onTriggerClick, direction }: Ed
     </div>
   );
 };
+
+export type TriggerProps = {
+  trigger?: any; // TODO: Define trigger type.
+}
+
+export type WorkflowProps = {
+  workflow?: Workflow;
+}
 
 const parseWorkflow = ({ workflow, trigger }: WorkflowProps & TriggerProps): { nodes: Node[], edges: Edge[] } => {
   const nodes: Node[] = [];
