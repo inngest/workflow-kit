@@ -26,7 +26,15 @@ UI.defaultProps = {
   workflow: {
     "actions": [
       {
-        "id": "1"
+        "id": "1",
+        "kind": "send-email",
+        "name": "Send Email",
+        "description": "Send an email to the user",
+        "inputs": {
+          "to": "!ref($.event.data.email)",
+          "subject": "Welcome to the platform",
+          "body": "Welcome to the platform"
+        }
       }
     ],
     "edges": [

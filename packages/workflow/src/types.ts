@@ -96,6 +96,9 @@ export interface WorkflowAction {
    *
    * This will be type checked to match the EngineAction type before
    * save and before execution.
+   * 
+   * Ref inputs for interpolation are "!ref($.<path>)",
+   * eg. "!ref($.event.data.email)"
    */
   inputs?: Record<string, any>;
 }

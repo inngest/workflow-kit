@@ -1,24 +1,17 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
   ReactFlow,
-  MiniMap,
-  Controls,
-  Background,
   useNodesState,
   useEdgesState,
-  addEdge,
   Node,
   Edge,
   ReactFlowProvider,
   useReactFlow,
   useNodesInitialized,
-  Handle,
-  Position,
-  HandleProps,
 } from '@xyflow/react';
 import { Workflow, WorkflowAction } from "../types";
 import { useLayout } from './layout';
-import { TriggerNode, ActionNode, AddActionNode } from './nodes';
+import { TriggerNode, ActionNode } from './nodes';
 
 export const Provider = () => {
   return (
@@ -45,6 +38,7 @@ type EditorProps = WorkflowProps & TriggerProps & {
   onActionClick?: (action: WorkflowAction) => void;
 
   // TODO: spacing
+  // TODO: branching boolean; by default it's a linear workflow.
 }
 
 export type TriggerProps = {
@@ -100,10 +94,6 @@ const EditorUI = ({ workflow, trigger, onChange, onTriggerClick, direction }: Ed
       return
     }
 
-    console.log(
-layoutRect?.width, ref.current?.offsetWidth ?? 0
-    )
-
     // If the workflow is too big for the current viewport, zoom out.
     // Otherwise, don't zoom in and center the current graph.
     if (
@@ -153,6 +143,7 @@ layoutRect?.width, ref.current?.offsetWidth ?? 0
           onNodesChange(args);
         }}
         key={direction}
+        proOptions={{ hideAttribution: true }}
       >
       </ReactFlow>
     </div>
