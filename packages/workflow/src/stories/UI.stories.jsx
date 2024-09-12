@@ -17,15 +17,17 @@ export default {
   },
 };
 
-export const Blank = {
+export const BlankDown = {
+  name: "Blank, ↓ graph",
   args: {
     workflow: undefined,
     trigger: undefined,
-    direction: "right",
+    direction: "down",
   }
 };
 
-export const EventOnly = {
+export const TriggerOnly = {
+  name: "Trigger only, ↓ graph",
   args: {
     workflow: undefined,
     trigger: {
@@ -35,6 +37,43 @@ export const EventOnly = {
           order: 123,
         },
       }
+    },
+  }
+};
+
+
+export const SingleAction = {
+  name: "Single action, ↓ graph",
+  args: {
+    direction: "down",
+    trigger: {
+      event: {
+        name: "shopify/order.created",
+        data: {
+          order: 123,
+        },
+      }
+    },
+    workflow: {
+      "actions": [
+      {
+        "id": "1",
+        "kind": "send-email",
+        "name": "Send Email",
+        "description": "Send an email to the user",
+        "inputs": {
+          "to": "!ref($.event.data.email)",
+          "subject": "Welcome to the platform",
+          "body": "Welcome to the platform"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "$source",
+        "to": "1"
+      }
+      ]
     },
   }
 };

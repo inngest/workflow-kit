@@ -1,15 +1,17 @@
 import {
   Handle,
   Position,
+  Node,
   HandleProps,
 } from '@xyflow/react';
 import { WorkflowAction } from "../types";
-import { TriggerProps, Direction } from "./ui";
+import { TriggerProps, Direction } from "./Editor";
+import { useProvider } from './Provider';
 
 
 export type TriggerNodeProps = TriggerProps & {
-  onTriggerClick?: () => void;
   direction: Direction;
+  node: Node;
 };
 
 /**
@@ -18,34 +20,27 @@ export type TriggerNodeProps = TriggerProps & {
  * @param trigger - The trigger within the workflow.
  * @param direction - The direction of the workflow, used to determine how handles are placed.
  */
-export const TriggerNode = ({ trigger, onTriggerClick, direction }: TriggerNodeProps) => {
-  const className = onTriggerClick ? "wf-cursor-pointer" : "";
+export const TriggerNode = ({ trigger, node, direction }: TriggerNodeProps) => {
+  const { setSelectedNode } = useProvider();
 
-  if (trigger === undefined) {
-    return (
-      <div
-        onClick={onTriggerClick}
-        className={`wf-node wf-trigger-node wf-trigger-node-empty ${className}`}
-      >
-        <p>Select a trigger</p>
-
-        {/* If there are no child actions, there should be a single "add" handle in the center. */}
-        <AddHandle {...sourceHandleProps(direction)} />
-      </div>
-    );
-  }
-
-  // TODO
   return (
     <div
-      className={`wf-node wf-trigger-node ${className}`}
-      onClick={onTriggerClick}
+      onClick={() => {
+        setSelectedNode(node);
+      }}
+      className={`wf-node wf-trigger-node wf-cursor-pointer`}
     >
-      <p>Trigger</p>
+      <p>{ trigger === undefined ? "Select a trigger" : trigger?.event?.name }</p>
+      <AddHandle {...sourceHandleProps(direction)} />
     </div>
   );
 }
 
+export type ActionNodeProps = {
+  action: WorkflowAction,
+  node: Node,
+  direction: Direction
+}
 
 /**
  * ActionNode represents a single action in the workflow.
@@ -53,9 +48,16 @@ export const TriggerNode = ({ trigger, onTriggerClick, direction }: TriggerNodeP
  * @param action - The action within the workflow that this node represents.
  * @param direction - The direction of the workflow, used to determine how handles are placed.
  */
-export const ActionNode = ({ action, direction }: { action: WorkflowAction, direction: Direction }) => {
+export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
+  const { setSelectedNode } = useProvider();
+
   return (
-    <div className='wf-node wf-action-node'>
+    <div
+      className='wf-node wf-action-node'
+      onClick={() => {
+        setSelectedNode(node);
+      }}
+    >
         <Handle {...targetHandleProps(direction)} />
         {action.name || action.id}
         <AddHandle {...sourceHandleProps(direction)} />
@@ -66,7 +68,7 @@ export const ActionNode = ({ action, direction }: { action: WorkflowAction, dire
 const AddHandle = ({ ...props }: HandleProps) => (
   <Handle {...props} className="wf-add-handle">
     <div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
         <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     </div>

@@ -12,19 +12,11 @@ import {
 import { Workflow, WorkflowAction } from "../types";
 import { useLayout } from './layout';
 import { TriggerNode, ActionNode } from './Nodes';
-import { useTrigger, useWorkflow } from './Provider';
+import { useSidebarPosition, useTrigger, useWorkflow } from './Provider';
 
 export type EditorProps = {
   direction: Direction;
-
-  // Allows users to customize the onClick handler on the event.
-  onTriggerClick?: () => void;
-
-  // Allows users to customize the onClick handler on the action nodes.
-  // onActionClick?: (action: WorkflowAction) => void;
-
-  // TODO: spacing
-  // TODO: branching boolean; by default it's a linear workflow.
+  children?: React.ReactNode;
 }
 
 export type Direction = "right" | "down";
@@ -32,10 +24,19 @@ export type Direction = "right" | "down";
 export const Editor = (props: EditorProps) => {
   // Force the correct enum if the user passes in a string via non-TS usage.
   const direction = props.direction === "right" ? "right" : "down";
+  const sidebarPosition = useSidebarPosition();
+
+  let className = "wf-editor";
+  if (sidebarPosition === "left") {
+    className += " wf-editor-left-sidebar";
+  }
 
   return (
     <ReactFlowProvider>
-      <EditorUI {...props} direction={direction} />
+      <div className={className}>
+        <EditorUI {...props} direction={direction} />
+        {props.children}
+      </div>
     </ReactFlowProvider>
   );
 }
@@ -56,7 +57,6 @@ const EditorUI = ({ onTriggerClick, direction }: EditorProps) => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
 
   // Lay out the nodes in the graph.
   const layoutRect = useLayout({
@@ -102,18 +102,18 @@ const EditorUI = ({ onTriggerClick, direction }: EditorProps) => {
   }, [nodesInitialized]);
 
   const nodeTypes = useMemo(() => ({
-    trigger: (args: any) => { // TODO: Define args type.
-      const { trigger } = args.data;
-      return <TriggerNode trigger={trigger} onTriggerClick={onTriggerClick} {...args} direction={direction} />
+    trigger: (node: any) => { // TODO: Define args type.
+      const { trigger } = node.data;
+      return <TriggerNode trigger={trigger} node={node} direction={direction} />
     },
-    action: (args: any) => { // TODO: Define args type.
-      const { action} = args.data;
-      return <ActionNode action={action} {...args} direction={direction} />
+    action: (node: any) => { // TODO: Define args type.
+      const { action} = node.data;
+      return <ActionNode action={action} node={node} direction={direction} />
     }
   }), [direction]);
 
   return (
-    <div className="wf-editor" ref={ref}>
+    <div className="wf-editor-parent" ref={ref}>
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
@@ -124,8 +124,7 @@ const EditorUI = ({ onTriggerClick, direction }: EditorProps) => {
         }}
         key={direction}
         proOptions={{ hideAttribution: true }}
-      >
-      </ReactFlow>
+      />
     </div>
   );
 };

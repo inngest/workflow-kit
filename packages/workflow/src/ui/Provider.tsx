@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useContext } from 'react';
+import React, { useEffect, useMemo, useRef, useContext, useState } from 'react';
 import {
   ReactFlow,
   useNodesState,
@@ -34,6 +34,16 @@ export type ProviderProps = {
 }
 
 type ProviderContextType = ProviderProps & {
+
+  // Used so that the `position` prop in the `Sidebar` component can set
+  // state and be accessed by other components.  We need this to set the
+  // correct classnames on the editor and parent container.
+  sidebarPosition: "right" | "left";
+  setSidebarPosition: (p: "right" | "left") => void;
+
+  selectedNode: Node | undefined;
+  setSelectedNode: (n: Node | undefined) => void;
+
   // TODO: Selected action
   // TODO: Drag n drop
 }
@@ -43,7 +53,7 @@ export const ProviderContext = React.createContext<ProviderContextType | undefin
 
 export const useOnChange = (): (w: Workflow) => void => {
   const ctx = useContext(ProviderContext);
-  return ctx?.onChange ?? (() => {});
+  return ctx?.onChange ?? (() => { });
 }
 
 /**
@@ -75,9 +85,40 @@ export const useAvailableActions = (): EngineAction[] => {
 }
 
 
+/**
+ * Hook for accessing the position of the sidebar.  Only for internal
+ * use.
+ * 
+ * @returns the position of the sidebar.
+ */
+export const useSidebarPosition = (): "right" | "left" => {
+  const ctx = useContext(ProviderContext);
+  return ctx?.sidebarPosition ?? "right";
+}
+
+export const useProvider = (): ProviderContextType => {
+  const ctx = useContext(ProviderContext);
+  if (!ctx) {
+    throw new Error("useProvider must be used within a Provider");
+  }
+  return ctx;
+}
+
 export const Provider = ({ children, workflow, trigger, onChange, availableActions }: ProviderProps & { children: React.ReactNode }) => {
+  const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
+  const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
+
   return (
-    <ProviderContext.Provider value={{ workflow, trigger, onChange, availableActions }}>
+    <ProviderContext.Provider value={{
+      workflow,
+      trigger,
+      onChange,
+      availableActions,
+      sidebarPosition,
+      setSidebarPosition,
+      selectedNode,
+      setSelectedNode,
+    }}>
       {children}
     </ProviderContext.Provider>
   );

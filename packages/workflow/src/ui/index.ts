@@ -4,6 +4,10 @@ export {
     type EditorProps,
 } from "./Editor";
 export {
+    Sidebar,
+    type SidebarProps,
+} from "./Sidebar";
+export {
     Provider,
     ProviderContext,
     useWorkflow,
@@ -15,5 +19,6 @@ export {
 export {
     TriggerNode,
     ActionNode,
-    type TriggerNodeProps,
 } from "./Nodes";
+
+// TODO: Trigger type

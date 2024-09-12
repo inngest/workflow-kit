@@ -6,6 +6,19 @@
 
   --editor-background-color: #f9f9f7;
 
+  --sidebar-width: 300px;
+  --sidebar-margin: 0;
+  --sidebar-padding: 0;
+  --sidebar-background-color: #fff;
+  --sidebar-border-color: #e7e7e5;
+  --sidebar-border-top-width: 0;
+  --sidebar-border-right-width: 0;
+  --sidebar-border-bottom-width: 0;
+  --sidebar-border-left-width: 1px;
+  --sidebar-border-radius: 0;
+
+  --sidebar-content-padding: 20px;
+
   --node-width: 240px;
   --node-height: 80px;
   --node-border-radius: 0.5rem;
@@ -16,14 +29,26 @@
 }
 
 .wf-editor {
-  direction: ltr;
   font-family: var(--font-family);
   font-size: var(--font-size);
+  background-color: var(--editor-background-color);
+
+  direction: ltr;
+  display: flex;
+  flex-direction: row;
+
   width: 100%;
   height: 100%;
-  background-color: var(--editor-background-color);
 }
 
+.wf-editor-left-sidebar {
+  flex-direction: row-reverse;
+}
+
+.wf-editor-parent {
+  width: 100%;
+  height: 100%;
+}
 
 .wf-node {
   display: block;
@@ -41,10 +66,6 @@
   justify-content: center;
 
   box-shadow: var(--node-box-shadow);
-}
-
-.wf-trigger-node-empty {
-  color: #555;
 }
 
 .wf-editor .wf-add-handle {
@@ -108,6 +129,34 @@
   height: 2px;
   width: 2px;
   margin-top: 1px;
+}
+
+.wf-sidebar {
+  height: calc(100% - var(--sidebar-margin) * 2);
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  width: var(--sidebar-width);
+  margin: var(--sidebar-margin);
+  padding: var(--sidebar-padding);
+
+  background-color: var(--sidebar-background-color);
+  border-top: var(--sidebar-border-top-width) solid var(--sidebar-border-color);
+  border-right: var(--sidebar-border-right-width) solid var(--sidebar-border-color);
+  border-bottom: var(--sidebar-border-bottom-width) solid var(--sidebar-border-color);
+  border-left: var(--sidebar-border-left-width) solid var(--sidebar-border-color);
+  border-radius: var(--sidebar-border-radius);
+}
+
+.wf-sidebar-content {
+  flex: 1;
+  padding: var(--sidebar-content-padding);
+}
+
+.wf-sidebar-footer {
+  margin-top: 20px;
 }
 
 /** Utilities **/
