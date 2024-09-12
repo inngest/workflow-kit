@@ -16,25 +16,39 @@ export interface EngineOptions {
 };
 
 
-/**
- * ActionHandler runs logic for a given EngineAction
- *
- */
-export type ActionHandler = (args: ActionHandlerArgs) => Promise<any>;
 
 /**
- * EngineAction represents a reusable action, or step, within a workflow.  It defines the
- * kind, the handler to run, the types for the action, and optionally custom UI for managing
- * the action's configuration within the workflow editor.
- *
+ * PublicEngineAction is the type representing an action in the *frontend UI*.  This is
+ * a subset of the entire EngineAction type.
+ * 
+ * Actions for workflows are defined in the backend, directly on the Engine.  The Engine
+ * provides an API which lists public information around the available actions - this type. 
  */
-export interface EngineAction {
+export interface PublicEngineAction {
+  /**
+   * Kind is an enum representing the action's ID.  This is not named as "id"
+   * so that we can keep consistency with the WorkflowAction type.
+   */
   kind: string;
-  handler: ActionHandler;
+
+  /**
+   * Name is the human-readable name of the action.
+   */
+  name: string;
+
+  /**
+   * Description is a short description of the action.
+   */
+  description?: string;
+
+  /**
+   * Icon is the name of the icon to use for the action.  This may be an HTTP
+   * URL, or an SVG directly.
+   */
+  icon?: string;
 
   /**
    * Inputs define input variables which can be configured by the workflow UI. 
-   *
    */
   inputs?: Record<string, ActionInput>
 
@@ -42,14 +56,52 @@ export interface EngineAction {
    * Outputs define the responses from the action, including the type, name, and
    * an optional description
    */
-  outputs?: TSchema | Record<string, ActionOutput>,
+  outputs?: TSchema | Record<string, ActionOutput>;
 };
 
-export interface ActionInput {
-  type: TSchema,
-  description?: string;
+/**
+ * EngineAction represents a reusable action, or step, within a workflow.  It defines the
+ * kind, the handler to run, the types for the action, and optionally custom UI for managing
+ * the action's configuration within the workflow editor.
+ * 
+ * Note that this is the type representing an action in the *backend engine*.
+ *
+ */
+export interface EngineAction extends PublicEngineAction {
+  /**
+   * The handler is the function which runs the action.  This may comprise of
+   * many individual inngest steps. 
+   */
+  handler: ActionHandler;
+};
 
-  // TODO: UI components for each input.
+/**
+ * ActionHandler runs logic for a given EngineAction
+ */
+export type ActionHandler = (args: ActionHandlerArgs) => Promise<any>;
+
+export interface ActionInput {
+  /**
+   * Type is the TypeBox type for the input.  This is used for type checking, validation,
+   * and form creation.
+   * 
+   * Note that this can include any of the JSON-schema refinements within the TypeBox type.
+   * 
+   * @example
+   * ```
+   * type: Type.String({
+   *   title: "Email address",
+   *   description: "The email address to send the email to",
+   *   format: "email",
+   * })
+   * ```
+   */
+  type: TSchema,
+
+  /**
+   * fieldType allows customization of the text input component, for string types.
+   */
+  fieldType?: "textarea" | "text"
 }
 
 export interface ActionOutput {

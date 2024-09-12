@@ -1,4 +1,5 @@
-import { useProvider } from "./Provider";
+import { ActionInput, PublicEngineAction, WorkflowAction } from "../types";
+import { useAvailableActions, useProvider } from "./Provider";
 
 export type SidebarProps = {
   /**
@@ -37,8 +38,6 @@ export const SidebarFooter = () => {
 const useSidebarContent = () => {
   const { trigger, selectedNode } = useProvider();
 
-  console.log(selectedNode);
-
   if (trigger === undefined) {
     // TODO (tonyhb): Allow users to define how triggers are selected,
     // including trigger loading passed in to the Provider.
@@ -61,6 +60,18 @@ const useSidebarContent = () => {
     )
   }
 
+  if (selectedNode.type === "action") {
+    const workflowAction = selectedNode.data.action as WorkflowAction;
+    const engineAction = useAvailableActions().find((action) => action.kind === workflowAction.kind);
+
+    return (
+      <>
+        <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} />
+        <SidebarFooter />
+      </>
+    )
+  }
+
   return (
     <div>
       {selectedNode?.type}
@@ -68,8 +79,11 @@ const useSidebarContent = () => {
   )
 }
 
+/**
+ * The form for editing a workflow's name and description.
+ */
 export const SidebarWorkflowForm = () => {
-  const { workflow, onChangeWorkflow } = useProvider();
+  const { workflow, onChange } = useProvider();
 
   return (
     <div className="wf-sidebar-form">
@@ -80,7 +94,7 @@ export const SidebarWorkflowForm = () => {
           defaultValue={workflow?.name}
           placeholder="Untitled workflow"
           onBlur={(e) => {
-            onChangeWorkflow({ ...workflow, name: e.target.value });
+            onChange({ ...workflow, name: e.target.value });
           }}
         />
       </label>
@@ -90,8 +104,60 @@ export const SidebarWorkflowForm = () => {
           placeholder="Add a short description..."
           defaultValue={workflow?.description}
           rows={4}
+          onBlur={(e) => {
+            onChange({ ...workflow, description: e.target.value });
+          }}
         />
       </label>
     </div>
   )
 } 
+
+type SidebarActionFormProps = {
+  workflowAction: WorkflowAction,
+  engineAction: PublicEngineAction | undefined,
+}
+
+export const SidebarActionForm = ({ workflowAction, engineAction }: SidebarActionFormProps) => {
+  if (engineAction === undefined) {
+    return (
+      <div className="wf-sidebar-form">
+        {/* TODO: Add a nicer looking error state */}
+        <div className="wf-sidebar-content wf-sidebar-error">
+          {`Action ${workflowAction.kind} not found in provider.`}
+        </div>
+      </div>
+    )
+  }
+
+  console.log(engineAction)
+
+  return (
+    <>
+      <div className="wf-sidebar-action">
+        <p className="wf-sidebar-action-name">{engineAction.name}</p>
+        <p className="wf-sidebar-action-description">{engineAction.description}</p>
+      </div>
+      <div className="wf-sidebar-form">
+        <span className="wf-sidebar-configure">Configure</span>
+        {InputFormUI(engineAction.inputs || {})}
+      </div>
+    </>
+  );
+}
+
+export const InputFormUI = (inputs: Record<string, ActionInput>) => {
+  // TODO: Handle different input types
+  // TODO: Allow variables to be inserted into the input, based off of the event
+  // or previous actions.
+  return (
+    <>
+      {Object.entries(inputs).map(([key, input]) => (
+        <label key={key}>
+          {input.type.title || key}
+          {input.fieldType === "textarea" ? <textarea /> : <input type="text" />}
+        </label>
+      ))}
+    </>
+  )
+}

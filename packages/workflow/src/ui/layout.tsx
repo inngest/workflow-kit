@@ -34,6 +34,8 @@ export const useLayout = (args: LayoutArgs): Rect => {
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction: Direction) => {
   const g = new Dagre.graphlib.Graph({ directed: true }).setDefaultEdgeLabel(() => ({}));
 
+  console.log("layouting")
+
   let nodePadding = 60 // TODO: Make this configurable.
   if (direction === "right") {
     nodePadding += 50;

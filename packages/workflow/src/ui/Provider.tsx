@@ -1,17 +1,6 @@
-import React, { useEffect, useMemo, useRef, useContext, useState } from 'react';
-import {
-  ReactFlow,
-  useNodesState,
-  useEdgesState,
-  Node,
-  Edge,
-  ReactFlowProvider,
-  useReactFlow,
-  useNodesInitialized,
-} from '@xyflow/react';
-import { EngineAction, Workflow, WorkflowAction } from "../types";
-import { useLayout } from './layout';
-import { TriggerNode, ActionNode } from './Nodes';
+import React, { useContext, useState } from 'react';
+import { Node, } from '@xyflow/react';
+import { PublicEngineAction, Workflow } from "../types";
 
 
 export type ProviderProps = {
@@ -22,7 +11,7 @@ export type ProviderProps = {
   trigger: any;
 
   // The available actions which can be used within the workflow.
-  availableActions: EngineAction[];
+  availableActions: PublicEngineAction[];
 
   // onChange is called when the workflow is changed via any interactivity
   // with the workflow editor.  This may be called many times on any update.
@@ -33,7 +22,7 @@ export type ProviderProps = {
   onChange: (w: Workflow) => {};
 }
 
-type ProviderContextType = ProviderProps & {
+export type ProviderContextType = ProviderProps & {
 
   // Used so that the `position` prop in the `Sidebar` component can set
   // state and be accessed by other components.  We need this to set the
@@ -79,7 +68,7 @@ export const useTrigger = (): any => {
  * the workflow.
  * 
  */
-export const useAvailableActions = (): EngineAction[] => {
+export const useAvailableActions = (): PublicEngineAction[] => {
   const ctx = useContext(ProviderContext);
   return ctx?.availableActions ?? [];
 }

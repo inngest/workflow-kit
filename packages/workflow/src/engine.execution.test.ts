@@ -9,6 +9,7 @@ test("execution", async () => {
     actions: [
       {
         kind: "multiply",
+        name: "Multiply some numbers",
         handler: async (args) => {
           return (args.workflowAction?.inputs?.a || 0) * (args.workflowAction?.inputs?.b || 0)
         },
@@ -68,5 +69,4 @@ test("execution", async () => {
 
   expect(es.state.get("stepA")).toBe(42);
   expect(es.state.get("stepB")).toBe(42*99);
-
 })
