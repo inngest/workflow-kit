@@ -12,7 +12,7 @@ import {
 import { Workflow, WorkflowAction } from "../types";
 import { useLayout } from './layout';
 import { TriggerNode, ActionNode } from './Nodes';
-import { useSidebarPosition, useTrigger, useWorkflow } from './Provider';
+import { useProvider, useSidebarPosition, useTrigger, useWorkflow } from './Provider';
 
 export type EditorProps = {
   direction: Direction;
@@ -26,14 +26,11 @@ export const Editor = (props: EditorProps) => {
   const direction = props.direction === "right" ? "right" : "down";
   const sidebarPosition = useSidebarPosition();
 
-  let className = "wf-editor";
-  if (sidebarPosition === "left") {
-    className += " wf-editor-left-sidebar";
-  }
+  let className = sidebarPosition === "left" ? "wf-editor-left-sidebar" : "";
 
   return (
     <ReactFlowProvider>
-      <div className={className}>
+      <div className={`wf-editor ${className}`}>
         <EditorUI {...props} direction={direction} />
         {props.children}
       </div>
@@ -41,9 +38,8 @@ export const Editor = (props: EditorProps) => {
   );
 }
 
-const EditorUI = ({ onTriggerClick, direction }: EditorProps) => {
-  const workflow = useWorkflow();
-  const trigger = useTrigger();
+const EditorUI = ({ direction }: EditorProps) => {
+  const { workflow, trigger, setSelectedNode } = useProvider();
 
   const flow = useReactFlow();
   const nodesInitialized = useNodesInitialized();
@@ -118,6 +114,28 @@ const EditorUI = ({ onTriggerClick, direction }: EditorProps) => {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
+        onClick={(event) => {
+          // If the event target is not a node, set the selected node to undefined.
+          let target = event.target as HTMLElement, isNode = false;
+          while (target !== ref.current) {
+            if (target.classList.contains("wf-node")) {
+              isNode = true;
+            }
+
+            target = target.parentElement as HTMLElement;
+            if (!target) {
+              break;
+            }
+          }
+
+          if (!isNode) {
+            setSelectedNode(undefined);
+          }
+        }}
+        onNodeClick={(event, node) => {
+          setSelectedNode(node);
+          event.preventDefault();
+        }}
         onNodesChange={(args) => {
           // Required to store .measured in nodes for computing layout.
           onNodesChange(args);

@@ -21,14 +21,16 @@ export type TriggerNodeProps = TriggerProps & {
  * @param direction - The direction of the workflow, used to determine how handles are placed.
  */
 export const TriggerNode = ({ trigger, node, direction }: TriggerNodeProps) => {
-  const { setSelectedNode } = useProvider();
+  const { setSelectedNode, selectedNode } = useProvider();
+
+  const isSelected = selectedNode?.type === "trigger";
 
   return (
     <div
       onClick={() => {
         setSelectedNode(node);
       }}
-      className={`wf-node wf-trigger-node wf-cursor-pointer`}
+      className={`wf-node wf-trigger-node wf-cursor-pointer ${isSelected ? "wf-node-selected" : ""}`}
     >
       <p>{ trigger === undefined ? "Select a trigger" : trigger?.event?.name }</p>
       <AddHandle {...sourceHandleProps(direction)} />
@@ -49,11 +51,13 @@ export type ActionNodeProps = {
  * @param direction - The direction of the workflow, used to determine how handles are placed.
  */
 export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
-  const { setSelectedNode } = useProvider();
+  const { setSelectedNode, selectedNode } = useProvider();
+
+  const isSelected = selectedNode?.type === "action" && selectedNode.id === node.id;
 
   return (
     <div
-      className='wf-node wf-action-node'
+      className={`wf-node wf-action-node ${isSelected ? "wf-node-selected" : ""}`}
       onClick={() => {
         setSelectedNode(node);
       }}
