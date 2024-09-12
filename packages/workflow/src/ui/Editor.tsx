@@ -8,6 +8,7 @@ import {
   ReactFlowProvider,
   useReactFlow,
   useNodesInitialized,
+  Rect,
 } from '@xyflow/react';
 import { Workflow, WorkflowAction } from "../types";
 import { getLayoutedElements, useLayout } from './layout';
@@ -40,8 +41,6 @@ export const Editor = (props: EditorProps) => {
 
 const EditorUI = ({ direction }: EditorProps) => {
   const { workflow, trigger, setSelectedNode, blankNode, setBlankNode } = useProvider();
-
-  const flow = useReactFlow();
   const nodesInitialized = useNodesInitialized();
 
   // Store a reference to the parent div to compute layout
@@ -66,68 +65,8 @@ const EditorUI = ({ direction }: EditorProps) => {
     nodesInitialized,
   });
 
-  useEffect(() => {
-    // We must manually update the react-flow nodes and edges as they're controlled
-    // via internal state.
-    if (blankNode) {
-      // Add the blank node and its edge.
-
-      // Ensure that the blank node's measured entry is filled. This fixes a layout bug shift.
-      // Measured is undefined when a node is being added, and is filled after react-flow renders
-      // the node for the first time.
-      if (!blankNode.measured) {
-        blankNode.measured = nodes[0]?.measured;
-      }
-
-      const newNodes = [...nodes, blankNode];
-      const newEdges = [...edges, {
-        id: `blank-node-edge`,
-        source: blankNode.data.parent.id,
-        target: '$blank',
-      }];
-
-      // Re-layout the graph prior to re-rendering.
-      const result = getLayoutedElements(newNodes, newEdges, direction);
-
-      setNodes(result.nodes);
-      setEdges(result.edges);
-    } else {
-      // Remove the blank node and its edge.
-      setNodes((nodes) => nodes.filter((node) => node.id !== '$blank'));
-      setEdges((edges) => edges.filter((edge) => edge.target !== '$blank'));
-    }
-  }, [blankNode]);
-
-  useEffect(() => {
-    if (!nodesInitialized) {
-      return
-    }
-
-    // If the workflow is too big for the current viewport, zoom out.
-    // Otherwise, don't zoom in and center the current graph.
-    if (
-      (layoutRect?.width > (ref.current?.offsetWidth ?? 0))
-      || (layoutRect?.height > (ref.current?.offsetHeight ?? 0))
-    ) {
-      flow.fitView();
-      return;
-    }
-
-    const w = ref.current?.offsetWidth ?? 0;
-    const h = ref.current?.offsetHeight ?? 0;
-    if (w === 0 || h === 0) {
-      return;
-    }
-
-    const fitRect = {
-      x: -1 * (w - layoutRect.width) / 2, // center the node rect in the viewport
-      y: -1 * (h - layoutRect.height) / 2,
-      width: w, // use viewport width
-      height: h, // use viewport height
-    }
-
-    flow.fitBounds(fitRect);
-  }, [nodesInitialized]);
+  useHandleBlankNode(nodes, edges, setNodes, setEdges, direction);
+  useCenterGraph(layoutRect, ref);
 
   const nodeTypes = useMemo(() => ({
     trigger: (node: any) => { // TODO: Define args type.
@@ -248,10 +187,95 @@ const parseWorkflow = ({ workflow, trigger, blankNodeParent }: parseWorkflowProp
   });
 
   // TODO: Always add an end node to every sink.
-
   return { nodes, edges };
 };
 
+const useCenterGraph = (layoutRect: Rect, ref: React.RefObject<HTMLDivElement>) => {
+  const flow = useReactFlow();
+  const nodesInitialized = useNodesInitialized();
+
+  useEffect(() => {
+    if (!nodesInitialized) {
+      return
+    }
+
+    // If the workflow is too big for the current viewport, zoom out.
+    // Otherwise, don't zoom in and center the current graph.
+    if (
+      (layoutRect?.width > (ref.current?.offsetWidth ?? 0))
+      || (layoutRect?.height > (ref.current?.offsetHeight ?? 0))
+    ) {
+      flow.fitView();
+      return;
+    }
+
+    const w = ref.current?.offsetWidth ?? 0;
+    const h = ref.current?.offsetHeight ?? 0;
+    if (w === 0 || h === 0) {
+      return;
+    }
+
+    const fitRect = {
+      x: -1 * (w - layoutRect.width) / 2, // center the node rect in the viewport
+      y: -1 * (h - layoutRect.height) / 2,
+      width: w, // use viewport width
+      height: h, // use viewport height
+    }
+
+    flow.fitBounds(fitRect);
+  }, [nodesInitialized]);
+}
+
+// useHandleBlankNode is a hook that handles the logic for adding and removing
+// blank nodes in a graph.
+//
+// Blank nodes are added when clicking the "AddHandle".  This mutates the Provider
+// state, which we then listen to here in order to manipulate react flow.
+const useHandleBlankNode = (
+  nodes: Node[],
+  edges: Edge[],
+  setNodes: (nodes: Node[]) => void,
+  setEdges: (edges: Edge[]) => void,
+  direction: Direction,
+) => {
+  const { blankNode } = useProvider();
+
+  useEffect(() => {
+    // We must manually update the react-flow nodes and edges as they're controlled
+    // via internal state.
+    if (blankNode) {
+      // Add the blank node and its edge.
+
+      // Ensure that the blank node's measured entry is filled. This fixes a layout bug shift.
+      // Measured is undefined when a node is being added, and is filled after react-flow renders
+      // the node for the first time.
+      if (!blankNode.measured) {
+        blankNode.measured = nodes[0]?.measured;
+      }
+
+      const newNodes = [...nodes, blankNode];
+      const newEdges = [...edges, {
+        id: `blank-node-edge`,
+        source: blankNode.data.parent.id,
+        target: '$blank',
+      }];
+
+      // Re-layout the graph prior to re-rendering.
+      const result = getLayoutedElements(newNodes, newEdges, direction);
+
+      setNodes(result.nodes);
+      setEdges(result.edges);
+    } else {
+      // Remove the blank node and its edge.
+      setNodes(nodes.filter((node) => node.id !== '$blank'));
+      setEdges(edges.filter((edge) => edge.target !== '$blank'));
+    }
+  }, [blankNode]);
+}
+
+
+// searchParents is a utility to search parent elements for given clasnames.  It returns
+// a record of whether each class was found.
 const searchParents = (target: HTMLElement, search: string[], until?: HTMLElement | null): Record<string, boolean> => {
   const result: Record<string, boolean> = {};
 
@@ -266,5 +290,6 @@ const searchParents = (target: HTMLElement, search: string[], until?: HTMLElemen
       break;
     }
   }
+
   return result;
 }
