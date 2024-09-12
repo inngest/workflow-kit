@@ -41,7 +41,6 @@ export const TriggerOnly = {
   }
 };
 
-
 export const SingleAction = {
   name: "Single action, ↓ graph",
   args: {

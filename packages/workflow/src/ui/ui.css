@@ -26,6 +26,7 @@
   --node-background-color: #fff;
   --node-border-color: #e7e7e5;
   --node-border-width: 1px;
+  --node-selected-outline-color: #d3e0f3;
 }
 
 .wf-editor {
@@ -88,6 +89,12 @@
   opacity: 1;
 }
 
+.wf-blank-node {
+  border-style: dashed;
+  opacity: 1;
+  outline: 1px solid var(--node-selected-outline-color);
+}
+
 .wf-editor .wf-add-handle > div {
   margin: -9px 0 0 -9px;
   width: 24px;
@@ -115,6 +122,7 @@
   /* Move up the Y axis by one */
   /* transform: rotate(-45deg) translateY(-1px) translateX(1px); */
   transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
 .wf-editor .wf-add-handle > div > svg {
@@ -132,7 +140,7 @@
 }
 
 .wf-node-selected {
-  outline: 1px solid #d3e0f3;
+  outline: 1px solid var(--node-selected-outline-color);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
 }
 

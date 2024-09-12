@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Node, } from '@xyflow/react';
 import { PublicEngineAction, Workflow } from "../types";
+import { BlankNodeType } from './Nodes';
 
 
 export type ProviderProps = {
@@ -32,6 +33,14 @@ export type ProviderContextType = ProviderProps & {
 
   selectedNode: Node | undefined;
   setSelectedNode: (n: Node | undefined) => void;
+
+  // blankNodeParent represents the parent of a blank node.  The blank node
+  // is used as a placeholder while users select the action to add to the workflow.
+  //
+  // This is set when the "Add" handle is clicked.  It's unset when any
+  // other node or the background is clicked.
+  blankNode?: BlankNodeType | undefined;
+  setBlankNode: (n: BlankNodeType | undefined) => void;
 
   // TODO: Selected action
   // TODO: Drag n drop
@@ -96,6 +105,7 @@ export const useProvider = (): ProviderContextType => {
 export const Provider = ({ children, workflow, trigger, onChange, availableActions }: ProviderProps & { children: React.ReactNode }) => {
   const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
   const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
+  const [blankNode, setBlankNode] = useState<Node | undefined>(undefined);
 
   return (
     <ProviderContext.Provider value={{
@@ -107,6 +117,8 @@ export const Provider = ({ children, workflow, trigger, onChange, availableActio
       setSidebarPosition,
       selectedNode,
       setSelectedNode,
+      blankNode,
+      setBlankNode,
     }}>
       {children}
     </ProviderContext.Provider>

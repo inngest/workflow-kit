@@ -11,7 +11,7 @@ export type SidebarProps = {
 }
 
 export const Sidebar = (props: SidebarProps) => {
-  const { setSidebarPosition, trigger } = useProvider();
+  const { setSidebarPosition } = useProvider();
 
   // Set this within context so the parent editor can adjust our
   // flex layouts correctly.
@@ -36,7 +36,7 @@ export const SidebarFooter = () => {
 
 
 const useSidebarContent = () => {
-  const { trigger, selectedNode } = useProvider();
+  const { trigger, selectedNode, availableActions } = useProvider();
 
   if (trigger === undefined) {
     // TODO (tonyhb): Allow users to define how triggers are selected,
@@ -60,16 +60,23 @@ const useSidebarContent = () => {
     )
   }
 
-  if (selectedNode.type === "action") {
-    const workflowAction = selectedNode.data.action as WorkflowAction;
-    const engineAction = useAvailableActions().find((action) => action.kind === workflowAction.kind);
+  switch (selectedNode.type) {
+    case "action": {
+      const workflowAction = selectedNode.data.action as WorkflowAction;
+      const engineAction = availableActions.find((action) => action.kind === workflowAction.kind);
 
-    return (
-      <>
-        <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} />
-        <SidebarFooter />
-      </>
-    )
+      return (
+        <>
+          <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} />
+          <SidebarFooter />
+        </>
+      )
+    }
+    case "blank": {
+      return (
+        <ActionList actions={availableActions} />
+      )
+    }
   }
 
   return (
@@ -130,8 +137,6 @@ export const SidebarActionForm = ({ workflowAction, engineAction }: SidebarActio
     )
   }
 
-  console.log(engineAction)
-
   return (
     <>
       <div className="wf-sidebar-action">
@@ -159,5 +164,15 @@ export const InputFormUI = (inputs: Record<string, ActionInput>) => {
         </label>
       ))}
     </>
+  )
+}
+
+export const ActionList = ({ actions }: { actions: PublicEngineAction[] }) => {
+  return (
+    <div>
+      {actions.map((action) => (
+        <div key={action.kind}>{action.name}</div>
+      ))}
+    </div>
   )
 }
