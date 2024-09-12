@@ -11,7 +11,7 @@ import {
   Rect,
 } from '@xyflow/react';
 import { Workflow, WorkflowAction } from "../types";
-import { getLayoutedElements, useLayout } from './layout';
+import { getLayoutedElements, parseWorkflow, useLayout } from './layout';
 import { TriggerNode, ActionNode, BlankNode } from './Nodes';
 import { useProvider, useSidebarPosition, useTrigger, useWorkflow } from './Provider';
 
@@ -48,7 +48,9 @@ const EditorUI = ({ direction }: EditorProps) => {
 
   const { nodes: initialNodes, edges: initialEdges } = useMemo(() =>
     parseWorkflow({ workflow, trigger }),
-  [workflow, trigger, blankNode]);
+  []);
+
+  console.log("og", workflow);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -135,60 +137,6 @@ export type TriggerProps = {
 export type WorkflowProps = {
   workflow?: Workflow;
 }
-
-type parseWorkflowProps = WorkflowProps & TriggerProps & { blankNodeParent?: Node }
-
-const parseWorkflow = ({ workflow, trigger, blankNodeParent }: parseWorkflowProps): { nodes: Node[], edges: Edge[] } => {
-  const nodes: Node[] = [];
-  const edges: Edge[] = [];
-
-  // Add trigger node
-  nodes.push({
-    id: '$source',
-    type: 'trigger',
-    position: { x: 0, y: 0 },
-    data: { trigger }
-  });
-
-  // Always handle the blank node case.
-  if (blankNodeParent) {
-    nodes.push({
-      id: '$blank',
-      type: 'blank',
-      position: { x: 0, y: 0 },
-      data: { parent: blankNodeParent }
-    });
-    edges.push({
-      id: `blank-node-edge`,
-      source: blankNodeParent.id,
-      target: '$blank',
-    });
-  }
-
-  if (!workflow) {
-    return { nodes, edges };
-  }
-
-  (workflow.actions || []).forEach((action, index) => {
-    nodes.push({
-      id: action.id,
-      type: 'action',
-      position: { x: 0, y: 0 },
-      data: { action }
-    });
-  });
-
-  (workflow.edges || []).forEach((edge) => {
-    edges.push({
-      id: `${edge.from}-${edge.to}`,
-      source: edge.from,
-      target: edge.to,
-    });
-  });
-
-  // TODO: Always add an end node to every sink.
-  return { nodes, edges };
-};
 
 const useCenterGraph = (layoutRect: Rect, ref: React.RefObject<HTMLDivElement>) => {
   const flow = useReactFlow();

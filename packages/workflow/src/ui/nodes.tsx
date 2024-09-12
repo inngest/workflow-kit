@@ -58,7 +58,8 @@ export type ActionNodeProps = {
  * @param direction - The direction of the workflow, used to determine how handles are placed.
  */
 export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
-  const { setSelectedNode, selectedNode } = useProvider();
+  const { selectedNode, availableActions } = useProvider();
+  const engineAction = availableActions.find(a => a.kind === action.kind);
 
   const isSelected = selectedNode?.type === "action" && selectedNode.id === node.id;
 
@@ -67,7 +68,7 @@ export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
       className={`wf-node wf-action-node ${isSelected ? "wf-node-selected" : ""}`}
     >
         <Handle {...targetHandleProps(direction)} />
-        {action.name || action.id}
+        {action.name || engineAction?.name || action.kind}
         <AddHandle {...sourceHandleProps(direction)} node={node} />
     </div>
   );

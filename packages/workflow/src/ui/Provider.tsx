@@ -42,6 +42,10 @@ export type ProviderContextType = ProviderProps & {
   blankNode?: BlankNodeType | undefined;
   setBlankNode: (n: BlankNodeType | undefined) => void;
 
+  // appendAction appends an action to the workflow under the given parent action ID.
+  // The parentID may be "$source" to represent the trigger.
+  appendAction: (action: PublicEngineAction, parentID: string) => void;
+
   // TODO: Selected action
   // TODO: Drag n drop
 }
@@ -105,7 +109,32 @@ export const useProvider = (): ProviderContextType => {
 export const Provider = ({ children, workflow, trigger, onChange, availableActions }: ProviderProps & { children: React.ReactNode }) => {
   const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
   const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
-  const [blankNode, setBlankNode] = useState<Node | undefined>(undefined);
+  const [blankNode, setBlankNode] = useState<BlankNodeType | undefined>(undefined);
+
+  const appendAction = (action: PublicEngineAction, parentID: string) => {
+    const id = (workflow.actions.length + 1).toString();
+
+    const workflowCopy = {
+      ...workflow,
+      actions: workflow.actions.slice(),
+      edges: workflow.edges.slice(),
+    };
+
+    workflowCopy.actions.push({
+      id,
+      kind: action.kind,
+    });
+    workflowCopy.edges.push({
+      from: parentID,
+      to: id,
+    });
+
+    onChange(workflowCopy);
+    console.log("workflowCopy", workflowCopy, parentID);
+    setBlankNode(undefined);
+  }
+
+  // TODO: Add customizable React components here to the Provider
 
   return (
     <ProviderContext.Provider value={{
@@ -119,6 +148,8 @@ export const Provider = ({ children, workflow, trigger, onChange, availableActio
       setSelectedNode,
       blankNode,
       setBlankNode,
+
+      appendAction,
     }}>
       {children}
     </ProviderContext.Provider>

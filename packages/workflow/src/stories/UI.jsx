@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Type } from '@sinclair/typebox'
 
 import { Editor, Provider, Sidebar } from '../ui/';
@@ -57,21 +57,27 @@ const availableActions = [
   },
 ]
 
-export const UI = ({ workflow, trigger, direction }) => (
-  <div className="sb-wrap">
-    <Provider
-      workflow={workflow}
-      trigger={trigger}
-      availableActions={availableActions}
-      onChange={() => {}}
-    >
-      <Editor direction={direction}>
-        <Sidebar position="right">
-        </Sidebar>
-      </Editor>
-    </Provider>
-  </div>
-);
+export const UI = ({ workflow, trigger, direction }) => {
+  const [wf, setWorkflow] = useState(workflow);
+
+  return (
+    <div className="sb-wrap">
+      <Provider
+        workflow={wf}
+        trigger={trigger}
+        availableActions={availableActions}
+        onChange={(updated) => {
+          setWorkflow(updated)
+        }}
+      >
+        <Editor direction={direction}>
+          <Sidebar position="right">
+          </Sidebar>
+        </Editor>
+      </Provider>
+    </div>
+  );
+}
 
 UI.propTypes = {
 };

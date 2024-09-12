@@ -168,11 +168,31 @@ export const InputFormUI = (inputs: Record<string, ActionInput>) => {
 }
 
 export const ActionList = ({ actions }: { actions: PublicEngineAction[] }) => {
+  const { workflow, onChange, blankNode, setBlankNode, appendAction } = useProvider();
+
   return (
     <div>
-      {actions.map((action) => (
-        <div key={action.kind}>{action.name}</div>
-      ))}
+      <div className="wf-sidebar-content">
+        Select an action
+      </div>
+      <div className="wf-sidebar-content">
+        {actions.map((action) => (
+          <ActionListItem key={action.kind} action={action} onClick={() => {
+            if (blankNode === undefined) {
+              return;
+            }
+            appendAction(action, blankNode?.data.parent.id);
+          }} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export const ActionListItem = ({ action, onClick }: { action: PublicEngineAction, onClick: () => void }) => {
+  return (
+    <div className="wf-sidebar-action-list-item" onClick={onClick}>
+      {action.name}
     </div>
   )
 }

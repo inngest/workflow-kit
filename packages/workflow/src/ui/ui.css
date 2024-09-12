@@ -237,6 +237,16 @@
   padding-top: var(--sidebar-content-padding);
 }
 
+.wf-sidebar-action-list-item {
+  padding: calc(var(--sidebar-content-padding) * 0.5) var(--sidebar-content-padding);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wf-sidebar-action-list-item:hover {
+  background-color: #f0f0ef;
+}
+
 /** Utilities **/
 
 .wf-cursor-pointer {

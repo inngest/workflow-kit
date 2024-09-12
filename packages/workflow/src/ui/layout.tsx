@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import Dagre from '@dagrejs/dagre';
 import { Node, Edge, Rect } from '@xyflow/react';
-import { type Direction } from './Editor';
+import { TriggerProps, WorkflowProps, type Direction } from './Editor';
+import { KeyOfFromMappedResult } from '@sinclair/typebox';
+import { useProvider } from './Provider';
 
 type LayoutArgs = {
   nodes: Node[];
@@ -17,7 +19,18 @@ type LayoutArgs = {
 
 
 export const useLayout = (args: LayoutArgs): Rect => {
-  const { nodes, edges, width, height, direction, setNodes, setEdges, nodesInitialized } = args;
+  const { workflow, trigger } = useProvider();
+
+  const { width, height, direction, setNodes, setEdges, nodesInitialized } = args;
+  let { nodes, edges } = args;
+
+  // Force a redraw any time the actions or edges change.
+  const parsed = parseWorkflow({ workflow, trigger });
+  if (parsed.nodes.length > nodes.length) {
+    nodes = parsed.nodes;
+    edges = parsed.edges;
+  }
+
   return useMemo(() => {
     if (!nodesInitialized) {
       return { x: 0, y: 0, width: 0, height: 0 };
@@ -85,4 +98,58 @@ export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction: Dir
     }
   };
 
+};
+
+type parseWorkflowProps = WorkflowProps & TriggerProps & { blankNodeParent?: Node }
+
+export const parseWorkflow = ({ workflow, trigger, blankNodeParent }: parseWorkflowProps): { nodes: Node[], edges: Edge[] } => {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  // Add trigger node
+  nodes.push({
+    id: '$source',
+    type: 'trigger',
+    position: { x: 0, y: 0 },
+    data: { trigger }
+  });
+
+  // Always handle the blank node case.
+  if (blankNodeParent) {
+    nodes.push({
+      id: '$blank',
+      type: 'blank',
+      position: { x: 0, y: 0 },
+      data: { parent: blankNodeParent }
+    });
+    edges.push({
+      id: `blank-node-edge`,
+      source: blankNodeParent.id,
+      target: '$blank',
+    });
+  }
+
+  if (!workflow) {
+    return { nodes, edges };
+  }
+
+  (workflow.actions || []).forEach((action, index) => {
+    nodes.push({
+      id: action.id,
+      type: 'action',
+      position: { x: 0, y: 0 },
+      data: { action }
+    });
+  });
+
+  (workflow.edges || []).forEach((edge) => {
+    edges.push({
+      id: `${edge.from}-${edge.to}`,
+      source: edge.from,
+      target: edge.to,
+    });
+  });
+
+  // TODO: Always add an end node to every sink.
+  return { nodes, edges };
 };
