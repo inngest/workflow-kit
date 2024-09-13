@@ -40,7 +40,7 @@ export const TriggerNode = ({ trigger, node, direction }: TriggerNodeProps) => {
       className={`wf-node wf-trigger-node wf-cursor-pointer ${isSelected ? "wf-node-selected" : ""}`}
     >
       <p>{ trigger === undefined ? "Select a trigger" : trigger?.event?.name }</p>
-      <AddHandle {...sourceHandleProps(direction)} node={node}/>
+      { trigger && <AddHandle {...sourceHandleProps(direction)} node={node}/> }
     </div>
   );
 }
@@ -108,19 +108,17 @@ const AddHandle = (props: HandleProps & { node: Node }) => {
   );
 }
 
-const targetHandleProps = (direction: Direction): HandleProps & { key: string }=> {
+const targetHandleProps = (direction: Direction): HandleProps => {
   return {
     type: "target",
     position: direction === "down" ? Position.Top : Position.Left,
-    key: direction,
     className: "wf-target-handle",
   }
 }
 
-const sourceHandleProps = (direction: Direction): HandleProps & { key: string } => {
+const sourceHandleProps = (direction: Direction): HandleProps => {
   return {
     type: "source",
     position: direction === "down" ? Position.Bottom : Position.Right,
-    key: direction,
   }
 }

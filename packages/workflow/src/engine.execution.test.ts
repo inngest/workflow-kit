@@ -15,12 +15,14 @@ test("execution", async () => {
         },
         inputs: {
           a: {
-            type: Type.Number(),
-            description: "Numerator",
+            type: Type.Number({
+              description: "Numerator",
+            }),
           },
           b: {
-            type: Type.Number(),
-            description: "Denominator",
+            type: Type.Number({
+              description: "Denominator",
+            }),
           },
         },
         outputs: Type.Number(),

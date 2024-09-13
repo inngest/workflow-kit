@@ -113,12 +113,12 @@ export const Provider = ({ children, workflow, trigger, onChange, availableActio
   const [blankNode, setBlankNode] = useState<BlankNodeType | undefined>(undefined);
 
   const appendAction = (action: PublicEngineAction, parentID: string) => {
-    const id = (workflow.actions.length + 1).toString();
+    const id = ((workflow?.actions?.length ?? 0) + 1).toString();
 
     const workflowCopy = {
       ...workflow,
-      actions: workflow.actions.slice(),
-      edges: workflow.edges.slice(),
+      actions: (workflow?.actions ?? []).slice(),
+      edges: (workflow?.edges ?? []).slice(),
     };
 
     workflowCopy.actions.push({
