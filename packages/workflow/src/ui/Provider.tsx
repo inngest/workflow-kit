@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Node, } from '@xyflow/react';
 import { PublicEngineAction, Workflow } from "../types";
 import { BlankNodeType } from './Nodes';
+import { parseWorkflow } from './layout';
 
 
 export type ProviderProps = {
@@ -130,8 +131,15 @@ export const Provider = ({ children, workflow, trigger, onChange, availableActio
     });
 
     onChange(workflowCopy);
-    console.log("workflowCopy", workflowCopy, parentID);
     setBlankNode(undefined);
+
+    // Parse the workflow and find the new node for selection.
+    const parsed = parseWorkflow({ workflow: workflowCopy, trigger });
+    const newNode = parsed.nodes.find((n) => n.id === id);
+    console.log(newNode, id, parsed.nodes)
+    if (newNode) {
+      setSelectedNode(newNode);
+    }
   }
 
   // TODO: Add customizable React components here to the Provider

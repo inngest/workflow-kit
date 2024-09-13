@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useContext } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ReactFlow,
   useNodesState,
@@ -50,8 +50,6 @@ const EditorUI = ({ direction }: EditorProps) => {
     parseWorkflow({ workflow, trigger }),
   []);
 
-  console.log("og", workflow);
-
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -90,6 +88,8 @@ const EditorUI = ({ direction }: EditorProps) => {
         nodeTypes={nodeTypes}
         nodes={nodes}
         edges={edges}
+        edgesFocusable={false}
+        edgesReconnectable={false}
         onClick={(event) => {
           // If the event target is not a node, set the selected node to undefined.
           let target = event.target as HTMLElement,
@@ -142,10 +142,18 @@ const useCenterGraph = (layoutRect: Rect, ref: React.RefObject<HTMLDivElement>) 
   const flow = useReactFlow();
   const nodesInitialized = useNodesInitialized();
 
+  const [centered, setCentered] = useState(false);
+
   useEffect(() => {
     if (!nodesInitialized) {
       return
     }
+    if (centered) {
+      return;
+    }
+
+    // Only do this once per render.
+    setCentered(true);
 
     // If the workflow is too big for the current viewport, zoom out.
     // Otherwise, don't zoom in and center the current graph.
@@ -206,6 +214,7 @@ const useHandleBlankNode = (
         id: `blank-node-edge`,
         source: blankNode.data.parent.id,
         target: '$blank',
+        type: 'smoothstep',
       }];
 
       // Re-layout the graph prior to re-rendering.
@@ -239,5 +248,6 @@ const searchParents = (target: HTMLElement, search: string[], until?: HTMLElemen
     }
   }
 
+  console.log(result)
   return result;
 }

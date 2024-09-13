@@ -126,6 +126,7 @@ export const parseWorkflow = ({ workflow, trigger, blankNodeParent }: parseWorkf
       id: `blank-node-edge`,
       source: blankNodeParent.id,
       target: '$blank',
+      type: 'smoothstep',
     });
   }
 
@@ -147,6 +148,7 @@ export const parseWorkflow = ({ workflow, trigger, blankNodeParent }: parseWorkf
       id: `${edge.from}-${edge.to}`,
       source: edge.from,
       target: edge.to,
+      type: 'smoothstep',
     });
   });
 

@@ -89,12 +89,6 @@
   opacity: 1;
 }
 
-.wf-blank-node {
-  border-style: dashed;
-  opacity: 1;
-  outline: 1px solid var(--node-selected-outline-color);
-}
-
 .wf-editor .wf-add-handle > div {
   margin: -9px 0 0 -9px;
   width: 24px;
@@ -143,6 +137,13 @@
   outline: 1px solid var(--node-selected-outline-color);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
 }
+
+.wf-blank-node {
+  border-style: dashed;
+  outline: 1px solid var(--node-selected-outline-color);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
 
 /**
  * Sidebar
@@ -239,8 +240,11 @@
 
 .wf-sidebar-action-list-item {
   padding: calc(var(--sidebar-content-padding) * 0.5) var(--sidebar-content-padding);
-  border-radius: 5px;
+  border-radius: var(--node-border-radius);
+  background-color: var(--node-background-color);
+  border: 0.5px solid var(--node-border-color);
   cursor: pointer;
+  margin: 0 0 8px;
 }
 
 .wf-sidebar-action-list-item:hover {
