@@ -272,10 +272,10 @@ export function interpolate(value: any, state: Record<string, any>, event: Trigg
     return interpolateObject(result, state, event);
   }
 
-  let foundRefs = refs(result)
 
   // This is a string which contains refs as values within content,
   // eg. "Hello !ref($.event.data.name)".
+  const foundRefs = refs(result)
   while (foundRefs.length > 0) {
     // Replace the ref with the interpolated value.
     let { path: jsonPath, ref: substr } = foundRefs.shift() ?? { path: "", ref: "" };

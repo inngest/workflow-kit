@@ -87,7 +87,7 @@ describe("ExecutionState.ref", () => {
       ({
         event: {
           data: {
-            userId: 1,
+            userId: 1.1,
             likes: ["a"],
           }
         },
@@ -99,7 +99,7 @@ describe("ExecutionState.ref", () => {
       },
     );
 
-    expect(state.interpolate("!ref($.event.data.userId)")).toEqual(1);
+    expect(state.interpolate("!ref($.event.data.userId)")).toEqual(1.1);
     expect(state.interpolate("!ref($.event.data.likes)")).toEqual(["a"]);
     expect(state.interpolate("!ref($.state.action_a)")).toEqual("test");
     expect(state.interpolate("!ref($.state.action_b)")).toEqual({ ok: true });
@@ -129,7 +129,7 @@ describe("ExecutionState.ref", () => {
       },
     )).toEqual({
       "and": [
-        { "==": [1, "a"] },
+        { "==": [1.1, "a"] },
         { "==": [{ ok: true }, "test"] },
       ]
     });
