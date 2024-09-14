@@ -11,7 +11,8 @@
     }
   },
   "scripts": {
-    "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false"
+    "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
+    "build": "tsc"
   },
   "author": "Inngest Inc",
   "license": "Apache 2",
