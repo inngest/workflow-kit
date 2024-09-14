@@ -269,10 +269,7 @@ export function interpolate(value: any, state: Record<string, any>, event: Trigg
 
   // If this is an object, walk the object and interpolate any refs within.
   if (typeof(result) === "object" && result !== null) {
-    for (let key in result) {
-      result[key] = interpolate(result[key], state, event);
-    }
-    return result
+    return interpolateObject(result, state, event);
   }
 
   let foundRefs = refs(result)
@@ -287,6 +284,55 @@ export function interpolate(value: any, state: Record<string, any>, event: Trigg
 
   return result
 }
+
+function interpolateObject(value: Object, state: Record<string, any>, event: TriggerEvent) {
+  let result = value;
+
+  const stack: Array<{ obj: Record<string, any>, key: string | null }> = [{ obj: result, key: null }];
+
+  // This is a reimplementaiton of interpolace() to prevent recursion and stack overflows. A
+  // basic implementation is simply:
+  //   if (typeof(result) === "object" && result !== null) {
+  //     for (let key in result) {
+  //       result[key] = interpolate(result[key], state, event);
+  //     }
+  //     return result
+  //   }
+  while (stack.length > 0) {
+    const { obj, key } = stack.pop()!;
+
+    if (key === null) {
+      // Process all keys of the current object
+      for (let k in obj) {
+        stack.push({ obj, key: k });
+      }
+      continue
+    }
+
+    // Process the value of the current key.
+    let value = obj[key];
+
+    if (isRef(value)) {
+      // Handle pure references
+      value = value.replace("!ref(", "").slice(0, -1);
+      obj[key] = interpolatedRefValue(value, state, event);
+    } else if (typeof value === "string") {
+      // Handle string with embedded refs
+      let foundRefs = refs(value);
+      while (foundRefs.length > 0) {
+        let { path, ref } = foundRefs.shift()!;
+        value = value.replace(ref, interpolatedRefValue(path, state, event));
+      }
+      obj[key] = value;
+    } else if (typeof value === "object" && value !== null) {
+      // Push object for further processing
+      stack.push({ obj: value, key: null });
+    }
+  }
+
+  return result;
+}
+
 
 function interpolatedRefValue(path: string, state: Record<string, any>, event: TriggerEvent) {
   const value = jsonpath.query({ state, event }, path)
