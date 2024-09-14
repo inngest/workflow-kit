@@ -259,7 +259,6 @@ export const resolveInputs = (
 
 export function interpolate(value: any, state: Record<string, any>, event: TriggerEvent) {
   let result = value;
-  let foundRefs = refs(result)
 
   if (isRef(result)) {
     // Handle pure references immediately.  Remove "!ref(" and ")"
@@ -267,6 +266,16 @@ export function interpolate(value: any, state: Record<string, any>, event: Trigg
     result = result.substring(0, result.length-1)
     return interpolatedRefValue(result, state, event);
   }
+
+  // If this is an object, walk the object and interpolate any refs within.
+  if (typeof(result) === "object" && result !== null) {
+    for (let key in result) {
+      result[key] = interpolate(result[key], state, event);
+    }
+    return result
+  }
+
+  let foundRefs = refs(result)
 
   // This is a string which contains refs as values within content,
   // eg. "Hello !ref($.event.data.name)".

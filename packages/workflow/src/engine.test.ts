@@ -114,6 +114,25 @@ describe("ExecutionState.ref", () => {
     expect(state.interpolate("lol")).toEqual("lol");
     expect(state.interpolate(123)).toEqual(123);
     expect(state.interpolate([123])).toEqual([123]);
+
+    // Object walking.
+    expect(state.interpolate(
+      {"==": ["!ref($.state.action_b)", "a"]},
+    )).toEqual({"==": [{ ok: true }, "a"]});
+
+    expect(state.interpolate(
+      {
+        "and": [
+          { "==": ["!ref($.event.data.userId)", "a"] },
+          { "==": ["!ref($.state.action_b)", "test"] },
+        ]
+      },
+    )).toEqual({
+      "and": [
+        { "==": [1, "a"] },
+        { "==": [{ ok: true }, "test"] },
+      ]
+    });
   })
 });
 
