@@ -14,6 +14,16 @@
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "build": "tsc"
   },
+  "homepage": "https://github.com/inngest/workflow-sdk/tree/main/packages/workflow#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inngest/workflow-sdk.git",
+    "directory": "packages/workflow"
+  },
+  "keywords": [
+    "inngest",
+    "workflow"
+  ],
   "author": "Inngest Inc",
   "license": "Apache 2",
   "dependencies": {
