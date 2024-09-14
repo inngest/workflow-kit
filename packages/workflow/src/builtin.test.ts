@@ -60,7 +60,6 @@ describe("builtin:if", () => {
     expect(result).toEqual({ result: true });
   });
 
-
   const handlerInput = (workflowAction: WorkflowAction): ActionHandlerArgs => {
     return {
       workflowAction,

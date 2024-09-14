@@ -4,7 +4,6 @@ import { PublicEngineAction, Workflow } from "../types";
 import { BlankNodeType } from './Nodes';
 import { parseWorkflow } from './layout';
 
-
 export type ProviderProps = {
   // The workflow to be modified by the user.
   workflow: Workflow;
@@ -107,7 +106,8 @@ export const useProvider = (): ProviderContextType => {
   return ctx;
 }
 
-export const Provider = ({ children, workflow, trigger, onChange, availableActions }: ProviderProps & { children: React.ReactNode }) => {
+export const Provider = (props: ProviderProps & { children: React.ReactNode }) => {
+  const { children, workflow, trigger, onChange, availableActions } = props;
   const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
   const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
   const [blankNode, setBlankNode] = useState<BlankNodeType | undefined>(undefined);

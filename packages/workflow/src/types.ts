@@ -4,13 +4,13 @@ import { TSchema } from '@sinclair/typebox'
 export interface EngineOptions {
   actions?: Array<EngineAction>;
 
-  /*
-   * Specifies whether if expressions and loops are enabled within workflows.
+  /**
+   * disableBuiltinActions disables the builtin actions from being used.
+   * 
+   * For selectively adding built-in actions, set this to true and expose
+   * the actions you want via the `availableActions` prop (in your Engine)
    */
-  statements?: {
-    ifs?: boolean;
-    loops?: boolean;
-  };
+  disableBuiltinActions?: boolean;
 
   loader?: Loader;
 };
