@@ -25,7 +25,7 @@
     "workflow"
   ],
   "author": "Inngest Inc",
-  "license": "Apache 2",
+  "license": "Apache-2.0",
   "dependencies": {
     "graphology": "^0.25.4",
     "graphology-dag": "^0.4.1",
