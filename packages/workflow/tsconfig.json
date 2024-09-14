@@ -9,7 +9,7 @@
     "sourceMap": true,
     "rootDir": "./src",
     "outDir": "./dist",
-    "types": ["node", "jest"],
+    "types": ["jest"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

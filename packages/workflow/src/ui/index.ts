@@ -16,9 +16,6 @@ export {
     useOnChange,
     type ProviderProps,
 } from "./Provider";
-export {
-    TriggerNode,
-    ActionNode,
-} from "./Nodes";
+export { TriggerNode, ActionNode } from "./nodes";
 
 // TODO: Trigger type

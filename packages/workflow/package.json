@@ -4,12 +4,53 @@
   "description": "Durable visual worfklows in your app, instantly",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsc && cp src/ui/ui.css dist/ui/ui.css",
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "author": "Inngest Inc",
   "license": "Apache 2",
+  "typings": "index.d.ts",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
+  "publishConfig": {
+    "directory": "dist",
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./index.js"
+      },
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      },
+      "default": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      }
+    },
+    "./ui": {
+      "require": {
+        "types": "./ui/index.d.cts",
+        "default": "./ui/index.js"
+      },
+      "import": {
+        "types": "./ui/index.d.ts",
+        "default": "./ui/index.js"
+      },
+      "default": {
+        "types": "./ui/index.d.ts",
+        "default": "./ui/index.js"
+      }
+    },
+    "./dist/ui/ui.css": "./dist/ui/ui.css",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
     "@sinclair/typebox": "^0.33.7",
