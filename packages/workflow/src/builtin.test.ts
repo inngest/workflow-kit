@@ -42,8 +42,7 @@ describe("builtin:if", () => {
             ]
           },
         },
-        Object.fromEntries(state),
-        event
+        { state: Object.fromEntries(state), event }
       )
     };
 

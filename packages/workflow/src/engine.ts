@@ -9,10 +9,8 @@ import {
   TriggerEvent,
 } from "./types";
 import { bfs, newDAG } from './graph';
-import jsonpath from "jsonpath";
-import { Type } from '@sinclair/typebox'
 import { Value, AssertError } from '@sinclair/typebox/value'
-import { interpolate, resolveInputs } from "./interpolation";
+import { interpolate, refs, resolveInputs } from "./interpolation";
 
 export class Engine {
   #options: EngineOptions;
@@ -236,11 +234,17 @@ export class ExecutionState {
    */
   resolveInputs = (action: WorkflowAction): Record<string, any> => {
     // For each action, check to see if it references any prior input.
-    return resolveInputs(action.inputs ?? {}, Object.fromEntries(this.#state), this.#opts.event);
+    return resolveInputs(action.inputs ?? {}, {
+      state: Object.fromEntries(this.#state),
+      event: this.#opts.event
+    });
   }
 
   interpolate = (value: any): any => {
-    return interpolate(value, Object.fromEntries(this.#state), this.#opts.event)
+    return interpolate(value, {
+      state: Object.fromEntries(this.#state),
+      event: this.#opts.event
+    });
   }
 
 }

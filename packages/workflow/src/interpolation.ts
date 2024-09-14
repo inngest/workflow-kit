@@ -6,18 +6,16 @@ import { TriggerEvent } from "./types";
  * refs within the inputs using the given state and event.
  * 
  * @param inputs an object of actio inputs
- * @param state the current engine state
- * @param event the event triggering the workflow
+ * @param vars the variables used for interpolation, eg. { state: {...}, event: {...} }.
  * @returns an object with the resolved inputs fully interpolated
  */
 export const resolveInputs = (
   inputs: Record<string, any>,
-  state: Record<string, any>,
-  event: TriggerEvent,
+  vars: Record<string, any>,
 ): Record<string, any> => {
   const outputs: Record<string, any> = {};
   for (let key in (inputs ?? {})) {
-    outputs[key] = interpolate(inputs[key], state, event);
+    outputs[key] = interpolate(inputs[key], vars);
   }
   return outputs
 }
@@ -55,11 +53,10 @@ export function refs(input: any): Array<{ path: string, ref: string }> {
  * all values within an object.
  * 
  * @param value any action input, eg. a string, object, or number,
- * @param state the current engine state
- * @param event the event triggering the workflow
+ * @param vars the variables used for interpolation, eg. { state: {...}, event: {...} }.
  * @returns the input with all refs interpolated
  */
-export function interpolate(value: any, state: Record<string, any>, event: TriggerEvent) {
+export function interpolate(value: any, vars: Record<string, any>) {
   let result = value;
 
   // TODO: Handle $.result
@@ -68,12 +65,12 @@ export function interpolate(value: any, state: Record<string, any>, event: Trigg
     // Handle pure references immediately.  Remove "!ref(" and ")"
     result = result.replace("!ref(", "")
     result = result.substring(0, result.length-1)
-    return interpolatedRefValue(result, state, event);
+    return interpolatedRefValue(result, vars);
   }
 
   // If this is an object, walk the object and interpolate any refs within.
   if (typeof(result) === "object" && result !== null) {
-    return interpolateObject(result, state, event);
+    return interpolateObject(result, vars);
   }
 
 
@@ -83,13 +80,13 @@ export function interpolate(value: any, state: Record<string, any>, event: Trigg
   while (foundRefs.length > 0) {
     // Replace the ref with the interpolated value.
     let { path: jsonPath, ref: substr } = foundRefs.shift() ?? { path: "", ref: "" };
-    result = result.replace(substr, interpolatedRefValue(jsonPath, state, event))
+    result = result.replace(substr, interpolatedRefValue(jsonPath, vars))
   }
 
   return result
 }
 
-function interpolateObject(value: Object, state: Record<string, any>, event: TriggerEvent) {
+function interpolateObject(value: Object, vars: Record<string, any>) {
   let result = value;
 
   const stack: Array<{ obj: Record<string, any>, key: string | null }> = [{ obj: result, key: null }];
@@ -119,13 +116,13 @@ function interpolateObject(value: Object, state: Record<string, any>, event: Tri
     if (isRef(value)) {
       // Handle pure references
       value = value.replace("!ref(", "").slice(0, -1);
-      obj[key] = interpolatedRefValue(value, state, event);
+      obj[key] = interpolatedRefValue(value, vars);
     } else if (typeof value === "string") {
       // Handle string with embedded refs
       let foundRefs = refs(value);
       while (foundRefs.length > 0) {
         let { path, ref } = foundRefs.shift()!;
-        value = value.replace(ref, interpolatedRefValue(path, state, event));
+        value = value.replace(ref, interpolatedRefValue(path, vars));
       }
       obj[key] = value;
     } else if (typeof value === "object" && value !== null) {
@@ -138,8 +135,8 @@ function interpolateObject(value: Object, state: Record<string, any>, event: Tri
 }
 
 
-function interpolatedRefValue(path: string, state: Record<string, any>, event: TriggerEvent) {
-  const value = jsonpath.query({ state, event }, path)
+function interpolatedRefValue(path: string, vars: Record<string, any>) {
+  const value = jsonpath.query(vars, path)
   if (!Array.isArray(value)) {
     return value
   }
