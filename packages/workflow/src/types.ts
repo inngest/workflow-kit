@@ -58,6 +58,24 @@ export interface PublicEngineAction {
    * an optional description
    */
   outputs?: TSchema | Record<string, ActionOutput>;
+
+  edges?: {
+    /**
+     * allowAdd controls whether the user can add new edges to the graph
+     * via the "add" handle.
+     * 
+     * If undefined this defaults to true (as most nodes should allow adding
+     * subsequent actions).
+     */
+    allowAdd?: boolean;
+
+    /**
+     * Edges allows the definition of predefined edges from this action,
+     * eg. "True" and "False" edges for an if statement, or "Not received"
+     * edges if an action contains `step.waitForEvent`.
+     */
+    edges?: Array<Omit<WorkflowEdge, "from" | "to">>;
+  }
 };
 
 /**
@@ -165,6 +183,11 @@ export interface WorkflowEdge {
   to: string;
 
   /**
+   * The name of the edge to show in the UI
+   */
+  name?: string,
+
+  /**
    * Conditional is a ref (eg. "!ref($.action.ifcheck.result)") which must be met
    * for the edge to be followed.
    * 
@@ -173,15 +196,24 @@ export interface WorkflowEdge {
    * 
    */
   conditional?: {
-    // type indicates whether this is the truthy if, the else block, or a
-    // "select" case block which must match a given value.
-    //
-    // for "if", the value will be inteprolated via "!!" to a boolean.
-    // for "else", the value is will be evaluated via "!" to a boolean.
-    // for "match", the value is will be evaluated via "===" to a boolean.
+    /**
+     * type indicates whether this is the truthy if, the else block, or a
+     * "select" case block which must match a given value.
+     * 
+     * for "if", the value will be inteprolated via "!!" to a boolean.
+     * for "else", the value is will be evaluated via "!" to a boolean.
+     * for "match", the value is will be evaluated via "===" to a boolean.
+     */
     type: "if" | "else" | "match",
+    /**
+     * The ref to evaluate.  This can use the shorthand: `!ref($.result)` to
+     * refer to the result of the previous action.
+     */
     ref: string; // Ref input, eg. "!ref($.action.ifcheck.result)"
-    value?: string; // Value to match against, if type is "match"
+    /**
+     * Value to match against, if type is "match"
+     */
+    value?: string;
   },
 }
 

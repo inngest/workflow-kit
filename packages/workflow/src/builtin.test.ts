@@ -1,5 +1,5 @@
 import { builtinActions } from "./builtin";
-import { resolveInputs } from "./engine";
+import { resolveInputs } from "./interpolation";
 import { ActionHandler, ActionHandlerArgs, Workflow, WorkflowAction } from "./types";
 
 describe("builtin:if", () => {
