@@ -3,6 +3,13 @@
   "version": "0.0.1",
   "description": "Durable visual worfklows in your app, instantly",
   "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false"
   },
