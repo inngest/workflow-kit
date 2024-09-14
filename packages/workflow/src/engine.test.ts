@@ -81,7 +81,7 @@ describe("Engine.graph", () => {
   it("validates action input types", () => {});
 });
 
-describe("ExecutionState.ref", () => {
+describe("ExecutionState.interpolate", () => {
   it("correctly references current state and events", () => {
     let state = new ExecutionState(
       ({
@@ -119,7 +119,6 @@ describe("ExecutionState.ref", () => {
     expect(state.interpolate(
       {"==": ["!ref($.state.action_b)", "a"]},
     )).toEqual({"==": [{ ok: true }, "a"]});
-
     expect(state.interpolate(
       {
         "and": [

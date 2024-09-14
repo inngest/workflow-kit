@@ -4,16 +4,18 @@ import { Type } from "@sinclair/typebox";
 import { ActionHandlerArgs, EngineAction } from "./types";
 import { apply } from "json-logic-js";
 
-const builtinActions: EngineAction[] = [
-    {
+export const builtinActions: Record<string, EngineAction> = {
+    "builtin:if": {
         kind: "builtin:if",
         name: "If",
         description: "If / Else logic",
         handler: async ({ workflowAction }: ActionHandlerArgs): Promise<{ result: boolean }> => {
-            if (!workflowAction.inputs?.condition) {
+
+            if (!!!workflowAction.inputs?.condition) {
                 // Always true.
                 return { result: true };
             }
+
             const result = apply(workflowAction.inputs.condition);
             return { result };
         },
@@ -42,4 +44,4 @@ const builtinActions: EngineAction[] = [
             },
         },
     }
-]
+}
