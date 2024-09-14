@@ -12,7 +12,8 @@
   },
   "scripts": {
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
-    "build": "tsc"
+    "build": "tsc",
+    "publish": "npm publish --access public --provenance"
   },
   "homepage": "https://github.com/inngest/workflow-sdk/tree/main/packages/workflow#readme",
   "repository": {
