@@ -91,7 +91,7 @@ export class Engine {
         const wval = (action.inputs || {})[name];
 
         // If this is a ref, we can't yet validate as we don't have state.
-        if (!isRef(wval)) {
+        if (refs(wval).length === 0) {
           try {
             Value.Assert(input.type, wval)
           } catch(e) {
@@ -101,7 +101,7 @@ export class Engine {
           continue
         }
 
-        // TODO: Ensure that ref is valid.
+        // TODO: Ensure that refs are valid.
 
         // TODO: Attempt to grab the output type of the action this is referencing, if this
         // is an action, and validate that (recursively)
@@ -221,6 +221,7 @@ export class ExecutionState {
         step,
         workflow,
         workflowAction,
+        state: this.#state,
       });
 
       // And set our state.  This may be a previously memoized output.
@@ -257,33 +258,66 @@ export const resolveInputs = (
 }
 
 export function interpolate(value: any, state: Record<string, any>, event: TriggerEvent) {
-  if (!isRef(value)) {
-    return value;
+  let result = value;
+  let foundRefs = refs(result)
+
+  if (isRef(result)) {
+    // Handle pure references immediately.  Remove "!ref(" and ")"
+    result = result.replace("!ref(", "")
+    result = result.substring(0, result.length-1)
+    return interpolatedRefValue(result, state, event);
   }
 
-  let path = value.replace("!ref(", "")
-  path = path.substring(0, path.length-1) // remove ")"
+  // This is a string which contains refs as values within content,
+  // eg. "Hello !ref($.event.data.name)".
+  while (foundRefs.length > 0) {
+    // Replace the ref with the interpolated value.
+    let { path: jsonPath, ref: substr } = foundRefs.shift() ?? { path: "", ref: "" };
+    result = result.replace(substr, interpolatedRefValue(jsonPath, state, event))
+  }
 
-  // This is a reference.  Grab the JSON path from the ref by removing "$ref:"
-  // and grabbing the item from state.
-  const result = jsonpath.query({ state, event }, path)
-
-  if (!Array.isArray(result)) {
-    return result
-  }
-  if (result.length === 0) {
-    // Not found.
-    return undefined;
-  }
-  if (result.length === 1) {
-    return result[0]
-  }
-  return result;
+  return result
 }
 
-function isRef(input: any) {
+function interpolatedRefValue(path: string, state: Record<string, any>, event: TriggerEvent) {
+  const value = jsonpath.query({ state, event }, path)
+  if (!Array.isArray(value)) {
+    return value
+  }
+  if (value.length === 0) {
+    // Not found in state, so this is undefined.
+    return undefined;
+  }
+  // JSON-path always returns an array containing the embedded results.  The first
+  // el is the result.
+  if (value.length === 1) {
+    return value[0]
+  }
+  return value;
+}
+
+
+// isRef returns true if the input is a reference, like !ref($state.foo).  We handle
+// pure refs differently than strings which contain refs as part of the value.
+function isRef(input: string) {
   if (typeof(input) !== "string" || input.indexOf("!ref($.") !== 0) {
     return false
   }
   return input.substring(input.length-1) === ")"
+}
+
+function refs(input: any): Array<{ path: string, ref: string }> {
+  if (typeof(input) !== "string") {
+    return []
+  }
+  // Ensure that the ref matches a proper regex.
+  let result = []
+  for (const match of  input.matchAll(/\!ref\((\$.[\w\.]+)\)/g)) {
+    if (match[1]) {
+      // Push the JSON path and the original ref, to make substring
+      // replacement easier.
+      result.push({ path: match[1], ref: match[0] })
+    }
+  }
+  return result
 }

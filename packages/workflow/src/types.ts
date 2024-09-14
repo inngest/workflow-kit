@@ -210,11 +210,34 @@ export interface Edge {
 }
 
 export interface ActionHandlerArgs {
-  event: any;
+  /**
+   * Event is the event which triggered the workflow.
+   */
+  event: TriggerEvent;
+  /**
+   * Step are the step functions from Inngest's SDK, allowing each
+   * action to be executed as a durable step function.  This exposes
+   * all step APIs: `step.run`, `step.waitForEvent`, `step.sleep`, etc.
+   * 
+   */
   step: any;
+
+  /**
+   * Workflow is the workflow definition.
+   */
   workflow: Workflow
+
+  /**
+   * WorkflowAction is the action being executed, with fully interpolate
+   * inputs.
+   */
   workflowAction: WorkflowAction;
-  // TODO: Action from workflow?
+
+  /**
+   * State represnets the current state of the workflow, with previous
+   * action's outputs recorded as key-value pairs.
+   */
+  state: Map<string, any>;
 }
 
 export type RunArgs = {

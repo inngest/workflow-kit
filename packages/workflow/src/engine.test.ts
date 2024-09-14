@@ -104,6 +104,11 @@ describe("ExecutionState.ref", () => {
     expect(state.interpolate("!ref($.state.action_a)")).toEqual("test");
     expect(state.interpolate("!ref($.state.action_b)")).toEqual({ ok: true });
 
+    // Contains refs in the middle of the string.
+    expect(
+      state.interpolate(`{"==": [{"var": "!ref($.state.action_a)"}, "a"}`)
+    ).toEqual(`{"==": [{"var": "test"}, "a"}`);
+
     expect(state.interpolate("!ref($.state.not_found)")).toEqual(undefined);
 
     expect(state.interpolate("lol")).toEqual("lol");
