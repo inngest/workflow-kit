@@ -609,8 +609,11 @@ These are just a few of the trends that are likely to shape the future of web de
 -- Data for Name: workflows; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."workflows" ("id", "created_at", "workflow") VALUES
-	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}], "actions": [{"id": "1", "kind": "grammar_review", "name": "Perform a grammar review", "description": "Perform a grammar review"}]}');
+INSERT INTO "public"."workflows" ("id", "created_at", "workflow", "enabled") VALUES
+	(2, '2024-09-14 20:19:41.892865+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "add_ToC"}, {"id": "2", "kind": "apply_changes"}]}', false),
+	(3, '2024-09-14 20:19:50.146892+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "add_ToC"}, {"id": "2", "kind": "apply_changes"}]}', false),
+	(4, '2024-09-14 20:19:53.320413+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "add_ToC"}, {"id": "2", "kind": "apply_changes"}]}', false),
+	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "grammar_review", "name": "Perform a grammar review", "description": "Perform a grammar review"}, {"id": "2", "kind": "wait_for_approval"}]}', false);
 
 
 --
@@ -668,7 +671,7 @@ SELECT pg_catalog.setval('"public"."blog_posts_id_seq"', 3, true);
 -- Name: workflows_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."workflows_id_seq"', 1, true);
+SELECT pg_catalog.setval('"public"."workflows_id_seq"', 4, true);
 
 
 --

@@ -42,16 +42,19 @@ export type Database = {
       workflows: {
         Row: {
           created_at: string;
+          enabled: boolean | null;
           id: number;
           workflow: Json | null;
         };
         Insert: {
           created_at?: string;
+          enabled?: boolean | null;
           id?: number;
           workflow?: Json | null;
         };
         Update: {
           created_at?: string;
+          enabled?: boolean | null;
           id?: number;
           workflow?: Json | null;
         };

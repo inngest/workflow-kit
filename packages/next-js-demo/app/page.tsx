@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
 import { capitalize } from "@/lib/utils";
-import { CalendarIcon, EditIcon, PlusIcon } from "lucide-react";
+import { CalendarIcon, PlusIcon, RocketIcon } from "lucide-react";
 
 export default async function Dashboard() {
   const supabase = createClient();
@@ -34,7 +34,7 @@ export default async function Dashboard() {
             <CardContent>
               <div className="flex items-center text-sm text-muted-foreground">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {post.created_at}
+                {new Date(post.created_at!).toLocaleDateString()}
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
@@ -47,9 +47,11 @@ export default async function Dashboard() {
               >
                 {capitalize(post.status!)}
               </div>
-              <Button variant="outline" size="sm">
-                <EditIcon className="mr-2 h-4 w-4" /> Edit
-              </Button>
+              {post.status !== "published" && (
+                <Button variant="outline" size="sm">
+                  <RocketIcon className="mr-2 h-4 w-4" /> Review & Publish
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}

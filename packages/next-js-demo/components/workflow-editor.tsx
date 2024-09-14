@@ -1,12 +1,18 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { actions } from "@/lib/inngest/workflow";
+import { useCallback, useEffect, useState } from "react";
 import { Editor, Provider, Sidebar } from "@inngest/workflow/ui";
 
-import { Type } from "@sinclair/typebox";
-import { Button } from "@/components/ui/button";
-
+import { PlusIcon, SaveIcon, Circle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -16,63 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+
+import { actions } from "@/lib/inngest/workflow";
 import { createClient } from "@/lib/supabase/client";
-import { useCallback, useEffect, useState } from "react";
 
 import "@inngest/workflow/ui/ui.css";
 import "@xyflow/react/dist/style.css";
 import { Database } from "@/lib/supabase/database.types";
-
-const availableActions = [
-  {
-    name: "Send an email",
-    description: "Sends an email via Resend",
-    kind: "send-email",
-    icon: "📧",
-    inputs: {
-      to: {
-        type: Type.String({
-          title: "To",
-          description: "The email address to send the email to",
-        }),
-      },
-      subject: {
-        type: Type.String({
-          title: "Subject",
-          description: "The subject of the email",
-        }),
-      },
-      body: {
-        type: Type.String({
-          title: "Email content",
-          description: "The content of the email",
-        }),
-        fieldType: "textarea",
-      },
-    },
-  },
-  {
-    name: "Send a text message",
-    description: "Sends a text message via Twilio",
-    kind: "send-text-message",
-    icon: "📧",
-    inputs: {
-      to: {
-        type: Type.String({
-          title: "Phone number",
-          description: "The phone number to send the text message to",
-        }),
-      },
-      body: {
-        type: Type.String({
-          title: "Text message",
-          description: "The text message itself",
-        }),
-      },
-    },
-  },
-];
 
 export const WorkflowEditor = () => {
   const [workflowDraft, updateWorkflowDraft] = useState<any>(undefined);
@@ -87,22 +46,53 @@ export const WorkflowEditor = () => {
       .select("*")
       .then(({ data }) => {
         setWorkflows(data || []);
-        updateWorkflowDraft(data ? data[0] : undefined);
       });
-  });
+  }, []);
 
   const onSelectWorkflow = useCallback(
     (workflowId: string) => {
-      const w = workflows.find(
-        // @ts-expect-error JSONB
-        ({ workflow: { id } }) => id.toString() === workflowId
-      );
+      const w = workflows.find(({ id }) => id.toString() === workflowId);
       if (w) {
         updateWorkflowDraft(w);
       }
     },
     [workflows]
   );
+
+  const onNewDraft = useCallback(() => {
+    updateWorkflowDraft({ id: `draft-${self.crypto.randomUUID()}` });
+  }, []);
+
+  const onSaveWorkflow = useCallback(async () => {
+    const supabase = createClient();
+    if (workflowDraft.id.toString().startsWith("draft-")) {
+      supabase
+        .from("workflows")
+        .insert({ workflow: workflowDraft.workflow })
+        .select()
+        .then(({ data }) => {
+          if (data) {
+            // @ts-expect-error bad typings
+            updateWorkflowDraft({ id: data.id, ...workflowDraft });
+          }
+        });
+    } else {
+      await supabase
+        .from("workflows")
+        .update({
+          workflow: workflowDraft.workflow,
+          enabled: workflowDraft.enabled,
+        })
+        .eq("id", workflowDraft.id);
+    }
+
+    supabase
+      .from("workflows")
+      .select("*")
+      .then(({ data }) => {
+        setWorkflows(data || []);
+      });
+  }, [workflowDraft]);
 
   console.log("workflowDraft", workflowDraft);
 
@@ -113,7 +103,11 @@ export const WorkflowEditor = () => {
         <div className="flex gap-2 justify-end items-center">
           <Select
             onValueChange={onSelectWorkflow}
-            value={workflowDraft ? workflowDraft.id.toString() : undefined}
+            value={
+              workflowDraft && !workflowDraft.id.toString().startsWith("draft-")
+                ? workflowDraft.id.toString()
+                : undefined
+            }
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select an automation" />
@@ -121,41 +115,93 @@ export const WorkflowEditor = () => {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Select an automation</SelectLabel>
-                {(workflows || []).map(({ workflow, id }) => (
+                {(workflows || []).map(({ workflow, id, enabled }) => (
                   <SelectItem key={id} value={id.toString()}>
-                    {(workflow as any).name}
+                    <div className="flex gap-2 items-center">
+                      <div className="flex-1">
+                        {(workflow as any)?.name || `Automation #${id}`}
+                      </div>
+                      {enabled ? (
+                        <Circle
+                          className={`h-4 w-4 fill-emerald-500 stroke-none`}
+                        />
+                      ) : (
+                        <Circle
+                          className={`h-4 w-4 fill-red-700 stroke-none`}
+                        />
+                      )}
+                    </div>
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button>
+          <Button onClick={onNewDraft}>
             <PlusIcon className="mr-2 h-4 w-4" /> Create a new automation
           </Button>
         </div>
       </div>
-      <div className="h-svh max-h-[700px]">
-        <Provider
-          workflow={workflowDraft?.workflow}
-          trigger={{
-            event: {
-              name: "blog.updated",
-              data: {
-                status: "review",
-              },
-            },
-          }}
-          availableActions={actions}
-          onChange={(updated) => {
-            console.log("updated", updated);
-            // updateWorkflowDraft(updated);
-          }}
-        >
-          <Editor>
-            <Sidebar position="right"></Sidebar>
-          </Editor>
-        </Provider>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Automation Editor</CardTitle>
+          <CardDescription>
+            Use the Editor below to modify your automation
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {workflowDraft ? (
+            <>
+              <div className="h-svh max-h-[500px]">
+                <Provider
+                  key={workflowDraft?.id}
+                  workflow={workflowDraft?.workflow}
+                  trigger={{
+                    event: {
+                      name: "blog.updated",
+                      data: {
+                        status: "review",
+                      },
+                    },
+                  }}
+                  availableActions={actions}
+                  onChange={(updated) => {
+                    updateWorkflowDraft({
+                      ...workflowDraft,
+                      workflow: updated,
+                    });
+                  }}
+                >
+                  <Editor>
+                    <Sidebar position="right"></Sidebar>
+                  </Editor>
+                </Provider>
+              </div>
+              <CardFooter className="flex justify-end align-bottom gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="workflow-enabled"
+                    value={workflowDraft.enabled}
+                    onCheckedChange={(enabled) => {
+                      updateWorkflowDraft({
+                        ...workflowDraft,
+                        enabled,
+                      });
+                    }}
+                  />
+                  <Label htmlFor="workflow-enabled">Enable</Label>
+                </div>
+                <Button onClick={onSaveWorkflow}>
+                  <SaveIcon className="mr-2 h-4 w-4" /> Save changes
+                </Button>
+              </CardFooter>
+            </>
+          ) : (
+            <div>
+              {"Use the control at the top to select or create an automation."}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
