@@ -15,7 +15,8 @@ export interface EngineOptions {
   loader?: Loader;
 };
 
-
+// TODO: Define event type more clearly.
+export type TriggerEvent = Record<string, any>;
 
 /**
  * PublicEngineAction is the type representing an action in the *frontend UI*.  This is
@@ -163,8 +164,25 @@ export interface WorkflowEdge {
   from: string;
   to: string;
 
-  if?: string;
-  else?: string;
+  /**
+   * Conditional is a ref (eg. "!ref($.action.ifcheck.result)") which must be met
+   * for the edge to be followed.
+   * 
+   * The `conditional` field is automatically set when using the built-in if
+   * action.
+   * 
+   */
+  conditional?: {
+    // type indicates whether this is the truthy if, the else block, or a
+    // "select" case block which must match a given value.
+    //
+    // for "if", the value will be inteprolated via "!!" to a boolean.
+    // for "else", the value is will be evaluated via "!" to a boolean.
+    // for "match", the value is will be evaluated via "===" to a boolean.
+    type: "if" | "else" | "match",
+    ref: string; // Ref input, eg. "!ref($.action.ifcheck.result)"
+    value?: string; // Value to match against, if type is "match"
+  },
 }
 
 

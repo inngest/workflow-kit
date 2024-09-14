@@ -7,6 +7,7 @@ describe("Engine.graph", () => {
     actions: [
       {
         kind: "send-email",
+        name: "Send Email",
         handler: async () => {}, // noop
       }
     ]
@@ -83,14 +84,14 @@ describe("Engine.graph", () => {
 describe("ExecutionState.ref", () => {
   it("correctly references current state and events", () => {
     let state = new ExecutionState(
-      {
+      ({
         event: {
           data: {
             userId: 1,
             likes: ["a"],
           }
         },
-      } as ExecutionOpts,
+      } as any) as ExecutionOpts,
       {
         action_a: "test",
         action_b: { ok: true },
@@ -98,16 +99,16 @@ describe("ExecutionState.ref", () => {
       },
     );
 
-    expect(state.ref("!ref($.event.data.userId)")).toEqual(1);
-    expect(state.ref("!ref($.event.data.likes)")).toEqual(["a"]);
-    expect(state.ref("!ref($.state.action_a)")).toEqual("test");
-    expect(state.ref("!ref($.state.action_b)")).toEqual({ ok: true });
+    expect(state.interpolate("!ref($.event.data.userId)")).toEqual(1);
+    expect(state.interpolate("!ref($.event.data.likes)")).toEqual(["a"]);
+    expect(state.interpolate("!ref($.state.action_a)")).toEqual("test");
+    expect(state.interpolate("!ref($.state.action_b)")).toEqual({ ok: true });
 
-    expect(state.ref("!ref($.state.not_found)")).toEqual(undefined);
+    expect(state.interpolate("!ref($.state.not_found)")).toEqual(undefined);
 
-    expect(state.ref("lol")).toEqual("lol");
-    expect(state.ref(123)).toEqual(123);
-    expect(state.ref([123])).toEqual([123]);
+    expect(state.interpolate("lol")).toEqual("lol");
+    expect(state.interpolate(123)).toEqual(123);
+    expect(state.interpolate([123])).toEqual([123]);
   })
 });
 
