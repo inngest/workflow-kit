@@ -1,5 +1,9 @@
 {
-	"dependencies": {
-		"@sinclair/typebox": "^0.33.7"
-	}
+  "scripts": {
+    "changeset": "changeset"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.27.8",
+    "@sinclair/typebox": "^0.33.7"
+  }
 }
