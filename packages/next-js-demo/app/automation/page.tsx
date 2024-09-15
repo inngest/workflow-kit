@@ -1,7 +1,5 @@
-import { WorkflowEditor } from "@/components/workflow-editor";
+import { AutomationList } from "@/components/automation-list";
 
-export const runtime = "edge";
-
-export default async function Automation() {
-  return <WorkflowEditor />;
+export default async function Dashboard() {
+  return <AutomationList />;
 }

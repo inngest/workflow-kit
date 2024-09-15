@@ -9,7 +9,11 @@ export const Menu = () => {
   return (
     <nav>
       <Button
-        variant={pathname === "/" ? "default" : "ghost"}
+        variant={
+          pathname === "/" || pathname.startsWith("/blog-post")
+            ? "default"
+            : "ghost"
+        }
         className="w-full justify-start mb-2"
         onClick={() => router.push("/")}
       >
@@ -17,7 +21,7 @@ export const Menu = () => {
         Posts
       </Button>
       <Button
-        variant={pathname === "/automation" ? "default" : "ghost"}
+        variant={pathname.startsWith("/automation") ? "default" : "ghost"}
         className="w-full justify-start"
         onClick={() => router.push("/automation")}
       >

@@ -42,20 +42,29 @@ export type Database = {
       workflows: {
         Row: {
           created_at: string;
+          description: string | null;
           enabled: boolean | null;
           id: number;
+          name: string | null;
+          trigger: string | null;
           workflow: Json | null;
         };
         Insert: {
           created_at?: string;
+          description?: string | null;
           enabled?: boolean | null;
           id?: number;
+          name?: string | null;
+          trigger?: string | null;
           workflow?: Json | null;
         };
         Update: {
           created_at?: string;
+          description?: string | null;
           enabled?: boolean | null;
           id?: number;
+          name?: string | null;
+          trigger?: string | null;
           workflow?: Json | null;
         };
         Relationships: [];

@@ -119,291 +119,6 @@ SET row_security = off;
 --
 
 INSERT INTO "public"."blog_posts" ("id", "title", "subtitle", "status", "markdown", "markdown_ai_revision", "created_at") VALUES
-	(1, 'Getting Started with React', 'Learn the basics of React and start building your first app.', 'published', '# Getting Started with React: A Comprehensive Guide
-
-## Introduction
-
-React has revolutionized the way we build user interfaces for web applications. Its component-based architecture and efficient rendering mechanism have made it a favorite among developers worldwide. This guide will walk you through the fundamentals of React, helping you get started on your journey to becoming a proficient React developer.
-
-## What is React?
-
-React is an open-source JavaScript library for building user interfaces. Developed and maintained by Facebook, React allows developers to create large web applications that can change data without reloading the page. Its main goal is to be fast, scalable, and simple.
-
-Key features of React include:
-- Virtual DOM for efficient updates
-- Component-based architecture
-- Declarative syntax
-- Unidirectional data flow
-- Strong community support and ecosystem
-
-## Setting Up Your Development Environment
-
-Before diving into React, you need to set up your development environment. Here''s what you''ll need:
-
-1. **Node.js and npm**: React relies on Node.js and npm (Node Package Manager) for development. Download and install the latest LTS version from the official Node.js website.
-
-2. **Code Editor**: While you can use any text editor, popular choices among React developers include Visual Studio Code, WebStorm, and Sublime Text.
-
-3. **Browser**: Use a modern browser like Chrome or Firefox for testing your React applications.
-
-4. **React Developer Tools**: Install the React Developer Tools extension for your browser to help with debugging and inspecting React components.
-
-## Creating Your First React App
-
-The easiest way to start a new React project is by using Create React App, a tool developed by Facebook to bootstrap React applications. To create your first React app, follow these steps:
-
-1. Open your terminal and run the following command:
-
-   ```
-   npx create-react-app my-first-react-app
-   ```
-
-2. Once the installation is complete, navigate to the project folder:
-
-   ```
-   cd my-first-react-app
-   ```
-
-3. Start the development server:
-
-   ```
-   npm start
-   ```
-
-Your default browser should open automatically, displaying the default React app running on `http://localhost:3000`.
-
-## Understanding JSX
-
-JSX is a syntax extension for JavaScript that looks similar to XML or HTML. It allows you to write HTML-like code in your JavaScript files, making it easier to describe what your UI should look like.
-
-Here''s a simple example of JSX:
-
-```jsx
-const element = <h1>Hello, React!</h1>;
-```
-
-JSX is not required for using React, but it makes your code more readable and easier to write. Behind the scenes, JSX is transformed into regular JavaScript function calls.
-
-## Components: The Building Blocks of React
-
-React applications are built using components. A component is a self-contained module that renders some output. Components can be as simple as a button, or as complex as an entire page.
-
-There are two types of components in React:
-
-1. **Function Components**: These are simpler and more modern. They are JavaScript functions that return JSX.
-
-   ```jsx
-   function Welcome(props) {
-     return <h1>Hello, {props.name}</h1>;
-   }
-   ```
-
-2. **Class Components**: These are ES6 classes that extend from `React.Component` and have a render method.
-
-   ```jsx
-   class Welcome extends React.Component {
-     render() {
-       return <h1>Hello, {this.props.name}</h1>;
-     }
-   }
-   ```
-
-## Props and State
-
-React uses two types of data to control a component''s behavior and rendering: props and state.
-
-**Props** (short for properties) are how components receive data from their parent. They are read-only and help make your components reusable.
-
-```jsx
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-
-// Usage
-<Welcome name="Alice" />
-```
-
-**State** is data that can change over time. Unlike props, state is managed within the component. When state changes, React re-renders the component.
-
-```jsx
-import React, { useState } from ''react'';
-
-function Counter() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-    </div>
-  );
-}
-```
-
-## Handling Events
-
-React events are named using camelCase and passed as functions. Here''s an example of handling a click event:
-
-```jsx
-function handleClick() {
-  alert(''Button clicked!'');
-}
-
-return <button onClick={handleClick}>Click me</button>;
-```
-
-## Conditional Rendering
-
-In React, you can create distinct components that encapsulate behavior you need. Then, you can render only some of them, depending on the state of your application.
-
-```jsx
-function UserGreeting(props) {
-  return <h1>Welcome back!</h1>;
-}
-
-function GuestGreeting(props) {
-  return <h1>Please sign up.</h1>;
-}
-
-function Greeting(props) {
-  const isLoggedIn = props.isLoggedIn;
-  if (isLoggedIn) {
-    return <UserGreeting />;
-  }
-  return <GuestGreeting />;
-}
-```
-
-## Lists and Keys
-
-When rendering multiple items in React, you''ll often use the `map()` function to transform arrays into lists of elements. Each list item needs a unique "key" prop to help React identify which items have changed, been added, or been removed.
-
-```jsx
-function NumberList(props) {
-  const numbers = props.numbers;
-  const listItems = numbers.map((number) =>
-    <li key={number.toString()}>
-      {number}
-    </li>
-  );
-  return <ul>{listItems}</ul>;
-}
-```
-
-## Forms in React
-
-HTML form elements work a bit differently from other DOM elements in React because form elements naturally keep some internal state. To have React control the form inputs, we use a technique called "controlled components".
-
-```jsx
-function NameForm() {
-  const [name, setName] = useState('''');
-
-  const handleSubmit = (event) => {
-    alert(''A name was submitted: '' + name);
-    event.preventDefault();
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
-      <input type="submit" value="Submit" />
-    </form>
-  );
-}
-```
-
-## Hooks: A Game Changer
-
-Hooks are a relatively new addition to React that allow you to use state and other React features without writing a class. The most commonly used hooks are:
-
-- `useState`: For adding state to function components
-- `useEffect`: For performing side effects in function components
-- `useContext`: For consuming context in function components
-- `useReducer`: For managing more complex state logic
-- `useCallback` and `useMemo`: For optimizing performance
-
-Here''s an example using `useState` and `useEffect`:
-
-```jsx
-import React, { useState, useEffect } from ''react'';
-
-function Example() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    document.title = `You clicked ${count} times`;
-  });
-
-  return (
-    <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-    </div>
-  );
-}
-```
-
-## Routing in React
-
-While React doesn''t come with built-in routing capabilities, there are popular libraries like React Router that provide this functionality. Here''s a basic example using React Router:
-
-```jsx
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-
-function App() {
-  return (
-    <Router>
-      <div>
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/users">Users</Link></li>
-          </ul>
-        </nav>
-
-        <Route path="/" exact component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/users" component={Users} />
-      </div>
-    </Router>
-  );
-}
-```
-
-## Best Practices and Common Pitfalls
-
-As you start your React journey, keep these best practices in mind:
-
-1. **Keep components small and focused**: Each component should ideally do one thing well.
-2. **Use functional components and hooks**: They''re simpler and make it easier to reuse stateful logic.
-3. **Avoid modifying state directly**: Always use `setState` or the state updating function returned by `useState`.
-4. **Use the key prop when rendering lists**: This helps React identify which items have changed.
-5. **Avoid using indexes as keys**: This can lead to issues with component identity.
-6. **Use prop-types for type checking**: This helps catch bugs early.
-7. **Use CSS-in-JS or CSS modules**: This helps avoid global CSS conflicts.
-
-Common pitfalls to watch out for:
-
-1. **Mutating state directly**: This can lead to unexpected behavior.
-2. **Using `setState` in `render`**: This can cause infinite loops.
-3. **Not understanding React''s lifecycle**: This can lead to memory leaks or unnecessary re-renders.
-4. **Overusing state**: Not all data needs to be in state. Some can be derived from existing state or props.
-
-## Conclusion
-
-React has transformed the way we build user interfaces, offering a powerful and flexible approach to web development. This guide has covered the fundamental concepts you need to get started with React, from setting up your environment to understanding key concepts like components, props, state, and hooks.
-
-As you continue your React journey, remember that practice is key. Build small projects, experiment with different features, and don''t be afraid to dive into the React documentation for more advanced topics. With time and experience, you''ll be building complex, efficient React applications in no time.
-
-Happy coding, and welcome to the world of React!', NULL, '2024-09-14 15:40:48.760124+00'),
 	(2, 'Advanced TypeScript Techniques', 'Dive deep into TypeScript and learn advanced concepts.', 'draft', '# Dive Deep Into TypeScript: Advanced Concepts
 
 TypeScript is a powerful superset of JavaScript that adds static typing and other advanced features to the language. While the basics of TypeScript are fairly straightforward, the language has many advanced concepts that can help you write more robust, maintainable, and expressive code. In this article, we''ll dive deep into some of these advanced TypeScript techniques.
@@ -602,18 +317,318 @@ Artificial Intelligence and Machine Learning are starting to make their way into
 
 As web applications become more complex, the need for robust Continuous Integration and Deployment (CI/CD) practices becomes more critical. Automating the process of testing, building, and deploying web applications can significantly improve the speed and reliability of development. Tools like Git, Jenkins, CircleCI, and Azure DevOps will become essential parts of the modern web application development process.
 
-These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes key part of being a successful web developer. So, continuous learning is vital in future as a web developer.', NULL, '2024-08-27 15:44:25+00');
+These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes key part of being a successful web developer. So, continuous learning is vital in future as a web developer.', NULL, '2024-08-27 15:44:25+00'),
+	(1, 'Getting Started with React', 'Learn the basics of React and start building your first app.', 'published', '# Getting Started with React: A Comprehensive Guide
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [What is React?](#what-is-react)
+3. [Setting Up Your Development Environment](#setting-up-your-development-environment)
+4. [Creating Your First React App](#creating-your-first-react-app)
+5. [Understanding JSX](#understanding-jsx)
+6. [Components: The Building Blocks of React](#components-the-building-blocks-of-react)
+7. [Props and State](#props-and-state)
+8. [Handling Events](#handling-events)
+9. [Conditional Rendering](#conditional-rendering)
+10. [Lists and Keys](#lists-and-keys)
+11. [Forms in React](#forms-in-react)
+12. [Hooks: A Game Changer](#hooks-a-game-changer)
+13. [Routing in React](#routing-in-react)
+14. [Best Practices and Common Pitfalls](#best-practices-and-common-pitfalls)
+15. [Conclusion](#conclusion)
+
+## Introduction
+
+React has revolutionized the way we build user interfaces for web applications. Its component-based architecture and efficient rendering mechanism have made it a favorite among developers worldwide. This guide will walk you through the fundamentals of React, helping you get started on your journey to becoming a proficient React developer.
+
+## What is React?
+
+React is an open-source JavaScript library for building user interfaces. Developed and maintained by Facebook, React allows developers to create large web applications that can change data without reloading the page. Its main goal is to be fast, scalable, and simple.
+
+Key features of React include:
+- Virtual DOM for efficient updates
+- Component-based architecture
+- Declarative syntax
+- Unidirectional data flow
+- Strong community support and ecosystem
+
+## Setting Up Your Development Environment
+
+Before diving into React, you need to set up your development environment. Here''s what you''ll need:
+
+1. **Node.js and npm**: React relies on Node.js and npm (Node Package Manager) for development. Download and install the latest LTS version from the official Node.js website.
+
+2. **Code Editor**: While you can use any text editor, popular choices among React developers include Visual Studio Code, WebStorm, and Sublime Text.
+
+3. **Browser**: Use a modern browser like Chrome or Firefox for testing your React applications.
+
+4. **React Developer Tools**: Install the React Developer Tools extension for your browser to help with debugging and inspecting React components.
+
+## Creating Your First React App
+
+The easiest way to start a new React project is by using Create React App, a tool developed by Facebook to bootstrap React applications. To create your first React app, follow these steps:
+
+1. Open your terminal and run the following command:
+
+```
+npx create-react-app my-first-react-app
+```
+
+2. Once the installation is complete, navigate to the project folder:
+
+```
+cd my-first-react-app
+```
+
+3. Start the development server:
+
+```
+npm start
+```
+
+Your default browser should open automatically, displaying the default React app running on `http://localhost:3000`.
+
+## Understanding JSX
+
+JSX is a syntax extension for JavaScript that looks similar to XML or HTML. It allows you to write HTML-like code in your JavaScript files, making it easier to describe what your UI should look like.
+
+Here''s a simple example of JSX:
+
+```jsx
+const element = <h1>Hello, React!</h1>;
+```
+
+JSX is not required for using React, but it makes your code more readable and easier to write. Behind the scenes, JSX is transformed into regular JavaScript function calls.
+
+## Components: The Building Blocks of React
+
+React applications are built using components. A component is a self-contained module that renders some output. Components can be as simple as a button, or as complex as an entire page.
+
+There are two types of components in React:
+
+1. **Function Components**: These are simpler and more modern. They are JavaScript functions that return JSX.
+
+```jsx
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+```
+
+2. **Class Components**: These are ES6 classes that extend from `React.Component` and have a render method.
+
+```jsx
+class Welcome extends React.Component {
+  render() {
+    return <h1>Hello, {this.props.name}</h1>;
+  }
+}
+```
+
+## Props and State
+
+React uses two types of data to control a component''s behavior and rendering: props and state.
+
+**Props** (short for properties) are how components receive data from their parent. They are read-only and help make your components reusable.
+
+```jsx
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+// Usage
+<Welcome name="Alice" />
+```
+
+**State** is data that can change over time. Unlike props, state is managed within the component. When state changes, React re-renders the component.
+
+```jsx
+import React, { useState } from ''react'';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+## Handling Events
+
+React events are named using camelCase and passed as functions. Here''s an example of handling a click event:
+
+```jsx
+function handleClick() {
+  alert(''Button clicked!'');
+}
+
+return <button onClick={handleClick}>Click me</button>;
+```
+
+## Conditional Rendering
+
+In React, you can create distinct components that encapsulate behavior you need. Then, you can render only some of them, depending on the state of your application.
+
+```jsx
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props) {
+  return <h1>Please sign up.</h1>;
+}
+
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+```
+
+## Lists and Keys
+
+When rendering multiple items in React, you''ll often use the `map()` function to transform arrays into lists of elements. Each list item needs a unique "key" prop to help React identify which items have changed, been added, or been removed.
+
+```jsx
+function NumberList(props) {
+  const numbers = props.numbers;
+  const listItems = numbers.map((number) =>
+    <li key={number.toString()}>
+      {number}
+    </li>
+  );
+  return <ul>{listItems}</ul>;
+}
+```
+
+## Forms in React
+
+HTML form elements work a bit differently from other DOM elements in React because form elements naturally keep some internal state. To have React control the form inputs, we use a technique called "controlled components".
+
+```jsx
+function NameForm() {
+  const [name, setName] = useState('''');
+
+  const handleSubmit = (event) => {
+    alert(''A name was submitted: '' + name);
+    event.preventDefault();
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Name:
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+      </label>
+      <input type="submit" value="Submit" />
+    </form>
+  );
+}
+```
+
+## Hooks: A Game Changer
+
+Hooks are a relatively new addition to React that allow you to use state and other React features without writing a class. The most commonly used hooks are:
+
+- `useState`: For adding state to function components
+- `useEffect`: For performing side effects in function components
+- `useContext`: For consuming context in function components
+- `useReducer`: For managing more complex state logic
+- `useCallback` and `useMemo`: For optimizing performance
+
+Here''s an example using `useState` and `useEffect`:
+
+```jsx
+import React, { useState, useEffect } from ''react'';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+## Routing in React
+
+While React doesn''t come with built-in routing capabilities, there are popular libraries like React Router that provide this functionality. Here''s a basic example using React Router:
+
+```jsx
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
+function App() {
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/users">Users</Link></li>
+          </ul>
+        </nav>
+
+        <Route path="/" exact component={Home} />
+        <Route path="/about" component={About} />
+        <Route path="/users" component={Users} />
+      </div>
+    </Router>
+  );
+}
+```
+
+## Best Practices and Common Pitfalls
+
+As you start your React journey, keep these best practices in mind:
+
+1. **Keep components small and focused**: Each component should ideally do one thing well.
+2. **Use functional components and hooks**: They''re simpler and make it easier to reuse stateful logic.
+3. **Avoid modifying state directly**: Always use `setState` or the state updating function returned by `useState`.
+4. **Use the key prop when rendering lists**: This helps React identify which items have changed.
+5. **Avoid using indexes as keys**: This can lead to issues with component identity.
+6. **Use prop-types for type checking**: This helps catch bugs early.
+7. **Use CSS-in-JS or CSS modules**: This helps avoid global CSS conflicts.
+
+Common pitfalls to watch out for:
+
+1. **Mutating state directly**: This can lead to unexpected behavior.
+2. **Using `setState` in `render`**: This can cause infinite loops.
+3. **Not understanding React''s lifecycle**: This can lead to memory leaks or unnecessary re-renders.
+4. **Overusing state**: Not all data needs to be in state. Some can be derived from existing state or props.
+
+## Conclusion
+
+React has transformed the way we build user interfaces, offering a powerful and flexible approach to web development. This guide has covered the fundamental concepts you need to get started with React, from setting up your environment to understanding key concepts like components, props, state, and hooks.
+
+As you continue your React journey, remember that practice is key. Build small projects, experiment with different features, and don''t be afraid to dive into the React documentation for more advanced topics. With time and experience, you''ll be building complex, efficient React applications in no time.
+
+Happy coding, and welcome to the world of React!', NULL, '2024-09-14 15:40:48.760124+00');
 
 
 --
 -- Data for Name: workflows; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."workflows" ("id", "created_at", "workflow", "enabled") VALUES
-	(2, '2024-09-14 20:19:41.892865+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "add_ToC"}, {"id": "2", "kind": "apply_changes"}]}', false),
-	(3, '2024-09-14 20:19:50.146892+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "add_ToC"}, {"id": "2", "kind": "apply_changes"}]}', false),
-	(4, '2024-09-14 20:19:53.320413+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "add_ToC"}, {"id": "2", "kind": "apply_changes"}]}', false),
-	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "grammar_review", "name": "Perform a grammar review", "description": "Perform a grammar review"}, {"id": "2", "kind": "wait_for_approval"}]}', false);
+INSERT INTO "public"."workflows" ("id", "created_at", "workflow", "enabled", "trigger", "description", "name") VALUES
+	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}, {"to": "3", "from": "2"}], "actions": [{"id": "1", "kind": "grammar_review", "name": "Perform a grammar review", "description": "Perform a grammar review"}, {"id": "3", "kind": "wait_for_approval"}, {"id": "2", "kind": "add_ToC"}]}', true, 'blog-post.updated', 'Getting a review from AI', 'When a blog post is moved to review'),
+	(2, '2024-09-14 20:19:41.892865+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "grammar_review"}, {"id": "2", "kind": "apply_changes"}]}', false, 'blog-post.published', 'Actions performed to optimize the distribution of blog posts', 'When a blog post is published');
 
 
 --
@@ -671,7 +686,7 @@ SELECT pg_catalog.setval('"public"."blog_posts_id_seq"', 3, true);
 -- Name: workflows_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."workflows_id_seq"', 4, true);
+SELECT pg_catalog.setval('"public"."workflows_id_seq"', 6, true);
 
 
 --
