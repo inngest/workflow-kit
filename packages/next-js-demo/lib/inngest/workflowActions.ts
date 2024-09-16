@@ -78,7 +78,7 @@ export const actions: EngineAction[] = [
           .from("blog_posts")
           .update({
             markdown_ai_revision: aiRevision,
-            status: "review",
+            status: "under review",
           })
           .eq("id", event.data.id)
           .select("*");
@@ -135,7 +135,7 @@ export const actions: EngineAction[] = [
           .from("blog_posts")
           .update({
             markdown_ai_revision: aiRevision,
-            status: "review",
+            status: "under review",
           })
           .eq("id", event.data.id)
           .select("*");
@@ -147,6 +147,20 @@ export const actions: EngineAction[] = [
     name: "Apply changes after approval",
     description: "Apply changes after approval",
     handler: async ({ event, step }) => {
+      const blogPost = await step.run("Load blog post", async () =>
+        loadBlogPost(event.data.id)
+      );
+
+      await step.run("update-blog-post-status", async () => {
+        await supabase
+          .from("blog_posts")
+          .update({
+            status: "Needs approval",
+          })
+          .eq("id", event.data.id)
+          .select("*");
+      });
+
       const approval = await step.waitForEvent(
         "wait-for-ai-suggestion-approval",
         {
@@ -167,10 +181,6 @@ export const actions: EngineAction[] = [
             .select("*");
         });
       } else {
-        const blogPost = await step.run("Load blog post", async () =>
-          loadBlogPost(event.data.id)
-        );
-
         await step.run("apply-ai-revision", async () => {
           await supabase
             .from("blog_posts")
@@ -189,7 +199,7 @@ export const actions: EngineAction[] = [
     kind: "apply_changes",
     name: "Apply changes",
     description: "Apply changes",
-    handler: async ({ event, step, workflowAction }) => {
+    handler: async ({ event, step }) => {
       const blogPost = await step.run("Load blog post", async () =>
         loadBlogPost(event.data.id)
       );

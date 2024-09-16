@@ -3,6 +3,15 @@ import { inngest } from "@/lib/inngest/client";
 import { createClient } from "@/lib/supabase/server";
 
 export const sendBlogPostToReview = async (id: string) => {
+  const supabase = createClient();
+  await supabase
+    .from("blog_posts")
+    .update({
+      status: "under review",
+      markdown_ai_revision: null,
+    })
+    .eq("id", id);
+
   await inngest.send({
     name: "blog-post.updated",
     data: {
