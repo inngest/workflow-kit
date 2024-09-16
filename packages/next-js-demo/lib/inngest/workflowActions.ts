@@ -207,4 +207,20 @@ export const actions: EngineAction[] = [
       });
     },
   },
+  {
+    kind: "send_to_mailing_list",
+    name: "Send the article to the mailing list",
+    description: "Send the article to the mailing list",
+    handler: async ({ event, step, workflowAction }) => {
+      //
+    },
+  },
+  {
+    kind: "generate_tweet_and_linked_in_posts",
+    name: "Generate Twitter and LinkedIn posts",
+    description: "Generate Twitter and LinkedIn posts",
+    handler: async ({ event, step, workflowAction }) => {
+      //
+    },
+  },
 ];

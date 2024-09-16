@@ -3,8 +3,6 @@ import { notFound } from "next/navigation";
 import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 
-import { SaveIcon } from "lucide-react";
-
 import {
   Card,
   CardContent,
@@ -12,10 +10,9 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 
 import { createClient } from "@/lib/supabase/server";
-// import { approveBlogPostAiSuggestions } from "@/app/actions";
+import { BlogPostActions } from "@/components/blog-post-actions";
 
 export const revalidate = 0;
 
@@ -117,18 +114,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
               )}
             </CardContent>
             <CardFooter className="flex justify-end align-bottom gap-4">
-              <Button variant={"secondary"}>
-                <SaveIcon className="mr-2 h-4 w-4" /> Discard suggestions &
-                Publish
-              </Button>
-              <Button
-              // onClick={() =>
-              //   approveBlogPostAiSuggestions(blogPost.id.toString())
-              // }
-              >
-                <SaveIcon className="mr-2 h-4 w-4" /> Approve suggestions &
-                Publish
-              </Button>
+              <BlogPostActions id={blogPost.id.toString()} />
             </CardFooter>
           </Card>
         </Tabs>
