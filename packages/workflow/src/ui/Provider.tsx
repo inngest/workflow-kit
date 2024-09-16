@@ -130,6 +130,7 @@ export const Provider = ({
     workflowCopy.actions.push({
       id,
       kind: action.kind,
+      name: action.name,
     });
     workflowCopy.edges.push({
       from: parentID,
