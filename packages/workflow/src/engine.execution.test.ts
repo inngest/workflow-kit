@@ -81,9 +81,18 @@ test("execution", async () => {
 
       // Finally, run a conditional to match on numeric values.
       {
-        id: "stepC",
+        id: "stepC-true",
         kind: "multiply",
         name: "Multiply 2 and 9",
+        inputs: {
+          a: 2,
+          b: 9,
+        },
+      },
+      {
+        id: "stepC-false",
+        kind: "multiply",
+        name: "Never runs, as equality is false",
         inputs: {
           a: 2,
           b: 9,
@@ -101,7 +110,9 @@ test("execution", async () => {
       { from: "if-a", to: "stepB-false", conditional: { type: "else", ref: "!ref($.output.result)" } },
 
       // Check that "match" works with non-string values.
-      { from: "stepB-true", to: "stepC", conditional: { type: "match", ref: "!ref($.output)", value: 42*99 } },
+      { from: "stepB-true", to: "stepC-true", conditional: { type: "match", ref: "!ref($.output)", value: 42*99 } },
+      // This should never run, as the value is not equal (type equality).
+      { from: "stepB-true", to: "stepC-false", conditional: { type: "match", ref: "!ref($.output)", value: (42*99).toString() } },
     ],
   };
 
@@ -119,8 +130,9 @@ test("execution", async () => {
 
   expect(es.state.get("stepA")).toBe(42);
   expect(es.state.get("stepB-true")).toBe(42*99);
-  expect(es.state.get("stepC")).toBe(2*9);
+  expect(es.state.get("stepC-true")).toBe(2*9);
 
   // Shouldn't run, as the if-a step is true
   expect(es.state.get("stepB-false")).toBe(undefined);
+  expect(es.state.get("stepC-false")).toBe(undefined);
 })
