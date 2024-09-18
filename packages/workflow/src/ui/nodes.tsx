@@ -9,6 +9,7 @@ import * as Popover from '@radix-ui/react-popover';
 import { PublicEngineEdge, WorkflowAction } from "../types";
 import { TriggerProps, Direction } from "./Editor";
 import { useProvider } from './Provider';
+import { useState } from 'react';
 
 export type BlankNodeType = Node<{
   parent: Node,
@@ -105,6 +106,7 @@ export const BlankNode = ({ direction }: { direction: Direction }) => {
 const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAction }) => {
   const { node, action, ...rest } = props;
   const { setBlankNode, setSelectedNode, availableActions } = useProvider();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // We want to find out whether the engine action's definition has any built-in edges,
   // or if we disable the 'Add new node' handle.
@@ -115,10 +117,11 @@ const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAction })
   }
 
   // This is the default handler for adding a new blank node.
-  const addNode = (edge?: PublicEngineEdge) => {
+  const addNode = (edge?: PublicEngineEdge): BlankNodeType => {
     const blankNode = NewBlankNode(node, edge);
     setBlankNode(blankNode);
     setSelectedNode(blankNode);
+    return blankNode;
   }
 
   const renderHandle = (onClick?: () => void) => (
@@ -138,7 +141,7 @@ const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAction })
   }
 
   return (
-    <Popover.Root>
+    <Popover.Root open={menuOpen} onOpenChange={setMenuOpen}>
       <Popover.Trigger asChild>
         {
           // This handler has no onClick, as we instead handle everything within the popover
@@ -147,17 +150,19 @@ const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAction })
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content>
-          <div>
+          <div className="wf-add-handle-menu">
             {edges.map((edge) => (
               <div
                 key={edge.name}
+                className="wf-add-handle-menu-item"
                 onClick={() => {
-                  addNode(edge);
-                  // TODO: Hide popover
-                  // TODO: Set selected node to blank node.  It doesnt auto work?
+                  const blankNode = addNode(edge);
+                  setMenuOpen(false);
+                  // This is a hack to auto-select the blank node.  We need to fix this shit.
+                  window?.setTimeout(() => { setSelectedNode(blankNode); }, 0);
                 }}
               >
-                {edge.name}
+                <p className="wf-add-handle-menu-label">{edge.name}</p>
               </div>
             ))}
           </div>
