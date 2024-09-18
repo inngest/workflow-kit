@@ -73,6 +73,13 @@ const EditorUI = ({ direction }: EditorProps) => {
   useHandleBlankNode(nodes, edges, setNodes, setEdges, direction, defaultNodeMeasure);
   useCenterGraph(layoutRect, ref);
 
+  // When the workflow changes, we need to re-layout the graph.
+  useEffect(() => {
+    const { nodes, edges } = parseWorkflow({ workflow, trigger });
+    setNodes(nodes);
+    setEdges(edges);
+  }, [JSON.stringify(workflow.edges)]);
+
   const nodeTypes = useMemo(() => ({
     trigger: (node: any) => { // TODO: Define args type.
       const { trigger } = node.data;

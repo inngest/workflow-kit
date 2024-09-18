@@ -3,6 +3,7 @@ import { SidebarWorkflowForm } from "./WorfklowForm";
 import { SidebarFooter } from "./Footer";
 import { ActionList } from "./ActionList";
 import { SidebarActionForm } from "./ActionForm";
+import { SidebarHeader } from "./Header";
 import { WorkflowAction } from "../../types";
 
 export type SidebarProps = {
@@ -62,6 +63,7 @@ const useSidebarContent = () => {
 
       return (
         <>
+          <SidebarHeader />
           <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} />
           <SidebarFooter />
         </>
