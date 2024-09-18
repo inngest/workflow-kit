@@ -152,8 +152,12 @@
 }
 
 .wf-node-selected {
-  outline: 1px solid var(--node-selected-outline-color);
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.15s ease-in-out;
+
+  outline: 2px solid var(--node-selected-outline-color);
+
+  box-shadow: var(--node-box-shadow),
+  0 2px 18px 0 rgba(0, 0, 0, 0.08);
 }
 
 .wf-blank-node {

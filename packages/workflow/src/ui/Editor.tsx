@@ -9,6 +9,7 @@ import {
   useReactFlow,
   useNodesInitialized,
   Rect,
+  NodeChange,
 } from '@xyflow/react';
 import { Workflow, WorkflowAction } from "../types";
 import { getLayoutedElements, parseWorkflow, useLayout } from './layout';
@@ -43,6 +44,9 @@ const EditorUI = ({ direction }: EditorProps) => {
   const { workflow, trigger, setSelectedNode, blankNode, setBlankNode } = useProvider();
   const nodesInitialized = useNodesInitialized();
 
+  // Retain the initial node measurement for computing layout when Workflow is refreshed.
+  const [defaultNodeMeasure, setDefaultNodeMeasure] = useState<{ width: number, height: number } | undefined>(undefined);
+
   // Store a reference to the parent div to compute layout
   const ref = useRef<HTMLDivElement>(null);
 
@@ -63,9 +67,10 @@ const EditorUI = ({ direction }: EditorProps) => {
     setNodes,
     setEdges,
     nodesInitialized,
+    defaultNodeMeasure,
   });
 
-  useHandleBlankNode(nodes, edges, setNodes, setEdges, direction);
+  useHandleBlankNode(nodes, edges, setNodes, setEdges, direction, defaultNodeMeasure);
   useCenterGraph(layoutRect, ref);
 
   const nodeTypes = useMemo(() => ({
@@ -119,9 +124,14 @@ const EditorUI = ({ direction }: EditorProps) => {
           setSelectedNode(node);
           event.preventDefault();
         }}
-        onNodesChange={(args) => {
+        onNodesChange={(args: NodeChange<Node>[]) => {
           // Required to store .measured in nodes for computing layout.
           onNodesChange(args);
+
+          if (!defaultNodeMeasure && args.length > 0 && args[0]?.type === 'dimensions') {
+            const item = args[0] as any; // TODO: Fix types
+            setDefaultNodeMeasure(item?.dimensions as { width: number, height: number });
+          }
         }}
         key={direction}
         proOptions={{ hideAttribution: true }}
@@ -193,6 +203,7 @@ const useHandleBlankNode = (
   setNodes: (nodes: Node[]) => void,
   setEdges: (edges: Edge[]) => void,
   direction: Direction,
+  defaultNodeMeasure: { width: number, height: number } | undefined,
 ) => {
   const { blankNode } = useProvider();
 
@@ -206,7 +217,7 @@ const useHandleBlankNode = (
       // Measured is undefined when a node is being added, and is filled after react-flow renders
       // the node for the first time.
       if (!blankNode.measured) {
-        blankNode.measured = nodes[0]?.measured;
+        blankNode.measured = nodes[0]?.measured || defaultNodeMeasure;
       }
 
       const newNodes = [...nodes, blankNode];
@@ -216,6 +227,8 @@ const useHandleBlankNode = (
         target: '$blank',
         type: 'smoothstep',
       }];
+
+      // For each node, ensure there's a measured entry.
 
       // Re-layout the graph prior to re-rendering.
       const result = getLayoutedElements(newNodes, newEdges, direction);
