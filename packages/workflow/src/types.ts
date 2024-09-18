@@ -203,17 +203,23 @@ export interface WorkflowEdge {
      * for "if", the value will be inteprolated via "!!" to a boolean.
      * for "else", the value is will be evaluated via "!" to a boolean.
      * for "match", the value is will be evaluated via "===" to a boolean.
+     * 
+     * It is expected that "if" blocks are used with json-logic,
+     * which create these conditional edges by default - hence the basic
+     * boolean logic.
+     * 
+     * This may change in the future; we may add json-logic directly here.
      */
     type: "if" | "else" | "match",
     /**
-     * The ref to evaluate.  This can use the shorthand: `!ref($.result)` to
-     * refer to the result of the previous action.
+     * The ref to evaluate.  This can use the shorthand: `!ref($.output)` to
+     * refer to the previous action's output.
      */
-    ref: string; // Ref input, eg. "!ref($.action.ifcheck.result)"
+    ref: string; // Ref input, eg. "!ref($.output.email_id)"
     /**
      * Value to match against, if type is "match"
      */
-    value?: string;
+    value?: any;
   },
 }
 
@@ -246,6 +252,7 @@ export interface ActionHandlerArgs {
    * Event is the event which triggered the workflow.
    */
   event: TriggerEvent;
+
   /**
    * Step are the step functions from Inngest's SDK, allowing each
    * action to be executed as a durable step function.  This exposes

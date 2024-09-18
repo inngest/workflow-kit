@@ -8,7 +8,7 @@ import {
   DAG,
   TriggerEvent,
 } from "./types";
-import { bfs, newDAG } from './graph';
+import { bfs, newDAG, SourceNodeID } from './graph';
 import { Value, AssertError } from '@sinclair/typebox/value'
 import { interpolate, refs, resolveInputs } from "./interpolation";
 
@@ -197,8 +197,36 @@ export class ExecutionState {
 
     await bfs(graph, async (action, edge) => {
       if (edge.conditional) {
-        // TODO: Evaluate conditional.
-        return;
+        const { type, ref, value } = edge.conditional || {};
+
+        // We allow "!ref($.output)" to refer to the previous action's output.
+        // Here we must grab the previous step's state for interpolation as the result.
+        const previousActionOutput = this.#state.get(edge.from);
+        const input = this.interpolate(ref, previousActionOutput);
+
+        console.log("edge conditional", input, type, value);
+
+        switch (type) {
+          case "if":
+            if (!input) {
+              // This doesn't match, so we skip this edge.
+              return;
+            }
+            break;
+          case "else":
+            if (!!input) {
+              // This doesn't match, so we skip this edge.
+              return;
+            }
+            break
+          case "match":
+            // Because object equality is what it is, we JSON stringify both
+            // values here.
+            if (JSON.stringify(input) !== JSON.stringify(value)) {
+              // This doesn't match, so we skip this edge.
+              return;
+            }
+        }
       }
 
       // Find the base action from the workflow class.  This includes the handler
@@ -240,10 +268,13 @@ export class ExecutionState {
     });
   }
 
-  interpolate = (value: any): any => {
+  interpolate = (value: any, output?: any): any => {
     return interpolate(value, {
       state: Object.fromEntries(this.#state),
-      event: this.#opts.event
+      event: this.#opts.event,
+      // output is an optional output from the previous step, used to
+      // interpolate conditional edges. 
+      output,
     });
   }
 

@@ -69,6 +69,8 @@ export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
     >
         <Handle {...targetHandleProps(direction)} />
         {action.name || engineAction?.name || action.kind}
+
+        {/* TODO: Add handle with menu options */}
         <AddHandle {...sourceHandleProps(direction)} node={node} />
     </div>
   );
