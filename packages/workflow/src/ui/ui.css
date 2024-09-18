@@ -120,10 +120,12 @@
   align-items: center;
   gap: 10px;
   font-weight: 500;
+  line-height: 1;
 }
 
 .wf-node-description {
   opacity: 0.4;
+  line-height: 1;
 }
 
 .wf-editor .wf-add-handle > div:hover {

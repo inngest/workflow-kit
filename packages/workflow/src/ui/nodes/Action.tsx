@@ -58,7 +58,7 @@ export const BlankNode = ({ direction }: { direction: Direction }) => {
 }
 
 const DefaultIcon = () => (
-  <svg width="20" height="20" fill="none" style={{ marginTop: 3 }}>
+  <svg width="20" height="20" viewBox="0 0 20 18" fill="none">
     <path fill="#9B9B9B" d="M12.905 10.75a3.001 3.001 0 0 1-5.81 0H3.25v-1.5h3.845a3.002 3.002 0 0 1 5.81 0h3.845v1.5h-3.845ZM10 11.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
   </svg>
 )
