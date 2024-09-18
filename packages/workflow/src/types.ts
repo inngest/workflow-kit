@@ -4,37 +4,52 @@ import { TSchema } from '@sinclair/typebox'
 export interface EngineOptions {
   actions?: Array<EngineAction>;
 
-  /*
-   * Specifies whether if expressions and loops are enabled within workflows.
+  /**
+   * disableBuiltinActions disables the builtin actions from being used.
+   * 
+   * For selectively adding built-in actions, set this to true and expose
+   * the actions you want via the `availableActions` prop (in your Engine)
    */
-  statements?: {
-    ifs?: boolean;
-    loops?: boolean;
-  };
+  disableBuiltinActions?: boolean;
 
   loader?: Loader;
 };
 
+// TODO: Define event type more clearly.
+export type TriggerEvent = Record<string, any>;
 
 /**
- * ActionHandler runs logic for a given EngineAction
- *
+ * PublicEngineAction is the type representing an action in the *frontend UI*.  This is
+ * a subset of the entire EngineAction type.
+ * 
+ * Actions for workflows are defined in the backend, directly on the Engine.  The Engine
+ * provides an API which lists public information around the available actions - this type. 
  */
-export type ActionHandler = (args: ActionHandlerArgs) => Promise<any>;
-
-/**
- * EngineAction represents a reusable action, or step, within a workflow.  It defines the
- * kind, the handler to run, the types for the action, and optionally custom UI for managing
- * the action's configuration within the workflow editor.
- *
- */
-export interface EngineAction {
+export interface PublicEngineAction {
+  /**
+   * Kind is an enum representing the action's ID.  This is not named as "id"
+   * so that we can keep consistency with the WorkflowAction type.
+   */
   kind: string;
-  handler: ActionHandler;
+
+  /**
+   * Name is the human-readable name of the action.
+   */
+  name: string;
+
+  /**
+   * Description is a short description of the action.
+   */
+  description?: string;
+
+  /**
+   * Icon is the name of the icon to use for the action.  This may be an HTTP
+   * URL, or an SVG directly.
+   */
+  icon?: string;
 
   /**
    * Inputs define input variables which can be configured by the workflow UI. 
-   *
    */
   inputs?: Record<string, ActionInput>
 
@@ -42,14 +57,70 @@ export interface EngineAction {
    * Outputs define the responses from the action, including the type, name, and
    * an optional description
    */
-  outputs?: TSchema | Record<string, ActionOutput>,
+  outputs?: TSchema | Record<string, ActionOutput>;
+
+  edges?: {
+    /**
+     * allowAdd controls whether the user can add new edges to the graph
+     * via the "add" handle.
+     * 
+     * If undefined this defaults to true (as most nodes should allow adding
+     * subsequent actions).
+     */
+    allowAdd?: boolean;
+
+    /**
+     * Edges allows the definition of predefined edges from this action,
+     * eg. "True" and "False" edges for an if statement, or "Not received"
+     * edges if an action contains `step.waitForEvent`.
+     */
+    edges?: Array<Omit<WorkflowEdge, "from" | "to">>;
+  }
 };
 
-export interface ActionInput {
-  type: TSchema,
-  description?: string;
+/**
+ * EngineAction represents a reusable action, or step, within a workflow.  It defines the
+ * kind, the handler to run, the types for the action, and optionally custom UI for managing
+ * the action's configuration within the workflow editor.
+ * 
+ * Note that this is the type representing an action in the *backend engine*.
+ *
+ */
+export interface EngineAction extends PublicEngineAction {
+  /**
+   * The handler is the function which runs the action.  This may comprise of
+   * many individual inngest steps. 
+   */
+  handler: ActionHandler;
+};
 
-  // TODO: UI components for each input.
+/**
+ * ActionHandler runs logic for a given EngineAction
+ */
+export type ActionHandler = (args: ActionHandlerArgs) => Promise<any>;
+
+export interface ActionInput {
+  /**
+   * Type is the TypeBox type for the input.  This is used for type checking, validation,
+   * and form creation.
+   * 
+   * Note that this can include any of the JSON-schema refinements within the TypeBox type.
+   * 
+   * @example
+   * ```
+   * type: Type.String({
+   *   title: "Email address",
+   *   description: "The email address to send the email to",
+   *   format: "email",
+   * })
+   * ```
+   */
+  type: TSchema,
+
+  /**
+   * fieldType allows customization of the text input component, for string types.
+   */
+  fieldType?: "textarea" | "text"
 }
 
 export interface ActionOutput {
@@ -63,6 +134,10 @@ export interface ActionOutput {
  *
  */
 export interface Workflow {
+  name?: string;
+  description?: string;
+  metadata?: Record<string, any>;
+
   actions: Array<WorkflowAction>
   edges: Array<WorkflowEdge>
 };
@@ -96,6 +171,9 @@ export interface WorkflowAction {
    *
    * This will be type checked to match the EngineAction type before
    * save and before execution.
+   * 
+   * Ref inputs for interpolation are "!ref($.<path>)",
+   * eg. "!ref($.event.data.email)"
    */
   inputs?: Record<string, any>;
 }
@@ -104,8 +182,45 @@ export interface WorkflowEdge {
   from: string;
   to: string;
 
-  if?: string;
-  else?: string;
+  /**
+   * The name of the edge to show in the UI
+   */
+  name?: string,
+
+  /**
+   * Conditional is a ref (eg. "!ref($.action.ifcheck.result)") which must be met
+   * for the edge to be followed.
+   * 
+   * The `conditional` field is automatically set when using the built-in if
+   * action.
+   * 
+   */
+  conditional?: {
+    /**
+     * type indicates whether this is the truthy if, the else block, or a
+     * "select" case block which must match a given value.
+     * 
+     * for "if", the value will be inteprolated via "!!" to a boolean.
+     * for "else", the value is will be evaluated via "!" to a boolean.
+     * for "match", the value is will be evaluated via "===" to a boolean.
+     * 
+     * It is expected that "if" blocks are used with json-logic,
+     * which create these conditional edges by default - hence the basic
+     * boolean logic.
+     * 
+     * This may change in the future; we may add json-logic directly here.
+     */
+    type: "if" | "else" | "match",
+    /**
+     * The ref to evaluate.  This can use the shorthand: `!ref($.output)` to
+     * refer to the previous action's output.
+     */
+    ref: string; // Ref input, eg. "!ref($.output.email_id)"
+    /**
+     * Value to match against, if type is "match"
+     */
+    value?: any;
+  },
 }
 
 
@@ -133,11 +248,35 @@ export interface Edge {
 }
 
 export interface ActionHandlerArgs {
-  event: any;
+  /**
+   * Event is the event which triggered the workflow.
+   */
+  event: TriggerEvent;
+
+  /**
+   * Step are the step functions from Inngest's SDK, allowing each
+   * action to be executed as a durable step function.  This exposes
+   * all step APIs: `step.run`, `step.waitForEvent`, `step.sleep`, etc.
+   * 
+   */
   step: any;
+
+  /**
+   * Workflow is the workflow definition.
+   */
   workflow: Workflow
+
+  /**
+   * WorkflowAction is the action being executed, with fully interpolate
+   * inputs.
+   */
   workflowAction: WorkflowAction;
-  // TODO: Action from workflow?
+
+  /**
+   * State represnets the current state of the workflow, with previous
+   * action's outputs recorded as key-value pairs.
+   */
+  state: Map<string, any>;
 }
 
 export type RunArgs = {
