@@ -71,7 +71,7 @@ export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
         {action.name || engineAction?.name || action.kind}
 
         {/* TODO: Add handle with menu options */}
-        <AddHandle {...sourceHandleProps(direction)} node={node} />
+        <AddHandle {...sourceHandleProps(direction)} node={node} action={action} />
     </div>
   );
 }
@@ -91,9 +91,17 @@ export const BlankNode = ({ direction }: { direction: Direction }) => {
   );
 }
 
-const AddHandle = (props: HandleProps & { node: Node }) => {
-  const { node, ...rest } = props;
-  const { setBlankNode, setSelectedNode } = useProvider();
+const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAction }) => {
+  const { node, action, ...rest } = props;
+  const { setBlankNode, setSelectedNode, availableActions } = useProvider();
+
+  // We want to find out whether the engine action's definition has any built-in edges,
+  // or if we disable the 'Add new node' handle.
+  const engineAction = availableActions.find((action) => action.kind === action?.kind);
+
+  if (engineAction?.edges?.allowAdd === false && engineAction?.edges?.length === 0) {
+    return null;
+  }
 
   return (
     <Handle {...rest} className="wf-add-handle" onClick={() => {

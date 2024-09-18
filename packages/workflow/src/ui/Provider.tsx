@@ -124,6 +124,7 @@ export const Provider = (props: ProviderProps & { children: React.ReactNode }) =
     workflowCopy.actions.push({
       id,
       kind: action.kind,
+      name: action.name,
     });
     workflowCopy.edges.push({
       from: parentID,
