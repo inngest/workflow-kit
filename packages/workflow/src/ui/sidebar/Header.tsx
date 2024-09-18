@@ -1,3 +1,4 @@
+import { WorkflowAction } from "inngest/types";
 import { useProvider } from "../Provider";
 
 export const SidebarHeader = () => {
@@ -20,7 +21,11 @@ export const SidebarHeader = () => {
           <button
             className="wf-cursor-pointer wf-sidebar-delete"
             onClick={() => {
-              deleteAction(selectedNode?.data?.action?.id);
+              const { action } = selectedNode.data;
+              if (!action) {
+                return
+              }
+              deleteAction((action as WorkflowAction)?.id);
             }}
             style={{
             }}
