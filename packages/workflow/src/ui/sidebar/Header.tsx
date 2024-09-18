@@ -20,8 +20,6 @@ export const SidebarHeader = () => {
           <button
             className="wf-cursor-pointer wf-sidebar-delete"
             onClick={() => {
-              // TODO: Implement delete action functionality
-              console.log("Delete action clicked", selectedNode?.data?.action);
               deleteAction(selectedNode?.data?.action?.id);
             }}
             style={{

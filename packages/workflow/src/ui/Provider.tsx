@@ -142,7 +142,6 @@ export const Provider = (props: ProviderProps & { children: React.ReactNode }) =
     // Parse the workflow and find the new node for selection.
     const parsed = parseWorkflow({ workflow: workflowCopy, trigger });
     const newNode = parsed.nodes.find((n) => n.id === id);
-    console.log(newNode, id, parsed.nodes)
     if (newNode) {
       setSelectedNode(newNode);
     }
@@ -161,8 +160,6 @@ export const Provider = (props: ProviderProps & { children: React.ReactNode }) =
     const parentEdgeIndex = workflowCopy.edges.findIndex(edge => edge.to === actionID);
     const parentEdge = workflowCopy.edges[parentEdgeIndex];
 
-    console.log(parentEdge, actionID, workflowCopy.edges);
-
     if (!parentEdge) {
       return;
     }
@@ -179,8 +176,6 @@ export const Provider = (props: ProviderProps & { children: React.ReactNode }) =
       const index = workflowCopy.edges.findIndex(edge => edge.to === childEdge.to && edge.from === actionID);
       workflowCopy.edges[index] = updatedChildEdge;
     });
-
-    console.log(workflowCopy);
 
     onChange(workflowCopy);
   };
