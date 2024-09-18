@@ -1,12 +1,12 @@
-"use client";
+'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useReducer, useState } from "react";
-import { Editor, Provider, Sidebar } from "@inngest/workflow/ui";
+import { useCallback, useReducer, useState } from 'react';
+import { Editor, Provider, Sidebar } from '@inngest/workflow/ui';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
-import { SaveIcon } from "lucide-react";
+import { SaveIcon } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -14,14 +14,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-import { actions } from "@/lib/inngest/workflowActions";
-import { Workflow, createClient } from "@/lib/supabase/client";
+import { actions } from '@/lib/inngest/workflowActions';
+import { Workflow, createClient } from '@/lib/supabase/client';
 
-import "@inngest/workflow/ui/ui.css";
-import "@xyflow/react/dist/style.css";
+import '@inngest/workflow/ui/ui.css';
+import '@xyflow/react/dist/style.css';
 
 export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
   const router = useRouter();
@@ -30,9 +30,9 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
 
   const onSaveWorkflow = useCallback(async () => {
     const supabase = createClient();
-    if (workflowDraft.id.toString().startsWith("draft-")) {
+    if (workflowDraft.id.toString().startsWith('draft-')) {
       supabase
-        .from("workflows")
+        .from('workflows')
         .insert({ workflow: workflowDraft.workflow })
         .select()
         .then(({ data }) => {
@@ -43,14 +43,14 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
         });
     } else {
       await supabase
-        .from("workflows")
+        .from('workflows')
         .update({
           workflow: workflowDraft.workflow,
         })
-        .eq("id", workflowDraft.id);
+        .eq('id', workflowDraft.id);
     }
 
-    router.push("/automation");
+    router.push('/automation');
   }, [router, workflowDraft]);
 
   return (
@@ -60,8 +60,15 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>{workflow.name}</CardTitle>
-          <CardDescription>{workflow.description}</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{workflow.name}</CardTitle>
+              <CardDescription>{workflow.description}</CardDescription>
+            </div>
+            <Button onClick={onSaveWorkflow}>
+              <SaveIcon className="mr-2 h-4 w-4" /> Save changes
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {workflowDraft ? (
@@ -88,15 +95,11 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
                   </Editor>
                 </Provider>
               </div>
-              <CardFooter className="flex justify-end align-bottom gap-4">
-                <Button onClick={onSaveWorkflow}>
-                  <SaveIcon className="mr-2 h-4 w-4" /> Save changes
-                </Button>
-              </CardFooter>
+              <CardFooter className="flex justify-end align-bottom gap-4"></CardFooter>
             </>
           ) : (
             <div>
-              {"Use the control at the top to select or create an automation."}
+              {'Use the control at the top to select or create an automation.'}
             </div>
           )}
         </CardContent>

@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { Menu } from "@/components/menu";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import './globals.css';
+import { Menu } from '@/components/menu';
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+  src: './fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900',
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
 });
 
 export const metadata: Metadata = {
-  title: "Inngest blog CMS",
-  description: "Leverage AI Automation to optimize your blog posts",
+  title: 'Inngest blog CMS',
+  description: 'Leverage AI Automation to optimize your blog posts',
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-gray-100 text-slate-900">
           {/* Sidebar */}
           <div className="w-64 bg-white shadow-md">
             <div className="p-4">

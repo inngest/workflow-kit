@@ -1,11 +1,11 @@
-"use client";
+'use client';
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { EditIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { EditIcon } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -13,19 +13,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
-import { Workflow, createClient } from "@/lib/supabase/client";
+import { Workflow, createClient } from '@/lib/supabase/client';
 
 export const AutomationList = () => {
   const supabase = createClient();
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
 
   const refreshWorkflows = useCallback(async () => {
-    const { data } = await supabase.from("workflows").select("*");
-
+    const { data } = await supabase.from('workflows').select('*').order('id');
     setWorkflows(data || []);
   }, []);
 
@@ -35,12 +34,12 @@ export const AutomationList = () => {
 
   const onToggleWorkflow = (workflowId: number) => async (enabled: boolean) => {
     await supabase
-      .from("workflows")
+      .from('workflows')
       .update({
         enabled,
       })
-      .eq("id", workflowId)
-      .select("*");
+      .eq('id', workflowId)
+      .select('*');
 
     await refreshWorkflows();
   };
@@ -62,8 +61,8 @@ export const AutomationList = () => {
               <CardContent>
                 <div className="flex items-center text-sm text-muted-foreground">
                   {actions.length
-                    ? actions.map(({ name, kind }) => name || kind).join(", ")
-                    : "No actions"}
+                    ? actions.map(({ name, kind }) => name || kind).join(', ')
+                    : 'No actions'}
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
