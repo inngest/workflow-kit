@@ -19,6 +19,6 @@ export {
 export {
     TriggerNode,
     ActionNode,
-} from "./Nodes";
+} from "./nodes";
 
 // TODO: Trigger type

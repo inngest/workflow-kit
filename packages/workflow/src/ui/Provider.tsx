@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Node } from '@xyflow/react';
 import { PublicEngineAction, PublicEngineEdge, Workflow } from "../types";
-import { BlankNodeType } from './Nodes';
+import { BlankNodeType } from './nodes';
 import { parseWorkflow } from './layout';
 
 export type ProviderProps = {
