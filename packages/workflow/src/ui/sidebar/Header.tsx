@@ -26,6 +26,7 @@ export const SidebarHeader = () => {
                 return
               }
               deleteAction((action as WorkflowAction)?.id);
+              setSelectedNode(undefined);
             }}
             style={{
             }}
