@@ -78,7 +78,7 @@ const EditorUI = ({ direction }: EditorProps) => {
     const { nodes, edges } = parseWorkflow({ workflow, trigger });
     setNodes(nodes);
     setEdges(edges);
-  }, [JSON.stringify(workflow.edges)]);
+  }, [JSON.stringify(workflow?.edges || [])]);
 
   const nodeTypes = useMemo(() => ({
     trigger: (node: any) => { // TODO: Define args type.
