@@ -18,6 +18,7 @@
   --sidebar-content-padding: 20px;
 
   --node-width: 240px;
+  --node-padding: 16px 14px;
   --node-height: 80px;
   --node-border-radius: 0.5rem;
   --node-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
@@ -50,20 +51,20 @@
 }
 
 .wf-node {
-  display: block;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+  width: var(--node-width);
+  height: var(--node-height);
+  padding: var(--node-padding);
+
   background: var(--node-background-color);
   border: var(--node-border-width) solid var(--node-border-color);
   border-radius: var(--node-border-radius);
-
-  cursor: pointer;
-
-  width: var(--node-width);
-  height: var(--node-height);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   box-shadow: var(--node-box-shadow);
 }
 
@@ -106,6 +107,23 @@
   border-left: 1px solid #e7e7e5;
   transform: rotate(-45deg);
   /*transform: rotate(-45deg) translate(-56%, 0);*/
+}
+
+
+.wf-node p {
+  margin: 0;
+}
+
+.wf-node-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.wf-node-description {
+  opacity: 0.4;
 }
 
 .wf-editor .wf-add-handle > div:hover {

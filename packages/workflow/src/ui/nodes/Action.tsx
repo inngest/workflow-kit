@@ -27,7 +27,14 @@ export const ActionNode = ({ action, node, direction }: ActionNodeProps) => {
       className={`wf-node wf-action-node ${isSelected ? "wf-node-selected" : ""}`}
     >
         <Handle {...targetHandleProps(direction)} />
-        {action.name || engineAction?.name || action.kind}
+        <div className="wf-node-title">
+          <div className="wf-node-icon">
+            {engineAction?.icon || <DefaultIcon />}
+          </div>
+          <p>{action.name || engineAction?.name || action.kind}</p>
+        </div>
+
+        <p className="wf-node-description">{ action.description || engineAction?.description || "Performs an action" }</p>
 
         {/* TODO: Add handle with menu options */}
         <AddHandle {...sourceHandleProps(direction)} node={node} action={action} />
@@ -49,3 +56,9 @@ export const BlankNode = ({ direction }: { direction: Direction }) => {
     </div>
   );
 }
+
+const DefaultIcon = () => (
+  <svg width="20" height="20" fill="none" style={{ marginTop: 3 }}>
+    <path fill="#9B9B9B" d="M12.905 10.75a3.001 3.001 0 0 1-5.81 0H3.25v-1.5h3.845a3.002 3.002 0 0 1 5.81 0h3.845v1.5h-3.845ZM10 11.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/>
+  </svg>
+)

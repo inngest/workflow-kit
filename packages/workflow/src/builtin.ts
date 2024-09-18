@@ -8,7 +8,7 @@ export const builtinActions: Record<string, EngineAction> = {
   "builtin:if": {
     kind: "builtin:if",
     name: "If",
-    description: "If / else logic to conditionally run actions",
+    description: "If / else branch",
     handler: async ({ workflowAction }: ActionHandlerArgs): Promise<{ result: boolean }> => {
       if (!!!workflowAction.inputs?.condition) {
         // Always true.
