@@ -74,9 +74,11 @@ export interface PublicEngineAction {
      * eg. "True" and "False" edges for an if statement, or "Not received"
      * edges if an action contains `step.waitForEvent`.
      */
-    edges?: Array<Omit<WorkflowEdge, "from" | "to">>;
+    edges?: Array<PublicEngineEdge>;
   }
 };
+
+export type PublicEngineEdge = Omit<WorkflowEdge, "from" | "to">;
 
 /**
  * EngineAction represents a reusable action, or step, within a workflow.  It defines the
