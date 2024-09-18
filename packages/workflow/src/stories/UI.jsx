@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Type } from '@sinclair/typebox'
 
 import { Editor, Provider, Sidebar } from '../ui/';
+import { builtinActions } from '../builtin';
 import './ui.storybook.css';
 import '@xyflow/react/dist/style.css';
 import '../ui/ui.css';
 
 // availableActions is of typePublicEngineAction[]
 const availableActions = [
+  ...Object.values(builtinActions),
   {
     name: "Send an email",
     description: "Sends an email via Resend",

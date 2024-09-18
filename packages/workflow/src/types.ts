@@ -4,13 +4,13 @@ import { TSchema } from '@sinclair/typebox'
 export interface EngineOptions {
   actions?: Array<EngineAction>;
 
-  /*
-   * Specifies whether if expressions and loops are enabled within workflows.
+  /**
+   * disableBuiltinActions disables the builtin actions from being used.
+   * 
+   * For selectively adding built-in actions, set this to true and expose
+   * the actions you want via the `availableActions` prop (in your Engine)
    */
-  statements?: {
-    ifs?: boolean;
-    loops?: boolean;
-  };
+  disableBuiltinActions?: boolean;
 
   loader?: Loader;
 };
@@ -58,7 +58,27 @@ export interface PublicEngineAction {
    * an optional description
    */
   outputs?: TSchema | Record<string, ActionOutput>;
+
+  edges?: {
+    /**
+     * allowAdd controls whether the user can add new edges to the graph
+     * via the "add" handle.
+     * 
+     * If undefined this defaults to true (as most nodes should allow adding
+     * subsequent actions).
+     */
+    allowAdd?: boolean;
+
+    /**
+     * Edges allows the definition of predefined edges from this action,
+     * eg. "True" and "False" edges for an if statement, or "Not received"
+     * edges if an action contains `step.waitForEvent`.
+     */
+    edges?: Array<PublicEngineEdge>;
+  }
 };
+
+export type PublicEngineEdge = Omit<WorkflowEdge, "from" | "to">;
 
 /**
  * EngineAction represents a reusable action, or step, within a workflow.  It defines the
@@ -165,6 +185,11 @@ export interface WorkflowEdge {
   to: string;
 
   /**
+   * The name of the edge to show in the UI
+   */
+  name?: string,
+
+  /**
    * Conditional is a ref (eg. "!ref($.action.ifcheck.result)") which must be met
    * for the edge to be followed.
    * 
@@ -173,15 +198,30 @@ export interface WorkflowEdge {
    * 
    */
   conditional?: {
-    // type indicates whether this is the truthy if, the else block, or a
-    // "select" case block which must match a given value.
-    //
-    // for "if", the value will be inteprolated via "!!" to a boolean.
-    // for "else", the value is will be evaluated via "!" to a boolean.
-    // for "match", the value is will be evaluated via "===" to a boolean.
+    /**
+     * type indicates whether this is the truthy if, the else block, or a
+     * "select" case block which must match a given value.
+     * 
+     * for "if", the value will be inteprolated via "!!" to a boolean.
+     * for "else", the value is will be evaluated via "!" to a boolean.
+     * for "match", the value is will be evaluated via "===" to a boolean.
+     * 
+     * It is expected that "if" blocks are used with json-logic,
+     * which create these conditional edges by default - hence the basic
+     * boolean logic.
+     * 
+     * This may change in the future; we may add json-logic directly here.
+     */
     type: "if" | "else" | "match",
-    ref: string; // Ref input, eg. "!ref($.action.ifcheck.result)"
-    value?: string; // Value to match against, if type is "match"
+    /**
+     * The ref to evaluate.  This can use the shorthand: `!ref($.output)` to
+     * refer to the previous action's output.
+     */
+    ref: string; // Ref input, eg. "!ref($.output.email_id)"
+    /**
+     * Value to match against, if type is "match"
+     */
+    value?: any;
   },
 }
 
@@ -210,11 +250,35 @@ export interface Edge {
 }
 
 export interface ActionHandlerArgs {
-  event: any;
+  /**
+   * Event is the event which triggered the workflow.
+   */
+  event: TriggerEvent;
+
+  /**
+   * Step are the step functions from Inngest's SDK, allowing each
+   * action to be executed as a durable step function.  This exposes
+   * all step APIs: `step.run`, `step.waitForEvent`, `step.sleep`, etc.
+   * 
+   */
   step: any;
+
+  /**
+   * Workflow is the workflow definition.
+   */
   workflow: Workflow
+
+  /**
+   * WorkflowAction is the action being executed, with fully interpolate
+   * inputs.
+   */
   workflowAction: WorkflowAction;
-  // TODO: Action from workflow?
+
+  /**
+   * State represnets the current state of the workflow, with previous
+   * action's outputs recorded as key-value pairs.
+   */
+  state: Map<string, any>;
 }
 
 export type RunArgs = {

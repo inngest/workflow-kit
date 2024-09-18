@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { Node, } from '@xyflow/react';
-import { PublicEngineAction, Workflow } from "../types";
-import { BlankNodeType } from "./nodes";
-import { parseWorkflow } from "./layout";
+import { Node } from '@xyflow/react';
+import { PublicEngineAction, PublicEngineEdge, Workflow } from "../types";
+import { BlankNodeType } from './nodes';
+import { parseWorkflow } from './layout';
 
 export type ProviderProps = {
   // The workflow to be modified by the user.
@@ -43,9 +43,10 @@ export type ProviderContextType = ProviderProps & {
 
   // appendAction appends an action to the workflow under the given parent action ID.
   // The parentID may be "$source" to represent the trigger.
-  appendAction: (action: PublicEngineAction, parentID: string) => void;
+  //
+  // The "edge" may be provided from the PublicEngineAction, eg. to specify a true or false edge.
+  appendAction: (action: PublicEngineAction, parentID: string, edge?: PublicEngineEdge) => void;
 
-  // TODO: Selected action
   // TODO: Drag n drop
 }
 
@@ -105,20 +106,13 @@ export const useProvider = (): ProviderContextType => {
   return ctx;
 };
 
-export const Provider = ({
-  children,
-  workflow,
-  trigger,
-  onChange,
-  availableActions,
-}: ProviderProps & { children: React.ReactNode }) => {
-  const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">(
-    "right"
-  );
+export const Provider = (props: ProviderProps & { children: React.ReactNode }) => {
+  const { children, workflow, trigger, onChange, availableActions } = props;
+  const [sidebarPosition, setSidebarPosition] = useState<"right" | "left">("right");
   const [selectedNode, setSelectedNode] = useState<Node | undefined>(undefined);
   const [blankNode, setBlankNode] = useState<BlankNodeType | undefined>(undefined);
 
-  const appendAction = (action: PublicEngineAction, parentID: string) => {
+  const appendAction = (action: PublicEngineAction, parentID: string, edge?: PublicEngineEdge) => {
     const id = ((workflow?.actions?.length ?? 0) + 1).toString();
 
     const workflowCopy = {
@@ -133,6 +127,7 @@ export const Provider = ({
       name: action.name,
     });
     workflowCopy.edges.push({
+      ...(edge || {}),
       from: parentID,
       to: id,
     });

@@ -81,13 +81,13 @@ describe("Engine.graph", () => {
   it("validates action input types", () => {});
 });
 
-describe("ExecutionState.ref", () => {
+describe("ExecutionState.interpolate", () => {
   it("correctly references current state and events", () => {
     let state = new ExecutionState(
       ({
         event: {
           data: {
-            userId: 1,
+            userId: 1.1,
             likes: ["a"],
           }
         },
@@ -99,16 +99,39 @@ describe("ExecutionState.ref", () => {
       },
     );
 
-    expect(state.interpolate("!ref($.event.data.userId)")).toEqual(1);
+    expect(state.interpolate("!ref($.event.data.userId)")).toEqual(1.1);
     expect(state.interpolate("!ref($.event.data.likes)")).toEqual(["a"]);
     expect(state.interpolate("!ref($.state.action_a)")).toEqual("test");
     expect(state.interpolate("!ref($.state.action_b)")).toEqual({ ok: true });
+
+    // Contains refs in the middle of the string.
+    expect(
+      state.interpolate(`{"==": [{"var": "!ref($.state.action_a)"}, "a"}`)
+    ).toEqual(`{"==": [{"var": "test"}, "a"}`);
 
     expect(state.interpolate("!ref($.state.not_found)")).toEqual(undefined);
 
     expect(state.interpolate("lol")).toEqual("lol");
     expect(state.interpolate(123)).toEqual(123);
     expect(state.interpolate([123])).toEqual([123]);
+
+    // Object walking.
+    expect(state.interpolate(
+      {"==": ["!ref($.state.action_b)", "a"]},
+    )).toEqual({"==": [{ ok: true }, "a"]});
+    expect(state.interpolate(
+      {
+        "and": [
+          { "==": ["!ref($.event.data.userId)", "a"] },
+          { "==": ["!ref($.state.action_b)", "test"] },
+        ]
+      },
+    )).toEqual({
+      "and": [
+        { "==": [1.1, "a"] },
+        { "==": [{ ok: true }, "test"] },
+      ]
+    });
   })
 });
 

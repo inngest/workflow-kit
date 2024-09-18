@@ -15,6 +15,11 @@ type LayoutArgs = {
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
   nodesInitialized: boolean;
+
+  // The default node measure exists after the first render.  Nodes reset
+  // when the parent Workflow prop changes, and we use this as a memoized fallback
+  // to retain layout.
+  defaultNodeMeasure: { width: number, height: number } | undefined;
 }
 
 
@@ -35,7 +40,16 @@ export const useLayout = (args: LayoutArgs): Rect => {
     if (!nodesInitialized) {
       return { x: 0, y: 0, width: 0, height: 0 };
     }
-    const { nodes: newNodes, edges: newEdges, rect } = getLayoutedElements(nodes, edges, direction)
+
+    // Ensure theres a measured property on every node.
+    const nodesWithMeasures = nodes.map((node) => {
+      if (!node.measured) {
+        return { ...node, measured: args.defaultNodeMeasure };
+      }
+      return node;
+    });
+
+    const { nodes: newNodes, edges: newEdges, rect } = getLayoutedElements(nodesWithMeasures, edges, direction)
 
     setNodes(newNodes);
     setEdges(newEdges);

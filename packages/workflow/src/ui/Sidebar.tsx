@@ -181,7 +181,7 @@ export const ActionList = ({ actions }: { actions: PublicEngineAction[] }) => {
             if (blankNode === undefined) {
               return;
             }
-            appendAction(action, blankNode?.data.parent.id);
+            appendAction(action, blankNode?.data.parent.id, blankNode?.data.edge);
           }} />
         ))}
       </div>
