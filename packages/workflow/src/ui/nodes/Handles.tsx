@@ -35,8 +35,9 @@ export const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAc
   // We want to find out whether the engine action's definition has any built-in edges,
   // or if we disable the 'Add new node' handle.
   const engineAction = availableActions.find((ea) => ea.kind === action?.kind);
+  const edges = engineAction?.edges?.edges || [];
 
-  if (engineAction?.edges?.allowAdd === false && engineAction?.edges?.length === 0) {
+  if (engineAction?.edges?.allowAdd === false && edges.length === 0) {
     return null;
   }
 
@@ -57,8 +58,6 @@ export const AddHandle = (props: HandleProps & { node: Node, action?: WorkflowAc
       </div>
     </Handle>
   );
-
-  const edges = engineAction?.edges?.edges || [];
 
   if (!edges.length) {
    return renderHandle(() => addNode());
