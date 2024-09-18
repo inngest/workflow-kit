@@ -3,7 +3,7 @@ import { SidebarWorkflowForm } from "./WorfklowForm";
 import { SidebarFooter } from "./Footer";
 import { ActionList } from "./ActionList";
 import { SidebarActionForm } from "./ActionForm";
-
+import { WorkflowAction } from "../../types";
 
 export type SidebarProps = {
   /**
