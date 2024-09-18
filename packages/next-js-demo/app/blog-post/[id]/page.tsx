@@ -114,7 +114,9 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
               )}
             </CardContent>
             <CardFooter className="flex justify-end align-bottom gap-4">
-              <BlogPostActions id={blogPost.id.toString()} />
+              {blogPost.markdown_ai_revision && (
+                <BlogPostActions id={blogPost.id.toString()} />
+              )}
             </CardFooter>
           </Card>
         </Tabs>

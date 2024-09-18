@@ -41,8 +41,8 @@ export const actions: EngineAction[] = [
 
       const content =
         workflowAction.id === '1'
-          ? blogPost.markdown
-          : blogPost.ai_suggestions || blogPost.markdown;
+          ? blogPost.markdown // if we are the first action, we use the initial content
+          : blogPost.markdown_ai_revision || blogPost.markdown; // otherwise we use the previous current ai revision
 
       const aiRevision = await step.run('add-toc-to-article', async () => {
         const openai = new OpenAI({
@@ -98,8 +98,8 @@ export const actions: EngineAction[] = [
 
       const content =
         workflowAction.id === '1'
-          ? blogPost.markdown
-          : blogPost.ai_suggestions || blogPost.markdown;
+          ? blogPost.markdown // if we are the first action, we use the initial content
+          : blogPost.markdown_ai_revision || blogPost.markdown; // otherwise we use the previous current ai revision
 
       const aiRevision = await step.run('get-ai-grammar-fixes', async () => {
         const openai = new OpenAI({
@@ -191,7 +191,7 @@ export const actions: EngineAction[] = [
               markdown_ai_revision: null,
               status: 'published',
             })
-            .eq('id', event.data.id)
+            .eq('id', blogPost.id)
             .select('*');
         });
       }
@@ -214,7 +214,7 @@ export const actions: EngineAction[] = [
             markdown_ai_revision: null,
             status: 'published',
           })
-          .eq('id', event.data.id)
+          .eq('id', blogPost.id)
           .select('*');
       });
     },
