@@ -267,7 +267,5 @@ const searchParents = (target: HTMLElement, search: string[], until?: HTMLElemen
       break;
     }
   }
-
-  console.log(result)
   return result;
 }
