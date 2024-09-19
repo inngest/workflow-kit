@@ -33,7 +33,7 @@ export const actions: EngineAction[] = [
   {
     kind: 'add_ToC',
     name: 'Add a Table of Contents',
-    description: 'Create an AI-generated table of contents',
+    description: 'Add an AI-generated ToC',
     handler: async ({ event, step, workflowAction }) => {
       const blogPost = await step.run('load-blog-post', async () =>
         loadBlogPost(event.data.id)
@@ -90,7 +90,7 @@ export const actions: EngineAction[] = [
   {
     kind: 'grammar_review',
     name: 'Perform a grammar review',
-    description: 'Perform a grammar review',
+    description: 'Use OpenAI for grammar fixes',
     handler: async ({ event, step, workflowAction }) => {
       const blogPost = await step.run('load-blog-post', async () =>
         loadBlogPost(event.data.id)
@@ -147,7 +147,7 @@ export const actions: EngineAction[] = [
   {
     kind: 'wait_for_approval',
     name: 'Apply changes after approval',
-    description: 'Apply changes after approval',
+    description: 'Request approval for changes',
     handler: async ({ event, step }) => {
       const blogPost = await step.run('load-blog-post', async () =>
         loadBlogPost(event.data.id)
@@ -200,7 +200,7 @@ export const actions: EngineAction[] = [
   {
     kind: 'apply_changes',
     name: 'Apply changes',
-    description: 'Apply changes',
+    description: 'Save the AI revisions',
     handler: async ({ event, step }) => {
       const blogPost = await step.run('load-blog-post', async () =>
         loadBlogPost(event.data.id)
