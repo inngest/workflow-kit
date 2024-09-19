@@ -119,13 +119,47 @@ SET row_security = off;
 --
 
 INSERT INTO "public"."blog_posts" ("id", "title", "subtitle", "status", "markdown", "markdown_ai_revision", "created_at") VALUES
-	(2, 'Advanced TypeScript Techniques', 'Dive deep into TypeScript and learn advanced concepts.', 'draft', '# Dive Deep Into TypeScript: Advanced Concepts
+	(3, 'The Future of Web Development', 'Explore upcoming trends and technologies in web development.
+', 'published', '# Table of Contents
+- [Serverless Architecture](#serverless-architecture)
+- [Progressive Web Apps (PWAs)](#progressive-web-apps-pwas)
+- [Web Assembly](#web-assembly)
+- [AI and Machine Learning](#ai-and-machine-learning)
+- [Continuous Integration and Deployment](#continuous-integration-and-deployment)
 
-TypeScript is a powerful superset of JavaScript that adds static typing and other advanced features to the language. While the basics of TypeScript are fairly straightforward, the language has many advanced concepts that can help you write more robust, maintainable, and expressive code. In this article, we''ll dive deep into some of these advanced TypeScript techniques.
+# The Future of Web Development
+
+The world of web development is constantly evolving, with new technologies, frameworks, and paradigms emerging all the time. As we look towards the future, there are several key trends that are likely to shape the way we build web applications.
+
+## Serverless Architecture
+
+Serverless architecture is becoming increasingly popular, allowing developers to focus on writing code without worrying about managing servers. With serverless computing, the cloud provider dynamically manages the allocation of machine resources, charging only for the actual amount of resources consumed by an application. This can lead to significant cost savings and increased scalability.
+
+## Progressive Web Apps (PWAs)
+
+Progressive Web Apps are web applications that use modern web capabilities to deliver an app-like experience to users. PWAs are fast, reliable, and engaging, and they work on any device with a web browser. As mobile usage continues to grow, PWAs will become an increasingly important way to deliver mobile experiences without the need for a separate native app.
+
+## Web Assembly
+
+Web Assembly is a low-level bytecode format that can be run in web browsers at near-native speeds. This opens up the possibility of running high-performance applications, such as games and virtual machines, directly in the browser. As Web Assembly matures and gains wider adoption, it could significantly expand the capabilities of web applications.
+
+## AI and Machine Learning
+
+Artificial Intelligence and Machine Learning are starting to make their way into web development, enabling new types of applications and user experiences. From chatbots and recommendation engines to intelligent UI components, AI will play an increasingly important role in the future of web development.
+
+## Continuous Integration and Deployment
+
+As web applications become more complex, the need for robust Continuous Integration and Deployment (CI/CD) practices becomes more critical. Automating the process of testing, building, and deploying web applications can significantly improve the speed and reliability of development. Tools like Git, Jenkins, CircleCI, and Azure DevOps will become essential parts of the modern web application development process.
+
+These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes a key part of being a successful web developer. Continuous learning is vital for the future of web developers.', NULL, '2024-08-27 15:44:25+00'),
+	(2, 'Advanced TypeScript Techniques', 'Dive deep into TypeScript and learn advanced concepts.', 'published', '# Deep Dive Into TypeScript: Advanced Concepts
+
+
+TypeScript is a dynamic superset of JavaScript that includes static typing and other refined features. While the bases of TypeScript are comparatively easy, the language introduces numerous advanced ideas beneficial for producing more robust, maintainable, and articulate code. This article covers these advanced TypeScript techniques.
 
 ## 1. Intersection Types
 
-Intersection types allow you to combine multiple types into one. This is useful when you want to create a new type that has all the properties of several other types. The syntax for intersection types uses the `&` operator. 
+Intersection types enable the merging of several types into one. This is beneficial when wanting to generate a new type with the properties of various other types. Intersection types make use of the `&` operator. 
 
 ```typescript
 type A = { a: string };
@@ -141,7 +175,7 @@ let x: AandB = {
 
 ## 2. Union Types
 
-Union types are the opposite of intersection types. They allow a value to be one of several types. The syntax for union types uses the `|` operator.
+Union types contrast intersection types by allowing a value to be one of several types. Union types make use of the `|` operator.
 
 ```typescript
 type StringOrNumber = string | number;
@@ -152,7 +186,7 @@ x = 42; // also valid
 
 ## 3. Type Guards
 
-Type guards are expressions that perform a runtime check to narrow down the type of a variable within a conditional block. There are several ways to define type guards in TypeScript.
+Type Guards are expressions that execute a runtime check to narrow the type of a variable within a conditional block. There are several methods to define type guards in TypeScript.
 
 ### `typeof` Type Guard
 
@@ -221,7 +255,8 @@ function getArea(shape: Shape) {
 
 ## 4. Conditional Types
 
-Conditional types allow types to be selected based on a condition that''s evaluated at compile time. They use the `extends` keyword to check if one type can be assigned to another.
+Conditional types are ideal for type selection based on a compile-time evaluated condition. 
+They use the `extends` key-word to check if one type can be assigned to another.
 
 ```typescript
 type NonNullable<T> = T extends null | undefined ? never : T;
@@ -232,7 +267,7 @@ type B = NonNullable<null | undefined>; // never
 
 ## 5. Mapped Types
 
-Mapped types allow you to create new types based on old ones by applying a transformation to each property. They use the `in` keyword to iterate over the keys of a type, and can optionally add a `readonly` or `?` modifier to the properties.
+Mapped types allow the creation of new types grounded on old ones by applying a transformation to each property. This uses the `in` keyword to iterate over the keys of a type and optionally add `readonly` or `?` modifier to the properties.
 
 ```typescript
 type Readonly<T> = {
@@ -254,7 +289,7 @@ type PartialPerson = Partial<Person>;
 
 ## 6. Infer Keyword
 
-The `infer` keyword is used in conditional types to infer a type from another type. This is often used with generic types to extract a type from a more complex type.
+The `infer` keyword is utilized in conditional types to infer a type from another. This is predominantly used with generic types to extract a type from a more complex type.
 
 ```typescript
 type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
@@ -277,7 +312,7 @@ type User = ReturnType<typeof getUser>;
 
 ## 7. Template Literal Types
 
-Template literal types allow you to create string literal types that can expand into many strings. They use the `${T}` syntax in type positions.
+Template literal types allow the creation of string literal types that can expand into numerous strings. They use `${T}` syntax in type positions.
 
 ```typescript
 type Vertical = "top" | "middle" | "bottom";
@@ -289,53 +324,11 @@ let a: Alignment = "top-left"; // valid
 let b: Alignment = "top-pot"; // invalid
 ```
 
-These are just a few of the many advanced concepts in TypeScript. By mastering these techniques, you can write TypeScript code that is more expressive, safer, and easier to maintain. However, it''s important to not overuse these features, as they can also make your code harder to understand. Use them judiciously and in situations where they truly improve the clarity and robustness of your code.
+These are several of the many advanced concepts in TypeScript. Mastering these techniques allows for more expressive, safer, and easier-to-maintain TypeScript code. Nevertheless, it''s crucial not to overuse these features, as they could make the code more complicated to understand. Use them wisely and in situations where they truly enhance the clearness and sturdiness of the code.
 
-TypeScript''s advanced types are a powerful tool in creating a more strongly typed codebase. They allow you to express complex relationships between types, create more flexible and reusable types, and catch potential errors at compile time. By leveraging these advanced concepts, you can take full advantage of TypeScript''s type system and create more reliable and maintainable JavaScript code.', NULL, '2024-09-04 15:41:20+00'),
-	(3, 'The Future of Web Development', 'Explore upcoming trends and technologies in web development.
-', 'published', '# The Future of Web Development
-
-The world of web development is constantly evolving, with new technologies, frameworks, and paradigms emerging all the time. As we look towards the future, there are several key trends that are likely to shape the way we build web applications.
-
-## Serverless Architecture
-
-Serverless architecture is becoming increasingly popular, allowing developers to focus on writing code without worrying about managing servers. With serverless, the cloud provider dynamically manages the allocation of machine resources, charging only for the actual amount of resources consumed by an application. This can lead to significant cost savings and increased scalability.
-
-## Progressive Web Apps (PWAs)
-
-Progressive Web Apps are web applications that use modern web capabilities to deliver an app-like experience to users. PWAs are fast, reliable, and engaging, and they work on any device with a web browser. As mobile usage continues to grow, PWAs will become an increasingly important way to deliver mobile experiences without the need for a separate native app.
-
-## Web Assembly
-
-Web Assembly is a low-level bytecode format that can be run in web browsers at near-native speeds. This opens up the possibility of running high-performance applications, such as games and virtual machines, directly in the browser. As Web Assembly matures and gains wider adoption, it could significantly expand the capabilities of web applications.
-
-## AI and Machine Learning
-
-Artificial Intelligence and Machine Learning are starting to make their way into web development, enabling new types of applications and user experiences. From chatbots and recommendation engines to intelligent UI components, AI will play an increasingly important role in the future of web development.
-
-## Continuous Integration and Deployment
-
-As web applications become more complex, the need for robust Continuous Integration and Deployment (CI/CD) practices becomes more critical. Automating the process of testing, building, and deploying web applications can significantly improve the speed and reliability of development. Tools like Git, Jenkins, CircleCI, and Azure DevOps will become essential parts of the modern web application development process.
-
-These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes key part of being a successful web developer. So, continuous learning is vital in future as a web developer.', NULL, '2024-08-27 15:44:25+00'),
+TypeScript''s advanced types are powerful tools for creating a more firmly typed codebase. They enable the expression of complex relationships between types, creation of more flexible, preserved types, and spotting of potential errors at compile time. By leveraging these advanced ideas, you can take full advantage of TypeScript''s type system and create more reliable and maintainable JavaScript code.', NULL, '2024-09-04 15:41:20+00'),
 	(1, 'Getting Started with React', 'Learn the basics of React and start building your first app.', 'published', '# Getting Started with React: A Comprehensive Guide
 
-## Table of Contents
-1. [Introduction](#introduction)
-2. [What is React?](#what-is-react)
-3. [Setting Up Your Development Environment](#setting-up-your-development-environment)
-4. [Creating Your First React App](#creating-your-first-react-app)
-5. [Understanding JSX](#understanding-jsx)
-6. [Components: The Building Blocks of React](#components-the-building-blocks-of-react)
-7. [Props and State](#props-and-state)
-8. [Handling Events](#handling-events)
-9. [Conditional Rendering](#conditional-rendering)
-10. [Lists and Keys](#lists-and-keys)
-11. [Forms in React](#forms-in-react)
-12. [Hooks: A Game Changer](#hooks-a-game-changer)
-13. [Routing in React](#routing-in-react)
-14. [Best Practices and Common Pitfalls](#best-practices-and-common-pitfalls)
-15. [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -627,8 +620,8 @@ Happy coding, and welcome to the world of React!', NULL, '2024-09-14 15:40:48.76
 --
 
 INSERT INTO "public"."workflows" ("id", "created_at", "workflow", "enabled", "trigger", "description", "name") VALUES
-	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}, {"to": "3", "from": "2"}], "actions": [{"id": "1", "kind": "grammar_review", "name": "Perform a grammar review", "description": "Perform a grammar review"}, {"id": "3", "kind": "wait_for_approval"}, {"id": "2", "kind": "add_ToC"}]}', true, 'blog-post.updated', 'Getting a review from AI', 'When a blog post is moved to review'),
-	(2, '2024-09-14 20:19:41.892865+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}], "actions": [{"id": "1", "kind": "grammar_review"}, {"id": "2", "kind": "apply_changes"}]}', false, 'blog-post.published', 'Actions performed to optimize the distribution of blog posts', 'When a blog post is published');
+	(2, '2024-09-14 20:19:41.892865+00', NULL, true, 'blog-post.published', 'Actions performed to optimize the distribution of blog posts', 'When a blog post is published'),
+	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}, {"to": "3", "from": "2"}], "actions": [{"id": "1", "kind": "add_ToC", "name": "Add a Table of Contents"}, {"id": "2", "kind": "grammar_review", "name": "Perform a grammar review"}, {"id": "3", "kind": "apply_changes", "name": "Apply changes"}]}', true, 'blog-post.updated', 'Getting a review from AI', 'When a blog post is moved to review');
 
 
 --
