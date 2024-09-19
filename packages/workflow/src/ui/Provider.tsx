@@ -47,6 +47,9 @@ export type ProviderContextType = ProviderProps & {
   // The "edge" may be provided from the PublicEngineAction, eg. to specify a true or false edge.
   appendAction: (action: PublicEngineAction, parentID: string, edge?: PublicEngineEdge) => void;
 
+  // deleteAction deletes an action from the workflow.
+  deleteAction: (actionID: string) => void;
+
   // TODO: Drag n drop
 }
 
@@ -138,11 +141,43 @@ export const Provider = (props: ProviderProps & { children: React.ReactNode }) =
     // Parse the workflow and find the new node for selection.
     const parsed = parseWorkflow({ workflow: workflowCopy, trigger });
     const newNode = parsed.nodes.find((n) => n.id === id);
-    console.log(newNode, id, parsed.nodes)
     if (newNode) {
       setSelectedNode(newNode);
     }
   }
+
+  const deleteAction = (actionID: string) => {
+    if (!workflow) return;
+
+    const workflowCopy = {
+      ...workflow,
+      actions: workflow.actions.filter(action => action.id !== actionID),
+      edges: workflow.edges.slice(),
+    };
+
+    // Find the parent edge and remove it
+    const parentEdgeIndex = workflowCopy.edges.findIndex(edge => edge.to === actionID);
+    const parentEdge = workflowCopy.edges[parentEdgeIndex];
+
+    if (!parentEdge) {
+      return;
+    }
+
+    workflowCopy.edges.splice(parentEdgeIndex, 1);
+
+    // Find child edges and update them
+    const childEdges = workflowCopy.edges.filter(edge => edge.from === actionID);
+    childEdges.forEach(childEdge => {
+      const updatedChildEdge = {
+        ...childEdge,
+        from: parentEdge.from,
+      };
+      const index = workflowCopy.edges.findIndex(edge => edge.to === childEdge.to && edge.from === actionID);
+      workflowCopy.edges[index] = updatedChildEdge;
+    });
+
+    onChange(workflowCopy);
+  };
 
   // TODO: Add customizable React components here to the Provider
 
@@ -160,6 +195,7 @@ export const Provider = (props: ProviderProps & { children: React.ReactNode }) =
       setBlankNode,
 
       appendAction,
+      deleteAction,
     }}>
       {children}
     </ProviderContext.Provider>

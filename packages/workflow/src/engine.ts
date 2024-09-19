@@ -204,8 +204,6 @@ export class ExecutionState {
         const previousActionOutput = this.#state.get(edge.from);
         const input = this.interpolate(ref, previousActionOutput);
 
-        console.log("edge conditional", input, type, value);
-
         switch (type) {
           case "if":
             if (!input) {

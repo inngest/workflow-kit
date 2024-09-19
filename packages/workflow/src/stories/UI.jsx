@@ -69,6 +69,7 @@ export const UI = ({ workflow, trigger, direction }) => {
         trigger={trigger}
         availableActions={availableActions}
         onChange={(updated) => {
+          console.log("updated", updated);
           setWorkflow(updated)
         }}
       >
