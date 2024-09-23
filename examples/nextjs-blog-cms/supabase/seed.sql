@@ -152,7 +152,7 @@ Artificial Intelligence and Machine Learning are starting to make their way into
 As web applications become more complex, the need for robust Continuous Integration and Deployment (CI/CD) practices becomes more critical. Automating the process of testing, building, and deploying web applications can significantly improve the speed and reliability of development. Tools like Git, Jenkins, CircleCI, and Azure DevOps will become essential parts of the modern web application development process.
 
 These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes a key part of being a successful web developer. Continuous learning is vital for the future of web developers.', NULL, '2024-08-27 15:44:25+00', NULL),
-	(2, 'Advanced TypeScript Techniques', 'Dive deep into TypeScript and learn advanced concepts.', 'published', '# Deep Dive Into TypeScript: Advanced Concepts
+	(2, 'Advanced TypeScript Techniques', 'Dive deep into TypeScript and learn advanced concepts.', 'draft', '# Deep Dive Into TypeScript: Advanced Concepts
 
 ## Table of Contents
 1. [Intersection Types](#1-intersection-types)
@@ -338,7 +338,7 @@ let b: Alignment = "top-pot"; // invalid
 These are several of the many advanced concepts in TypeScript. Mastering these techniques allows for more expressive, safer, and easier-to-maintain TypeScript code. Nevertheless, it''s crucial not to overuse these features, as they could make the code more complicated to understand. Use them wisely and in situations where they truly enhance the clearness and sturdiness of the code.
 
 TypeScript''s advanced types are powerful tools for creating a more firmly typed codebase. They enable the expression of complex relationships between types, creation of more flexible, preserved types, and spotting of potential errors at compile time. By leveraging these advanced ideas, you can take full advantage of TypeScript''s type system and create more reliable and maintainable JavaScript code.', NULL, '2024-09-04 15:41:20+00', NULL),
-	(1, 'Getting Started with React', 'Learn the basics of React and start building your first app.', 'published', '# Getting Started with React: A Comprehensive Guide
+	(1, 'Getting Started with React', 'Learn the basics of React and start building your first app.', 'draft', '# Getting Started with React: A Comprehensive Guide
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -648,7 +648,7 @@ Happy coding, and welcome to the world of React!', NULL, '2024-09-14 15:40:48.76
 
 INSERT INTO "public"."workflows" ("id", "created_at", "workflow", "enabled", "trigger", "description", "name") VALUES
 	(2, '2024-09-14 20:19:41.892865+00', NULL, true, 'blog-post.published', 'Actions performed to optimize the distribution of blog posts', 'When a blog post is published'),
-	(1, '2024-09-14 15:46:53.822922+00', '{"edges": [{"to": "1", "from": "$source"}, {"to": "2", "from": "1"}, {"to": "3", "from": "2"}], "actions": [{"id": "1", "kind": "add_ToC", "name": "Add a Table of Contents"}, {"id": "2", "kind": "grammar_review", "name": "Perform a grammar review"}, {"id": "3", "kind": "apply_changes", "name": "Apply changes"}]}', true, 'blog-post.updated', 'Getting a review from AI', 'When a blog post is moved to review');
+	(1, '2024-09-14 15:46:53.822922+00', NULL, true, 'blog-post.updated', 'Getting a review from AI', 'When a blog post is moved to review');
 
 
 --

@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS "public"."blog_posts" (
     "status" "text",
     "markdown" "text",
     "markdown_ai_revision" "text",
-    "created_at" timestamp with time zone DEFAULT "now"()
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "ai_publishing_recommendations" "text"
 );
 
 ALTER TABLE "public"."blog_posts" OWNER TO "postgres";
