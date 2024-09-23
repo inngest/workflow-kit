@@ -118,7 +118,7 @@ SET row_security = off;
 -- Data for Name: blog_posts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."blog_posts" ("id", "title", "subtitle", "status", "markdown", "markdown_ai_revision", "created_at") VALUES
+INSERT INTO "public"."blog_posts" ("id", "title", "subtitle", "status", "markdown", "markdown_ai_revision", "created_at", "ai_publishing_recommendations") VALUES
 	(3, 'The Future of Web Development', 'Explore upcoming trends and technologies in web development.
 ', 'published', '# Table of Contents
 - [Serverless Architecture](#serverless-architecture)
@@ -151,9 +151,20 @@ Artificial Intelligence and Machine Learning are starting to make their way into
 
 As web applications become more complex, the need for robust Continuous Integration and Deployment (CI/CD) practices becomes more critical. Automating the process of testing, building, and deploying web applications can significantly improve the speed and reliability of development. Tools like Git, Jenkins, CircleCI, and Azure DevOps will become essential parts of the modern web application development process.
 
-These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes a key part of being a successful web developer. Continuous learning is vital for the future of web developers.', NULL, '2024-08-27 15:44:25+00'),
+These are just a few of the trends that are likely to shape the future of web development. As the web continues to evolve, staying aware of these trends and in command of the latest technologies becomes a key part of being a successful web developer. Continuous learning is vital for the future of web developers.', NULL, '2024-08-27 15:44:25+00', NULL),
 	(2, 'Advanced TypeScript Techniques', 'Dive deep into TypeScript and learn advanced concepts.', 'published', '# Deep Dive Into TypeScript: Advanced Concepts
 
+## Table of Contents
+1. [Intersection Types](#1-intersection-types)
+2. [Union Types](#2-union-types)
+3. [Type Guards](#3-type-guards)
+    - [`typeof` Type Guard](#typeof-type-guard)
+    - [`instanceof` Type Guard](#instanceof-type-guard)
+    - [Custom Type Guards](#custom-type-guards)
+4. [Conditional Types](#4-conditional-types)
+5. [Mapped Types](#5-mapped-types)
+6. [Infer Keyword](#6-infer-keyword)
+7. [Template Literal Types](#7-template-literal-types)
 
 TypeScript is a dynamic superset of JavaScript that includes static typing and other refined features. While the bases of TypeScript are comparatively easy, the language introduces numerous advanced ideas beneficial for producing more robust, maintainable, and articulate code. This article covers these advanced TypeScript techniques.
 
@@ -326,9 +337,25 @@ let b: Alignment = "top-pot"; // invalid
 
 These are several of the many advanced concepts in TypeScript. Mastering these techniques allows for more expressive, safer, and easier-to-maintain TypeScript code. Nevertheless, it''s crucial not to overuse these features, as they could make the code more complicated to understand. Use them wisely and in situations where they truly enhance the clearness and sturdiness of the code.
 
-TypeScript''s advanced types are powerful tools for creating a more firmly typed codebase. They enable the expression of complex relationships between types, creation of more flexible, preserved types, and spotting of potential errors at compile time. By leveraging these advanced ideas, you can take full advantage of TypeScript''s type system and create more reliable and maintainable JavaScript code.', NULL, '2024-09-04 15:41:20+00'),
+TypeScript''s advanced types are powerful tools for creating a more firmly typed codebase. They enable the expression of complex relationships between types, creation of more flexible, preserved types, and spotting of potential errors at compile time. By leveraging these advanced ideas, you can take full advantage of TypeScript''s type system and create more reliable and maintainable JavaScript code.', NULL, '2024-09-04 15:41:20+00', NULL),
 	(1, 'Getting Started with React', 'Learn the basics of React and start building your first app.', 'published', '# Getting Started with React: A Comprehensive Guide
 
+## Table of Contents
+1. [Introduction](#introduction)
+2. [What is React?](#what-is-react)
+3. [Setting Up Your Development Environment](#setting-up-your-development-environment)
+4. [Creating Your First React App](#creating-your-first-react-app)
+5. [Understanding JSX](#understanding-jsx)
+6. [Components: The Building Blocks of React](#components-the-building-blocks-of-react)
+7. [Props and State](#props-and-state)
+8. [Handling Events](#handling-events)
+9. [Conditional Rendering](#conditional-rendering)
+10. [Lists and Keys](#lists-and-keys)
+11. [Forms in React](#forms-in-react)
+12. [Hooks: A Game Changer](#hooks-a-game-changer)
+13. [Routing in React](#routing-in-react)
+14. [Best Practices and Common Pitfalls](#best-practices-and-common-pitfalls)
+15. [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -612,7 +639,7 @@ React has transformed the way we build user interfaces, offering a powerful and 
 
 As you continue your React journey, remember that practice is key. Build small projects, experiment with different features, and don''t be afraid to dive into the React documentation for more advanced topics. With time and experience, you''ll be building complex, efficient React applications in no time.
 
-Happy coding, and welcome to the world of React!', NULL, '2024-09-14 15:40:48.760124+00');
+Happy coding, and welcome to the world of React!', NULL, '2024-09-14 15:40:48.760124+00', NULL);
 
 
 --

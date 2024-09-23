@@ -48,6 +48,13 @@ export const BlogPostList = () => {
                   </Badge>
                 </div>
               )}
+              {blogPost.ai_publishing_recommendations && (
+                <div className="flex">
+                  <Badge variant="secondary">
+                    Publishing recommendations are available
+                  </Badge>
+                </div>
+              )}
             </CardHeader>
             <CardContent>
               <div className="flex items-center text-sm text-muted-foreground">

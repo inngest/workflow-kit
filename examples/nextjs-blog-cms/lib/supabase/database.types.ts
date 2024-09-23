@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       blog_posts: {
         Row: {
+          ai_publishing_recommendations: string | null;
           created_at: string | null;
           id: number;
           markdown: string | null;
@@ -20,6 +21,7 @@ export type Database = {
           title: string | null;
         };
         Insert: {
+          ai_publishing_recommendations?: string | null;
           created_at?: string | null;
           id?: number;
           markdown?: string | null;
@@ -29,6 +31,7 @@ export type Database = {
           title?: string | null;
         };
         Update: {
+          ai_publishing_recommendations?: string | null;
           created_at?: string | null;
           id?: number;
           markdown?: string | null;

@@ -26,12 +26,16 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
       runtime as any
     );
 
-    let MDXBlogPostAIRevisionContent: typeof MDXBlogPostContent | undefined;
+    let MDXBlogPostAIContent: typeof MDXBlogPostContent | undefined;
 
-    if (blogPost.markdown_ai_revision) {
-      MDXBlogPostAIRevisionContent = (
+    if (
+      blogPost.markdown_ai_revision ||
+      blogPost.ai_publishing_recommendations
+    ) {
+      MDXBlogPostAIContent = (
         await evaluate(
-          blogPost.markdown_ai_revision,
+          blogPost.markdown_ai_revision ||
+            blogPost.ai_publishing_recommendations,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           runtime as any
         )
@@ -48,8 +52,12 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             <CardHeader>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="original">Original</TabsTrigger>
-                {MDXBlogPostAIRevisionContent && (
-                  <TabsTrigger value="ai">AI version</TabsTrigger>
+                {MDXBlogPostAIContent && (
+                  <TabsTrigger value="ai">
+                    {blogPost.markdown_ai_revision
+                      ? "AI version"
+                      : "AI Publishing recommendations"}
+                  </TabsTrigger>
                 )}
               </TabsList>
             </CardHeader>
@@ -57,9 +65,9 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
               <TabsContent value="original">
                 <MDXBlogPostContent components={mdxComponents} />
               </TabsContent>
-              {MDXBlogPostAIRevisionContent && (
+              {MDXBlogPostAIContent && (
                 <TabsContent value="ai">
-                  <MDXBlogPostAIRevisionContent components={mdxComponents} />
+                  <MDXBlogPostAIContent components={mdxComponents} />
                 </TabsContent>
               )}
             </CardContent>

@@ -40,6 +40,13 @@ export const publishBlogPost = async (id: string) => {
       markdown_ai_revision: null,
     })
     .eq("id", id);
+
+  await inngest.send({
+    name: "blog-post.published",
+    data: {
+      id,
+    },
+  });
 };
 export const updateWorkflow = async (workflow: Workflow) => {
   const supabase = createClient();

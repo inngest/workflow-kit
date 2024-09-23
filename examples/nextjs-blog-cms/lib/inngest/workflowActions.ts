@@ -8,8 +8,8 @@ import { type PublicEngineAction } from "@inngest/workflow/types";
 //     - [Apply changes]
 //     - [Apply changes after approval]
 //   - Post-publish actions
-//     - Send the article to the mailing list (Resend audience)
-//     - Get Tweet and LinkedIn verbatim
+//     - Get Tweet verbatim
+//     - Get LinkedIn verbatim
 export const actions: PublicEngineAction[] = [
   {
     kind: "add_ToC",
@@ -32,13 +32,13 @@ export const actions: PublicEngineAction[] = [
     description: "Save the AI revisions",
   },
   {
-    kind: "send_to_mailing_list",
-    name: "Send the article to the mailing list",
-    description: "Send the article to the mailing list",
+    kind: "generate_linkedin_posts",
+    name: "Generate LinkedIn posts",
+    description: "Generate LinkedIn posts",
   },
   {
-    kind: "generate_tweet_and_linked_in_posts",
-    name: "Generate Twitter and LinkedIn posts",
-    description: "Generate Twitter and LinkedIn posts",
+    kind: "generate_tweet_posts",
+    name: "Generate Twitter posts",
+    description: "Generate Twitter posts",
   },
 ];
