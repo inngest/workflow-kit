@@ -13,7 +13,6 @@ test("execution", async () => {
         kind: "multiply",
         name: "Multiply some numbers",
         handler: async (args) => {
-          console.log("yee", args);
           return (args.workflowAction?.inputs?.a || 0) * (args.workflowAction?.inputs?.b || 0)
         },
         inputs: {

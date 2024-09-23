@@ -12,14 +12,9 @@ import {
   NodeChange,
 } from '@xyflow/react';
 import { Workflow, WorkflowAction } from "../types";
-import { getLayoutedElements, parseWorkflow, useLayout } from "./layout";
-import { TriggerNode, ActionNode, BlankNode } from "./nodes";
-import {
-  useProvider,
-  useSidebarPosition,
-  useTrigger,
-  useWorkflow,
-} from "./Provider";
+import { getLayoutedElements, parseWorkflow, useLayout } from './layout';
+import { TriggerNode, ActionNode, BlankNode } from './nodes';
+import { useProvider, useSidebarPosition, useTrigger, useWorkflow } from './Provider';
 
 export type EditorProps = {
   direction?: Direction;
