@@ -10,13 +10,13 @@ export default async function Automation({
   params: { id: string };
 }) {
   const supabase = createClient();
-  const { data: workflows } = await supabase
+  const { data: workflow } = await supabase
     .from("workflows")
     .select("*")
     .eq("id", params.id!)
-    .limit(1);
-  if (workflows && workflows[0]) {
-    return <AutomationEditor workflow={workflows![0]} />;
+    .single();
+  if (workflow) {
+    return <AutomationEditor workflow={workflow} />;
   } else {
     notFound();
   }

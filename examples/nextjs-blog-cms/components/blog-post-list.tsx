@@ -1,8 +1,11 @@
 "use client";
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import useSWR from "swr";
 import { CalendarIcon, Edit, Eye, RocketIcon } from "lucide-react";
+
+import { type BlogPost } from "@/lib/supabase/types";
 
 import {
   Card,
@@ -15,45 +18,30 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-import { capitalize } from "@/lib/utils";
-import Link from "next/link";
-import { BlogPost } from "@/lib/supabase/client";
-import { listBlogPosts, sendBlogPostToReview } from "@/app/actions";
+import { capitalize, fetcher } from "@/lib/utils";
+import { sendBlogPostToReview } from "@/app/actions";
 
 export const BlogPostList = () => {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-
-  const refreshBlogPosts = useCallback(async () => {
-    const list = await listBlogPosts();
-    setBlogPosts(list);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(refreshBlogPosts, 1000);
-    refreshBlogPosts();
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+  const { data } = useSWR<{ blogPosts: BlogPost[] }>(
+    "/api/blog-posts",
+    fetcher,
+    { refreshInterval: 1000 }
+  );
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Blog Posts</h2>
-        {/* <Button>
-              <PlusIcon className="mr-2 h-4 w-4" /> Create a new blog post
-            </Button> */}
       </div>
       <div className="grid gap-6">
-        {(blogPosts || []).map((blogPost) => (
+        {(data?.blogPosts || []).map((blogPost) => (
           <Card key={blogPost.id}>
             <CardHeader className="flex flex-row">
               <div className="flex-1">
                 <CardTitle>{blogPost.title}</CardTitle>
                 <CardDescription>{blogPost.subtitle}</CardDescription>
               </div>
-              {blogPost.markdown_ai_revision && (
+              {blogPost.status === "needs approval" && (
                 <div className="flex">
                   <Badge variant="secondary">
                     An AI revision need approval

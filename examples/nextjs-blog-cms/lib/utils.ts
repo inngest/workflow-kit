@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const fetcher = (...args: [any]) =>
+  fetch(...args).then((res) => res.json());

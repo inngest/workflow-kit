@@ -1,8 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
-import { Database } from "./database.types";
-
-export type Workflow = Database["public"]["Tables"]["workflows"]["Row"];
-export type BlogPost = Database["public"]["Tables"]["blog_posts"]["Row"];
+import { Database } from "./types";
 
 export function createClient() {
   return createBrowserClient<Database>(

@@ -1,19 +1,21 @@
-'use server';
-import { inngest } from '@/lib/inngest/client';
-import { createClient } from '@/lib/supabase/server';
+"use server";
+import { inngest } from "@/lib/inngest/client";
+import { Json } from "@/lib/supabase/database.types";
+import { createClient } from "@/lib/supabase/server";
+import { type Workflow } from "@/lib/supabase/types";
 
 export const sendBlogPostToReview = async (id: string) => {
   const supabase = createClient();
   await supabase
-    .from('blog_posts')
+    .from("blog_posts")
     .update({
-      status: 'under review',
+      status: "under review",
       markdown_ai_revision: null,
     })
-    .eq('id', id);
+    .eq("id", id);
 
   await inngest.send({
-    name: 'blog-post.updated',
+    name: "blog-post.updated",
     data: {
       id,
     },
@@ -22,32 +24,40 @@ export const sendBlogPostToReview = async (id: string) => {
 
 export const approveBlogPostAiSuggestions = async (id: string) => {
   await inngest.send({
-    name: 'blog-post.approve-ai-suggestions',
+    name: "blog-post.approve-ai-suggestions",
     data: {
       id,
     },
   });
 };
 
-export const listBlogPosts = async () => {
-  const supabase = createClient();
-  const { data: blogPosts } = await supabase
-    .from('blog_posts')
-    .select(
-      'id, title, subtitle, markdown_ai_revision, created_at, status, markdown'
-    )
-    .order('created_at', { ascending: false });
-
-  return blogPosts || [];
-};
-
 export const publishBlogPost = async (id: string) => {
   const supabase = createClient();
   await supabase
-    .from('blog_posts')
+    .from("blog_posts")
     .update({
-      status: 'published',
+      status: "published",
       markdown_ai_revision: null,
     })
-    .eq('id', id);
+    .eq("id", id);
+};
+export const updateWorkflow = async (workflow: Workflow) => {
+  const supabase = createClient();
+  await supabase
+    .from("workflows")
+    .update({
+      workflow: workflow.workflow as unknown as Json,
+    })
+    .eq("id", workflow.id);
+};
+
+export const toggleWorkflow = async (workflowId: number, enabled: boolean) => {
+  const supabase = createClient();
+  await supabase
+    .from("workflows")
+    .update({
+      enabled,
+    })
+    .eq("id", workflowId)
+    .select("*");
 };

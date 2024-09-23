@@ -1,12 +1,11 @@
-'use client';
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useReducer, useState } from 'react';
-import { Editor, Provider, Sidebar } from '@inngest/workflow/ui';
+"use client";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { SaveIcon } from "lucide-react";
+import { Editor, Provider, Sidebar } from "@inngest/workflow/ui";
 
-import { useRouter } from 'next/navigation';
+import { type Workflow } from "@/lib/supabase/types";
 
-import { SaveIcon } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -14,14 +13,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-import { actions } from '@/lib/inngest/workflowActions';
-import { Workflow, createClient } from '@/lib/supabase/client';
+import { updateWorkflow } from "@/app/actions";
+import { actions } from "@/lib/inngest/workflowActions";
 
-import '@inngest/workflow/ui/ui.css';
-import '@xyflow/react/dist/style.css';
+import "@inngest/workflow/ui/ui.css";
+import "@xyflow/react/dist/style.css";
 
 export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
   const router = useRouter();
@@ -29,28 +28,8 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
     useState<typeof workflow>(workflow);
 
   const onSaveWorkflow = useCallback(async () => {
-    const supabase = createClient();
-    if (workflowDraft.id.toString().startsWith('draft-')) {
-      supabase
-        .from('workflows')
-        .insert({ workflow: workflowDraft.workflow })
-        .select()
-        .then(({ data }) => {
-          if (data) {
-            // @ts-expect-error bad typings
-            updateWorkflowDraft({ id: data.id, ...workflowDraft });
-          }
-        });
-    } else {
-      await supabase
-        .from('workflows')
-        .update({
-          workflow: workflowDraft.workflow,
-        })
-        .eq('id', workflowDraft.id);
-    }
-
-    router.push('/automation');
+    await updateWorkflow(workflowDraft);
+    router.push("/automation");
   }, [router, workflowDraft]);
 
   return (
@@ -71,37 +50,29 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
           </div>
         </CardHeader>
         <CardContent>
-          {workflowDraft ? (
-            <>
-              <div className="h-svh max-h-[500px]">
-                <Provider
-                  key={workflowDraft?.id}
-                  workflow={workflowDraft?.workflow as any}
-                  trigger={{
-                    event: {
-                      name: workflowDraft.trigger,
-                    },
-                  }}
-                  availableActions={actions}
-                  onChange={(updated) => {
-                    updateWorkflowDraft({
-                      ...workflowDraft,
-                      workflow: updated as any,
-                    });
-                  }}
-                >
-                  <Editor>
-                    <Sidebar position="right"></Sidebar>
-                  </Editor>
-                </Provider>
-              </div>
-              <CardFooter className="flex justify-end align-bottom gap-4"></CardFooter>
-            </>
-          ) : (
-            <div>
-              {'Use the control at the top to select or create an automation.'}
-            </div>
-          )}
+          <div className="h-svh max-h-[500px]">
+            <Provider
+              key={workflowDraft?.id}
+              workflow={workflowDraft?.workflow}
+              trigger={{
+                event: {
+                  name: workflowDraft.trigger,
+                },
+              }}
+              availableActions={actions}
+              onChange={(updated) => {
+                updateWorkflowDraft({
+                  ...workflowDraft,
+                  workflow: updated,
+                });
+              }}
+            >
+              <Editor>
+                <Sidebar position="right"></Sidebar>
+              </Editor>
+            </Provider>
+          </div>
+          <CardFooter className="flex justify-end align-bottom gap-4"></CardFooter>
         </CardContent>
       </Card>
     </div>

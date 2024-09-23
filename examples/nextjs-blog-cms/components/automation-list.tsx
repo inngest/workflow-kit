@@ -1,11 +1,13 @@
-'use client';
+"use client";
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { EditIcon } from 'lucide-react';
+import useSWR from "swr";
+import Link from "next/link";
+import { EditIcon } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { type Workflow } from "@/lib/supabase/types";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,36 +15,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
-import { Workflow, createClient } from '@/lib/supabase/client';
+import { toggleWorkflow } from "@/app/actions";
+import { fetcher } from "@/lib/utils";
 
 export const AutomationList = () => {
-  const supabase = createClient();
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
-
-  const refreshWorkflows = useCallback(async () => {
-    const { data } = await supabase.from('workflows').select('*').order('id');
-    setWorkflows(data || []);
-  }, []);
-
-  useEffect(() => {
-    refreshWorkflows();
-  }, []);
-
-  const onToggleWorkflow = (workflowId: number) => async (enabled: boolean) => {
-    await supabase
-      .from('workflows')
-      .update({
-        enabled,
-      })
-      .eq('id', workflowId)
-      .select('*');
-
-    await refreshWorkflows();
-  };
+  const { data } = useSWR<{ workflows: Workflow[] }>(
+    "/api/workflows",
+    fetcher,
+    { refreshInterval: 500 }
+  );
 
   return (
     <div>
@@ -50,7 +35,7 @@ export const AutomationList = () => {
         <h2 className="text-2xl font-bold">Automations</h2>
       </div>
       <div className="grid gap-6">
-        {(workflows || []).map((workflow) => {
+        {(data?.workflows || []).map((workflow) => {
           const actions: any[] = (workflow.workflow as any)?.actions || [];
           return (
             <Card key={workflow.id}>
@@ -61,8 +46,8 @@ export const AutomationList = () => {
               <CardContent>
                 <div className="flex items-center text-sm text-muted-foreground">
                   {actions.length
-                    ? actions.map(({ name, kind }) => name || kind).join(', ')
-                    : 'No actions'}
+                    ? actions.map(({ name, kind }) => name || kind).join(", ")
+                    : "No actions"}
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
@@ -70,7 +55,9 @@ export const AutomationList = () => {
                   <Switch
                     id="airplane-mode"
                     checked={workflow.enabled!}
-                    onCheckedChange={onToggleWorkflow(workflow.id)}
+                    onCheckedChange={() =>
+                      toggleWorkflow(workflow.id, !workflow.enabled)
+                    }
                   />
                   <Label htmlFor="airplane-mode">Active</Label>
                 </div>

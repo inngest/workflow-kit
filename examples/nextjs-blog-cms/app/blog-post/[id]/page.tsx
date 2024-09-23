@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound } from "next/navigation";
 import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
@@ -10,70 +9,21 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import { createClient } from "@/lib/supabase/server";
 import { BlogPostActions } from "@/components/blog-post-actions";
+
+import { loadBlogPost } from "@/lib/loaders/blog-post";
+import { mdxComponents } from "@/lib/mdxComponents";
 
 export const revalidate = 0;
 
-// shadcn markdown compat
-const components: any = {
-  h1: ({ children, ...props }: any) => (
-    <h1
-      {...props}
-      className="scroll-m-20 text-2xl font-extrabold tracking-tight"
-    >
-      {children}
-    </h1>
-  ),
-  h2: ({ children, ...props }: any) => (
-    <h2
-      {...props}
-      className="mt-10 scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight transition-colors first:mt-0"
-    >
-      {children}
-    </h2>
-  ),
-  p: ({ children, ...props }: any) => (
-    <p {...props} className="leading-7 [&:not(:first-child)]:mt-6">
-      {children}
-    </p>
-  ),
-  ul: ({ children, ...props }: any) => (
-    <ul {...props} className="my-6 ml-6 list-disc [&>li]:mt-2">
-      {children}
-    </ul>
-  ),
-  li: ({ children, ...props }: any) => (
-    <li {...props} className="ml-4 list-outside list-disc mb-2">
-      {children}
-    </li>
-  ),
-  a: ({ children, ...props }: any) => (
-    <a
-      {...props}
-      className="font-medium text-primary underline underline-offset-4"
-    >
-      {children}
-    </a>
-  ),
-};
-
 export default async function BlogPost({ params }: { params: { id: string } }) {
-  const supabase = createClient();
-  const { data: blogPosts } = await supabase
-    .from("blog_posts")
-    .select("*")
-    .eq("id", params.id!)
-    .limit(1);
+  const blogPost = await loadBlogPost(params.id);
 
-  if (blogPosts && blogPosts[0]) {
-    const blogPost = blogPosts[0];
-
+  if (blogPost) {
     const { default: MDXBlogPostContent } = await evaluate(
       blogPost.markdown || "",
-      // @ts-expect-error <?>
-      runtime
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      runtime as any
     );
 
     let MDXBlogPostAIRevisionContent: typeof MDXBlogPostContent | undefined;
@@ -82,8 +32,8 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
       MDXBlogPostAIRevisionContent = (
         await evaluate(
           blogPost.markdown_ai_revision,
-          // @ts-expect-error <?>
-          runtime
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          runtime as any
         )
       ).default;
     }
@@ -105,16 +55,16 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
             </CardHeader>
             <CardContent>
               <TabsContent value="original">
-                <MDXBlogPostContent components={components} />
+                <MDXBlogPostContent components={mdxComponents} />
               </TabsContent>
               {MDXBlogPostAIRevisionContent && (
                 <TabsContent value="ai">
-                  <MDXBlogPostAIRevisionContent components={components} />
+                  <MDXBlogPostAIRevisionContent components={mdxComponents} />
                 </TabsContent>
               )}
             </CardContent>
             <CardFooter className="flex justify-end align-bottom gap-4">
-              {blogPost.markdown_ai_revision && (
+              {blogPost.status === "needs approval" && (
                 <BlogPostActions id={blogPost.id.toString()} />
               )}
             </CardFooter>
