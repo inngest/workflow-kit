@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    branches:
+      # - main
+      - holding-branch-until-ready
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          # Used to fetch all history so that changesets doesn't attempt to
+          # publish duplicate tags.
+          fetch-depth: 0
+      # Replaces `concurrency` - never cancels any jobs
+      - uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 30
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm install
+        with:
+          working-directory: packages/workflow
+      - run: pnpm run build
+        with:
+          working-directory: packages/workflow
+      - run: pnpm run test
+        with:
+          working-directory: packages/workflow
+      - uses: changesets/action@v1
+        with:
+          cwd: packages/workflow
+          title: "Release @latest"
+          publish: pnpm run publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHANGESET_GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_ENV: test # disable npm access checks; they don't work in CI

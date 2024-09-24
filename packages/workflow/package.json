@@ -1,15 +1,63 @@
 {
-  "name": "@inngest/workflow",
+  "name": "@inngest/workflow-kit",
   "version": "0.0.1",
   "description": "Durable visual worfklows in your app, instantly",
   "main": "dist/index.js",
   "scripts": {
+    "build": "rm -rf dist && tsc && cp src/ui/ui.css dist/ui/ui.css",
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "publish": "npm publish --access public --provenance"
   },
+  "homepage": "https://github.com/inngest/workflow-sdk/tree/main/packages/workflow#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inngest/workflow-sdk.git",
+    "directory": "packages/workflow"
+  },
+  "keywords": [
+    "inngest",
+    "workflow"
+  ],
   "author": "Inngest Inc",
-  "license": "Apache 2",
+  "license": "Apache-2.0",
+  "typings": "index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./ui": {
+      "require": {
+        "types": "./dist/ui/index.d.ts",
+        "default": "./dist/ui/index.js"
+      },
+      "import": {
+        "types": "./dist/ui/index.d.ts",
+        "default": "./dist/ui/index.js"
+      },
+      "default": {
+        "types": "./dist/ui/index.d.ts",
+        "default": "./dist/ui/index.js"
+      }
+    },
+    "./ui/ui.css": "./dist/ui/ui.css",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
     "@radix-ui/react-popover": "^1.1.1",
@@ -35,6 +83,7 @@
     "@types/jest": "^29.5.12",
     "@types/json-logic-js": "^2.0.7",
     "@types/jsonpath": "^0.2.4",
+    "@types/node": "^22.5.5",
     "@types/react": "^18.3.5",
     "jest": "^29.7.0",
     "preset": "link:@storybook/react-vite/preset",

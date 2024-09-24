@@ -17,7 +17,7 @@ import { TriggerNode, ActionNode, BlankNode } from './nodes';
 import { useProvider, useSidebarPosition, useTrigger, useWorkflow } from './Provider';
 
 export type EditorProps = {
-  direction: Direction;
+  direction?: Direction;
   children?: React.ReactNode;
 }
 
@@ -40,8 +40,9 @@ export const Editor = (props: EditorProps) => {
   );
 }
 
-const EditorUI = ({ direction }: EditorProps) => {
-  const { workflow, trigger, setSelectedNode, blankNode, setBlankNode } = useProvider();
+const EditorUI = ({ direction = "down" }: EditorProps) => {
+  const { workflow, trigger, setSelectedNode, blankNode, setBlankNode } =
+    useProvider();
   const nodesInitialized = useNodesInitialized();
 
   // Retain the initial node measurement for computing layout when Workflow is refreshed.

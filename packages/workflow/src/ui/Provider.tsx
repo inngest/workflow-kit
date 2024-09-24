@@ -20,11 +20,10 @@ export type ProviderProps = {
   // Note that this does not imply that you must save the workflow.  You may
   // store the workflow in an internal state and only save when the user
   // hits a save button.
-  onChange: (w: Workflow) => {};
-}
+  onChange: (w: Workflow) => any;
+};
 
 export type ProviderContextType = ProviderProps & {
-
   // Used so that the `position` prop in the `Sidebar` component can set
   // state and be accessed by other components.  We need this to set the
   // correct classnames on the editor and parent container.
@@ -108,7 +107,7 @@ export const useProvider = (): ProviderContextType => {
     throw new Error("useProvider must be used within a Provider");
   }
   return ctx;
-}
+};
 
 export const Provider = (props: ProviderProps & { children: React.ReactNode }) => {
   const { children, workflow, trigger, onChange, availableActions } = props;
