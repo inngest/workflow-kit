@@ -6,6 +6,7 @@ import { actionsWithHandlers } from "./workflowActionHandlers";
 
 const workflowEngine = new Engine({
   actions: actionsWithHandlers,
+  // @ts-expect-error FIX
   loader: loadWorkflow,
 });
 
