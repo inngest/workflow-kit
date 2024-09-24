@@ -1,16 +1,16 @@
-import { type PublicEngineAction } from "@inngest/workflow-kit/types";
+// import { type PublicEngineAction } from "@inngest/workflow-kit";
 
 // Actions
 //   - Review actions
 //     - Add ToC to the article
 //     - Add grammar suggestions
-//     - Add SEO on-page optimization suggestions
 //     - [Apply changes]
 //     - [Apply changes after approval]
 //   - Post-publish actions
 //     - Get Tweet verbatim
 //     - Get LinkedIn verbatim
-export const actions: PublicEngineAction[] = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const actions: any[] = [
   {
     kind: "add_ToC",
     name: "Add a Table of Contents",
