@@ -33,7 +33,7 @@
   "exports": {
     ".": {
       "require": {
-        "types": "./index.d.cts",
+        "types": "./index.d.ts",
         "default": "./index.js"
       },
       "import": {
@@ -47,7 +47,7 @@
     },
     "./ui": {
       "require": {
-        "types": "./ui/index.d.cts",
+        "types": "./ui/index.d.ts",
         "default": "./ui/index.js"
       },
       "import": {
