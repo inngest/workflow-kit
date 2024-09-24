@@ -6,11 +6,11 @@ import {
   type Loader,
   type Workflow,
   DAG,
+  TriggerEvent,
 } from "./types";
-import { bfs, newDAG } from './graph';
-import jsonpath from "jsonpath";
-import { Type } from '@sinclair/typebox'
+import { bfs, newDAG, SourceNodeID } from './graph';
 import { Value, AssertError } from '@sinclair/typebox/value'
+import { interpolate, refs, resolveInputs } from "./interpolation";
 
 export class Engine {
   #options: EngineOptions;
@@ -90,7 +90,7 @@ export class Engine {
         const wval = (action.inputs || {})[name];
 
         // If this is a ref, we can't yet validate as we don't have state.
-        if (!isRef(wval)) {
+        if (refs(wval).length === 0) {
           try {
             Value.Assert(input.type, wval)
           } catch(e) {
@@ -100,7 +100,7 @@ export class Engine {
           continue
         }
 
-        // TODO: Ensure that ref is valid.
+        // TODO: Ensure that refs are valid.
 
         // TODO: Attempt to grab the output type of the action this is referencing, if this
         // is an action, and validate that (recursively)
@@ -163,7 +163,7 @@ export interface ExecutionOpts {
   engine: Engine;
   graph: DAG;
   workflow: Workflow;
-  event: any;
+  event: TriggerEvent;
   step: any;
 }
 
@@ -196,13 +196,35 @@ export class ExecutionState {
     const { event, step, graph, workflow, engine } = this.#opts;
 
     await bfs(graph, async (action, edge) => {
-      if (edge.if && !this.ref(edge.if)) {
-        // Do not iterate through the edge, as it's an if which evaluated falsey.
-        return;
-      }
-      if (edge.else && !!this.ref(edge.else)) {
-        // Do not iterate through the edge, as it's an else which evaluated truthy.
-        return;
+      if (edge.conditional) {
+        const { type, ref, value } = edge.conditional || {};
+
+        // We allow "!ref($.output)" to refer to the previous action's output.
+        // Here we must grab the previous step's state for interpolation as the result.
+        const previousActionOutput = this.#state.get(edge.from);
+        const input = this.interpolate(ref, previousActionOutput);
+
+        switch (type) {
+          case "if":
+            if (!input) {
+              // This doesn't match, so we skip this edge.
+              return;
+            }
+            break;
+          case "else":
+            if (!!input) {
+              // This doesn't match, so we skip this edge.
+              return;
+            }
+            break
+          case "match":
+            // Because object equality is what it is, we JSON stringify both
+            // values here.
+            if (JSON.stringify(input) !== JSON.stringify(value)) {
+              // This doesn't match, so we skip this edge.
+              return;
+            }
+        }
       }
 
       // Find the base action from the workflow class.  This includes the handler
@@ -216,11 +238,14 @@ export class ExecutionState {
       //
       // Note: The handler should use Inngest's step API within handlers, ensuring
       // that nodes in the workflow execute once, durably.
+      const workflowAction = { ...action, inputs: this.resolveInputs(action) };
+
       const result = await base.handler({
         event,
         step,
         workflow,
-        workflowAction: this.resolveInputs(action),
+        workflowAction,
+        state: this.#state,
       });
 
       // And set our state.  This may be a previously memoized output.
@@ -233,47 +258,22 @@ export class ExecutionState {
    * variables within the config.
    *
    */
-  resolveInputs = (action: WorkflowAction) => {
+  resolveInputs = (action: WorkflowAction): Record<string, any> => {
     // For each action, check to see if it references any prior input.
-    action.inputs ??= {};
-    for (let key in action.inputs) {
-      action.inputs[key] = this.ref(action.inputs[key]);
-    }
-    return action
-  }
-
-  ref = (value: any) => {
-    if (!isRef(value)) {
-      return value;
-    }
-
-    let path = value.replace("!ref(", "")
-    path = path.substring(0, path.length-1) // remove ")"
-
-    // This is a reference.  Grab the JSON path from the ref by removing "$ref:"
-    // and grabbing the item from state.
-    const result = jsonpath.query({
-      event: this.#opts.event,
+    return resolveInputs(action.inputs ?? {}, {
       state: Object.fromEntries(this.#state),
-    }, path)
-
-    if (!Array.isArray(result)) {
-      return result
-    }
-    if (result.length === 0) {
-      // Not found.
-      return undefined;
-    }
-    if (result.length === 1) {
-      return result[0]
-    }
-    return result;
+      event: this.#opts.event
+    });
   }
-}
 
-function isRef(input: string) {
-  if (typeof(input) !== "string" || input.indexOf("!ref($.") !== 0) {
-    return false
+  interpolate = (value: any, output?: any): any => {
+    return interpolate(value, {
+      state: Object.fromEntries(this.#state),
+      event: this.#opts.event,
+      // output is an optional output from the previous step, used to
+      // interpolate conditional edges. 
+      output,
+    });
   }
-  return input.substring(input.length-1) === ")"
+
 }
