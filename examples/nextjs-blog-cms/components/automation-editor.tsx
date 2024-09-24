@@ -1,11 +1,12 @@
 "use client";
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Editor, Provider, Sidebar } from "@inngest/workflow-kit/ui";
 import { SaveIcon } from "lucide-react";
-import { Editor, Provider, Sidebar } from "@inngest/workflow/ui";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 
 import { type Workflow } from "@/lib/supabase/types";
 
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,12 +15,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 import { updateWorkflow } from "@/app/actions";
 import { actions } from "@/lib/inngest/workflowActions";
 
-import "@inngest/workflow/ui/ui.css";
+import "@inngest/workflow-kit/ui/ui.css";
 import "@xyflow/react/dist/style.css";
 
 export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {

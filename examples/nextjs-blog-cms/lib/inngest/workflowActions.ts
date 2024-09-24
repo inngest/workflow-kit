@@ -1,4 +1,4 @@
-import { type PublicEngineAction } from "@inngest/workflow/types";
+import { type PublicEngineAction } from "@inngest/workflow-kit/types";
 
 // Actions
 //   - Review actions

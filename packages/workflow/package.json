@@ -1,10 +1,10 @@
 {
-  "name": "@inngest/workflow",
+  "name": "@inngest/workflow-kit",
   "version": "0.0.1",
   "description": "Durable visual worfklows in your app, instantly",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && cp src/ui/ui.css dist/ui/ui.css",
+    "build": "rm -rf dist && tsc && cp src/ui/ui.css dist/ui/ui.css",
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -23,43 +23,39 @@
   "author": "Inngest Inc",
   "license": "Apache-2.0",
   "typings": "index.d.ts",
-  "typescript": {
-    "definition": "index.d.ts"
-  },
   "publishConfig": {
-    "directory": "dist",
     "access": "public"
   },
   "exports": {
     ".": {
       "require": {
-        "types": "./index.d.ts",
-        "default": "./index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       },
       "import": {
-        "types": "./index.d.ts",
-        "default": "./index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       },
       "default": {
-        "types": "./index.d.ts",
-        "default": "./index.js"
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
       }
     },
     "./ui": {
       "require": {
-        "types": "./ui/index.d.ts",
-        "default": "./ui/index.js"
+        "types": "./dist/ui/index.d.ts",
+        "default": "./dist/ui/index.js"
       },
       "import": {
-        "types": "./ui/index.d.ts",
-        "default": "./ui/index.js"
+        "types": "./dist/ui/index.d.ts",
+        "default": "./dist/ui/index.js"
       },
       "default": {
-        "types": "./ui/index.d.ts",
-        "default": "./ui/index.js"
+        "types": "./dist/ui/index.d.ts",
+        "default": "./dist/ui/index.js"
       }
     },
-    "./dist/ui/ui.css": "./dist/ui/ui.css",
+    "./ui/ui.css": "./dist/ui/ui.css",
     "./package.json": "./package.json"
   },
   "dependencies": {
