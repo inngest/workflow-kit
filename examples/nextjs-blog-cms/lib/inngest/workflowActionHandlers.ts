@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { type EngineAction, type WorkflowAction } from "@inngest/workflow-kit";
 import OpenAI from "openai";
-import { type WorkflowAction, type EngineAction } from "@inngest/workflow";
 
 import { type BlogPost } from "../supabase/types";
 
-import { createClient } from "../supabase/server";
 import { loadBlogPost } from "../loaders/blog-post";
+import { createClient } from "../supabase/server";
 import { actions } from "./workflowActions";
 
 // helper to ensure that each step of the workflow use
@@ -235,7 +235,7 @@ export const actionsWithHandlers: EngineAction[] = [
           const prompt = `
           Generate a LinkedIn post that will drive traffic to the below blog post.
           Keep the a profesionnal tone, do not use emojis.
-  
+
           Here is the blog post text wrapped with "\`\`\`":
           \`\`\`
           ${getAIworkingCopy(workflowAction, blogPost)}

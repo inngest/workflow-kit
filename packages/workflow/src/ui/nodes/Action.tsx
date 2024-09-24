@@ -1,7 +1,7 @@
-import { useProvider } from "../Provider";
-import { WorkflowAction } from "inngest/types";
 import { Handle, Node } from "@xyflow/react";
+import { WorkflowAction } from "../../";
 import { Direction } from "../Editor";
+import { useProvider } from "../Provider";
 import { AddHandle, sourceHandleProps, targetHandleProps } from "./Handles";
 
 export type ActionNodeProps = {

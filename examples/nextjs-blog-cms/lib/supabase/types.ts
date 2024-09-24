@@ -1,4 +1,4 @@
-import { type Workflow as InngestWorkflow } from "@inngest/workflow";
+import { type Workflow as InngestWorkflow } from "@inngest/workflow-kit";
 import { Database as SourceDatabase } from "./database.types";
 
 // typing `workflows.workflow` Json field

@@ -1,4 +1,4 @@
-import { WorkflowAction } from "inngest/types";
+import { WorkflowAction } from "../../";
 import { useProvider } from "../Provider";
 
 export const SidebarHeader = () => {

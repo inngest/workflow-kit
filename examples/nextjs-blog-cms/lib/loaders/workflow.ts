@@ -1,4 +1,4 @@
-import { Workflow } from "@inngest/workflow";
+import { Workflow } from "@inngest/workflow-kit";
 
 import { createClient } from "../supabase/server";
 

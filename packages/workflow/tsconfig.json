@@ -18,13 +18,7 @@
     "noImplicitOverride": true,
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
-    "strictNullChecks": true,
-    "paths": {
-      "inngest": ["./src"],
-      "inngest/*": ["./src/*"],
-      "@local": ["./src"],
-      "@local/*": ["./src/*"]
-    }
+    "strictNullChecks": true
   },
-  "include": ["./src/**/*", "./scripts/**/*"]
+  "include": ["./src/**/*.ts"]
 }
