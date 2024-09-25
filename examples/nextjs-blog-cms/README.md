@@ -166,3 +166,7 @@ Let's trigger our automation:
 1. At the bottom, click on the "Approve suggestions & Publish" button
 1. Back on the Runs page of the [Inngest Dev Server](http://localhost:8288) or [Inngest Platform](https://app.inngest.com/?ref=github-workflow-kit-example-nextjs-blog-cms-readme), you see the workflow in a completed state.
 1. Going back to the demo application, on the "blog posts" tab, the blog post should be flagged as "Published"
+
+## License
+
+[Apache 2.0](./LICENSE.md)
