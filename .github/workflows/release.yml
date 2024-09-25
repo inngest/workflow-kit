@@ -3,8 +3,7 @@ name: Release
 on:
   push:
     branches:
-      # - main
-      - holding-branch-until-ready
+      - main
 
 env:
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -40,7 +39,7 @@ jobs:
       - uses: changesets/action@v1
         with:
           cwd: packages/workflow
-          title: "Release @latest"
+          title: 'Release @latest'
           publish: pnpm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESET_GITHUB_TOKEN }}
