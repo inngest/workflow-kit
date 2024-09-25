@@ -2,9 +2,10 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
-
+    # branches:
+    #   - main
+    tags:
+      - 'v*'
 env:
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
