@@ -4,10 +4,12 @@
   "description": "Durable visual workflows in your app, instantly",
   "main": "dist/index.js",
   "scripts": {
+    "changeset": "changeset",
     "build": "rm -rf dist && tsc && cp src/ui/ui.css dist/ui/ui.css",
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "release": "npm publish --access public --provenance && changeset tag && git push --follow-tags origin main"
   },
   "homepage": "https://github.com/inngest/workflow-kit/tree/main/packages/workflow#readme",
   "repository": {
