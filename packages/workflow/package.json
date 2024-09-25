@@ -9,7 +9,7 @@
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "release": "npm publish --access public --provenance && changeset tag && git push --follow-tags origin main"
+    "release": "npm run build && changeset publish"
   },
   "homepage": "https://github.com/inngest/workflow-kit/tree/main/packages/workflow#readme",
   "repository": {
