@@ -235,7 +235,7 @@ export interface WorkflowEdge {
  *
  * If an Instance is not found, this should throw an error.
  */
-export type Loader = (event: unknown) => Promise<Workflow>
+export type Loader = (event: any) => Promise<Workflow | null | undefined>
 
 export type DAG = DirectedGraph<Node, Edge>;
 
