@@ -31,11 +31,8 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - run: pnpm install
-        working-directory: packages/workflow
       - run: pnpm run build
-        working-directory: packages/workflow
       - run: pnpm run test
-        working-directory: packages/workflow
       - uses: changesets/action@v1
         with:
           title: "Release @latest"

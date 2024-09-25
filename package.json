@@ -1,6 +1,7 @@
 {
   "scripts": {
     "changeset": "changeset",
+    "test": "pnpm run --if-present --recursive test",
     "build": "pnpm run --if-present --recursive build",
     "release": "pnpm run build && changeset publish"
   },
