@@ -42,7 +42,7 @@ jobs:
         with:
           cwd: packages/workflow
           title: 'Release @latest'
-          publish: pnpm publish --access public --provenance
+          publish: pnpm publish --access public --provenance --no-git-checks
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESET_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
