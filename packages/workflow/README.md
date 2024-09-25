@@ -1,6 +1,6 @@
 <p align="center">
 
-![Workflow Kit by Inngest](/.github/assets/workflow-kit.jpg)
+![Workflow Kit by Inngest](https://github.com/inngest/workflow-kit/blob/main/.github/assets/workflow-kit.jpg?raw=true)
 
 </p>
 
@@ -16,7 +16,7 @@
 
 **Workflow Kit** enables you to build user-defined workflows with Inngest by providing a set of workflow actions to the **[Workflow Engine](https://www.inngest.com/docs/reference/workflow-kit/engine?ref=github-workflow-kit-readme)** while using the **[pre-built React components](https://www.inngest.com/docs/reference/workflow-kit/components-api?ref=github-workflow-kit-readme)** to build your Workflow Editor UI.
 
-![Workflow kit UI demo](/.github/assets/workflow-demo.gif)
+![Workflow kit UI demo](https://github.com/inngest/workflow-kit/blob/main/.github/assets/workflow-demo.gif?raw=true)
 
 ## Installation
 
