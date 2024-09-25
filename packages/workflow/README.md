@@ -1,14 +1,46 @@
 <p align="center">
 
-![Workflow Kit by Inngest](./workflow-kit.jpg)
+![Workflow Kit by Inngest](/.github/assets/workflow-kit.jpg)
 
 </p>
 
 <p align="center">
-    <a href="https://www.inngest.com/docs?ref=github-workflow-sdk-readme">Documentation</a>
+    <a href="https://www.inngest.com/docs/reference/workflow-kit?ref=github-workflow-kit-readme">Documentation</a>
     <span>&nbsp;·&nbsp;</span>
-    <a href="https://www.inngest.com/blog?ref=github-workflow-sdk-readme">Blog</a>
+    <a href="https://www.inngest.com/blog?ref=github-workflow-kit-readme">Blog</a>
     <span>&nbsp;·&nbsp;</span>
     <a href="https://www.inngest.com/discord">Community</a>
 </p>
-<br/>
+
+# Workflow kit
+
+**Workflow Kit** enables you to build user-defined workflows with Inngest by providing a set of workflow actions to the **[Workflow Engine](https://www.inngest.com/docs/reference/workflow-kit/engine?ref=github-workflow-kit-readme)** while using the **[pre-built React components](https://www.inngest.com/docs/reference/workflow-kit/components-api?ref=github-workflow-kit-readme)** to build your Workflow Editor UI.
+
+![Workflow kit UI demo](/.github/assets/workflow-demo.gif)
+
+## Installation
+
+Workflow kit requires the [Inngest TypeScript SDK](https://github.com/inngest/inngest-js) as a dependency. You can install both via `npm` or similar:
+
+```shell {{ title: "npm" }}
+npm install @inngest/workflow-kit inngest
+```
+
+## Documentation
+
+The full Workflow kit documentation is available [here](https://www.inngest.com/docs/reference/workflow-kit). You can also jump to specific guides and references:
+
+- [Creating workflow actions](https://www.inngest.com/docs/reference/workflow-kit/actions?ref=github-workflow-kit-readme)
+- [Using the workflow engine](https://www.inngest.com/docs/reference/workflow-kit/engine?ref=github-workflow-kit-readme)
+- [Workflow instance format](https://www.inngest.com/docs/reference/workflow-kit/workflow-instance?ref=github-workflow-kit-readme)
+- [Components API (React)](https://www.inngest.com/docs/reference/workflow-kit/components-api?ref=github-workflow-kit-readme)
+
+## Examples
+
+See Workflow kit in action in fully functioning example projects:
+
+- [Next.js Blog CMS](/examples/nextjs-blog-cms) - A ready-to-deploy Next.js demo using the Workflow Kit, Supabase, and OpenAI to power some AI content workflows.
+
+## License
+
+[Apache 2.0](/LICENSE.md)
