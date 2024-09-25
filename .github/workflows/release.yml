@@ -28,14 +28,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm install
-        with:
-          working-directory: packages/workflow
+        working-directory: packages/workflow
       - run: pnpm run build
-        with:
-          working-directory: packages/workflow
+        working-directory: packages/workflow
       - run: pnpm run test
-        with:
-          working-directory: packages/workflow
+        working-directory: packages/workflow
       - uses: changesets/action@v1
         with:
           cwd: packages/workflow
