@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "build": "pnpm run --if-present --recursive build",
+    "release": "pnpm run --if-present --recursive release"
   },
   "dependencies": {
     "@changesets/cli": "^2.27.8",

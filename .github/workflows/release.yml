@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ktlo/release-packaging # temp
 
 env:
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -37,7 +38,6 @@ jobs:
         working-directory: packages/workflow
       - uses: changesets/action@v1
         with:
-          cwd: packages/workflow
           title: "Release @latest"
           publish: pnpm run release
         env:
