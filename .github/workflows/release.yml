@@ -27,6 +27,10 @@ jobs:
           poll-interval-seconds: 30
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 6
       - run: pnpm install
         working-directory: packages/workflow
       - run: pnpm run build
