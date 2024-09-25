@@ -39,8 +39,8 @@ The full Workflow kit documentation is available [here](https://www.inngest.com/
 
 See Workflow kit in action in fully functioning example projects:
 
-- [Next.js Blog CMS](/examples/nextjs-blog-cms) - A ready-to-deploy Next.js demo using the Workflow Kit, Supabase, and OpenAI to power some AI content workflows.
+- [Next.js Blog CMS](/examples/nextjs-blog-cms#readme) - A ready-to-deploy Next.js demo using the Workflow Kit, Supabase, and OpenAI to power some AI content workflows.
 
 ## License
 
-[Apache 2.0](/LICENSE.md)
+[Apache 2.0](/packages/workflow/LICENSE.md)
