@@ -29,8 +29,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9.4.0
       - run: pnpm install
         working-directory: packages/workflow
       - run: pnpm run build
