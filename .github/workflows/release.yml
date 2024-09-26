@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - ktlo/release-packaging # temp
 
 env:
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
