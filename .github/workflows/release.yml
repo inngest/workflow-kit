@@ -2,10 +2,9 @@ name: Release
 
 on:
   push:
-    # branches:
-    #   - main
-    tags:
-      - 'v*'
+    branches:
+      - main
+
 env:
   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -30,19 +29,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9.4.0
       - run: pnpm install
-        working-directory: packages/workflow
       - run: pnpm run build
-        working-directory: packages/workflow
       - run: pnpm run test
-        working-directory: packages/workflow
       - uses: changesets/action@v1
         with:
-          cwd: packages/workflow
-          title: 'Release @latest'
-          publish: pnpm publish --access public --provenance --no-git-checks
+          title: "Release @latest"
+          publish: pnpm run release
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESET_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
