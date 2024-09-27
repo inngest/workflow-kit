@@ -1,7 +1,6 @@
 import { DirectedGraph } from "graphology";
 import { TSchema } from "@sinclair/typebox";
-import { type Inngest } from "inngest";
-import { createStepTools } from "inngest/components/InngestStepTools";
+import { type GetStepTools, type Inngest } from "inngest";
 
 export interface EngineOptions {
   actions?: Array<EngineAction>;
@@ -96,7 +95,7 @@ export interface EngineAction<TClient extends Inngest = Inngest>
    * The handler is the function which runs the action.  This may comprise of
    * many individual inngest steps.
    */
-  handler: ActionHandler<ReturnType<typeof createStepTools<TClient>>>;
+  handler: ActionHandler<GetStepTools<TClient>>;
 }
 
 /**
