@@ -35,7 +35,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
       MDXBlogPostAIContent = (
         await evaluate(
           blogPost.markdown_ai_revision ||
-            blogPost.ai_publishing_recommendations,
+            blogPost.ai_publishing_recommendations!,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           runtime as any
         )

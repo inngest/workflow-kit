@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { type EngineAction, type WorkflowAction } from "@inngest/workflow-kit";
 import OpenAI from "openai";
 
@@ -7,6 +6,7 @@ import { type BlogPost } from "../supabase/types";
 import { loadBlogPost } from "../loaders/blog-post";
 import { createClient } from "../supabase/server";
 import { actions } from "./workflowActions";
+import { inngest } from "./client";
 
 // helper to ensure that each step of the workflow use
 //  the original content or current AI revision
@@ -28,7 +28,7 @@ function addAiPublishingSuggestion(
     : blogPost.ai_publishing_recommendations + `<br/ >` + additionalSuggestion; // otherwise add one
 }
 
-export const actionsWithHandlers: EngineAction[] = [
+export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
   {
     // Add a Table of Contents
     ...actions[0],

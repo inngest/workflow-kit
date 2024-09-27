@@ -114,7 +114,7 @@ To run this demo locally, you'll need the following:
 
 Use the below button to deploy this template to Vercel:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Finngest%2Fworkflow-kit%2Ftree%2Fmain%2Fexamples%2Fnextjs-blog-cms%2F&project-name=nextjs-blog-cms-ai-workflow-with-inngest&repository-name=workflow-kit&demo-title=nextjs-blog-cms-ai-workflow-with-inngest&demo-description=Next.js%20blog%20back-office%20featuring%20some%20AI%20workflows%20helping%20with%20grammar%20fixes%2C%20generating%20Table%20of%20Contents%20or%20Tweets&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2Finngest%2Fworkflow-kit%2Frefs%2Fheads%2Fmain%2Fworkflow-kit.jpg)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?install-command=pnpm%20--ignore-workspace%20i&repository-url=https%3A%2F%2Fgithub.com%2Finngest%2Fworkflow-kit%2Ftree%2Fmain%2Fexamples%2Fnextjs-blog-cms%2F&project-name=nextjs-blog-cms-ai-workflow-with-inngest&repository-name=workflow-kit&demo-title=nextjs-blog-cms-ai-workflow-with-inngest&demo-description=Next.js%20blog%20back-office%20featuring%20some%20AI%20workflows%20helping%20with%20grammar%20fixes%2C%20generating%20Table%20of%20Contents%20or%20Tweets&demo-image=https%3A%2F%2Fraw.githubusercontent.com%2Finngest%2Fworkflow-kit%2Frefs%2Fheads%2Fmain%2Fworkflow-kit.jpg)
 
 **Once deployed, make sure to configure your `OPENAI_API_KEY` environment variable.**
 
