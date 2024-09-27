@@ -57,7 +57,7 @@ npm i
 # or
 yarn
 # or
-pnpm
+pnpm --ignore-workspace i
 ```
 
 3. Finally, copy your local `.env.example` as `.env.local` and fill your `OPENAI_API_KEY`.
