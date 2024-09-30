@@ -1,6 +1,6 @@
 {
   "name": "@inngest/workflow-kit",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Durable visual workflows in your app, instantly",
   "main": "dist/index.js",
   "scripts": {
