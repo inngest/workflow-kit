@@ -68,9 +68,7 @@ export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
               }}
             >
               <Editor>
-                <Sidebar position="right">
-                  <></>
-                </Sidebar>
+                <Sidebar position="right" />
               </Editor>
             </Provider>
           </div>

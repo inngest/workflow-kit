@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useProvider } from "../Provider";
 import { SidebarWorkflowForm } from "./WorfklowForm";
 import { SidebarFooter } from "./Footer";
@@ -20,7 +21,9 @@ export const Sidebar = (props: SidebarProps) => {
 
   // Set this within context so the parent editor can adjust our
   // flex layouts correctly.
-  setSidebarPosition(props.position === "left" ? "left" : "right");
+  useEffect(() => {
+    setSidebarPosition(props.position === "left" ? "left" : "right");
+  }, [props.position])
 
   let content = props.children || useSidebarContent();
 
