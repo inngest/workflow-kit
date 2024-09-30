@@ -1,6 +1,11 @@
 import { builtinActions } from "./builtin";
 import { resolveInputs } from "./interpolation";
-import { ActionHandler, ActionHandlerArgs, Workflow, WorkflowAction } from "./types";
+import {
+  ActionHandler,
+  ActionHandlerArgs,
+  Workflow,
+  WorkflowAction,
+} from "./types";
 
 describe("builtin:if", () => {
   // This tests the handler logic of the builtin:if action.
@@ -14,8 +19,8 @@ describe("builtin:if", () => {
       id: "1",
       kind: "builtin:if",
       inputs: {
-        condition: { "==": [1, 1] }
-      }
+        condition: { "==": [1, 1] },
+      },
     };
 
     let result = await action.handler(handlerInput(workflowAction));
@@ -27,7 +32,7 @@ describe("builtin:if", () => {
   });
 
   it("evaluates complex conditions with refs", async () => {
-    const state = new Map(Object.entries({"action_a": 1.123}));
+    const state = new Map(Object.entries({ action_a: 1.123 }));
     const event = { data: { name: "jimothy" } };
 
     const workflowAction: WorkflowAction = {
@@ -36,21 +41,21 @@ describe("builtin:if", () => {
       inputs: resolveInputs(
         {
           condition: {
-            "and": [
+            and: [
               { "==": ["!ref($.state.action_a)", 1.123] },
               { "==": ["!ref($.event.data.name)", "jimothy"] },
-            ]
+            ],
           },
         },
         { state: Object.fromEntries(state), event }
-      )
+      ),
     };
 
     let result = await action.handler({
       workflowAction,
       event,
       state,
-      step: {},
+      step: {} as any,
       workflow: {
         actions: [workflowAction],
         edges: [],
@@ -66,8 +71,8 @@ describe("builtin:if", () => {
       event: {
         data: {
           age: 82.1,
-          likes: ["a"]
-        }
+          likes: ["a"],
+        },
       },
       step: {},
       workflow: {
@@ -75,7 +80,6 @@ describe("builtin:if", () => {
         edges: [],
       },
       state: new Map(),
-    }
-  }
-
+    };
+  };
 });

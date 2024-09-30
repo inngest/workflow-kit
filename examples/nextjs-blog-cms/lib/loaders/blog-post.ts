@@ -1,6 +1,7 @@
 import { createClient } from "../supabase/server";
+import { BlogPost } from "../supabase/types";
 
-export async function loadBlogPost(id: string) {
+export async function loadBlogPost(id: string): Promise<BlogPost> {
   const supabase = createClient();
   const { data: blogPosts } = await supabase
     .from("blog_posts")
@@ -10,5 +11,11 @@ export async function loadBlogPost(id: string) {
     .eq("id", id)
     .limit(1);
 
-  return blogPosts && blogPosts[0];
+  const blogPost = blogPosts && blogPosts[0];
+
+  if (!blogPost) {
+    throw new Error(`Blog post #${id} not found`);
+  }
+
+  return blogPost;
 }

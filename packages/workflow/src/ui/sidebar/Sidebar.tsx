@@ -12,7 +12,7 @@ export type SidebarProps = {
    */
   position?: "right" | "left";
 
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const Sidebar = (props: SidebarProps) => {

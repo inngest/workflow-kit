@@ -1,19 +1,20 @@
 import { DirectedGraph } from "graphology";
-import { TSchema } from '@sinclair/typebox'
+import { TSchema } from "@sinclair/typebox";
+import { type GetStepTools, type Inngest } from "inngest";
 
 export interface EngineOptions {
   actions?: Array<EngineAction>;
 
   /**
    * disableBuiltinActions disables the builtin actions from being used.
-   * 
+   *
    * For selectively adding built-in actions, set this to true and expose
    * the actions you want via the `availableActions` prop (in your Engine)
    */
   disableBuiltinActions?: boolean;
 
   loader?: Loader;
-};
+}
 
 // TODO: Define event type more clearly.
 export type TriggerEvent = Record<string, any>;
@@ -21,9 +22,9 @@ export type TriggerEvent = Record<string, any>;
 /**
  * PublicEngineAction is the type representing an action in the *frontend UI*.  This is
  * a subset of the entire EngineAction type.
- * 
+ *
  * Actions for workflows are defined in the backend, directly on the Engine.  The Engine
- * provides an API which lists public information around the available actions - this type. 
+ * provides an API which lists public information around the available actions - this type.
  */
 export interface PublicEngineAction {
   /**
@@ -49,9 +50,9 @@ export interface PublicEngineAction {
   icon?: string;
 
   /**
-   * Inputs define input variables which can be configured by the workflow UI. 
+   * Inputs define input variables which can be configured by the workflow UI.
    */
-  inputs?: Record<string, ActionInput>
+  inputs?: Record<string, ActionInput>;
 
   /**
    * Outputs define the responses from the action, including the type, name, and
@@ -63,7 +64,7 @@ export interface PublicEngineAction {
     /**
      * allowAdd controls whether the user can add new edges to the graph
      * via the "add" handle.
-     * 
+     *
      * If undefined this defaults to true (as most nodes should allow adding
      * subsequent actions).
      */
@@ -75,8 +76,8 @@ export interface PublicEngineAction {
      * edges if an action contains `step.waitForEvent`.
      */
     edges?: Array<PublicEngineEdge>;
-  }
-};
+  };
+}
 
 export type PublicEngineEdge = Omit<WorkflowEdge, "from" | "to">;
 
@@ -84,30 +85,31 @@ export type PublicEngineEdge = Omit<WorkflowEdge, "from" | "to">;
  * EngineAction represents a reusable action, or step, within a workflow.  It defines the
  * kind, the handler to run, the types for the action, and optionally custom UI for managing
  * the action's configuration within the workflow editor.
- * 
+ *
  * Note that this is the type representing an action in the *backend engine*.
  *
  */
-export interface EngineAction extends PublicEngineAction {
+export interface EngineAction<TClient extends Inngest = Inngest>
+  extends PublicEngineAction {
   /**
    * The handler is the function which runs the action.  This may comprise of
-   * many individual inngest steps. 
+   * many individual inngest steps.
    */
-  handler: ActionHandler;
-};
+  handler: ActionHandler<GetStepTools<TClient>>;
+}
 
 /**
  * ActionHandler runs logic for a given EngineAction
  */
-export type ActionHandler = (args: ActionHandlerArgs) => Promise<any>;
+export type ActionHandler<S> = (args: ActionHandlerArgs<S>) => Promise<any>;
 
 export interface ActionInput {
   /**
    * Type is the TypeBox type for the input.  This is used for type checking, validation,
    * and form creation.
-   * 
+   *
    * Note that this can include any of the JSON-schema refinements within the TypeBox type.
-   * 
+   *
    * @example
    * ```
    * type: Type.String({
@@ -117,16 +119,16 @@ export interface ActionInput {
    * })
    * ```
    */
-  type: TSchema,
+  type: TSchema;
 
   /**
    * fieldType allows customization of the text input component, for string types.
    */
-  fieldType?: "textarea" | "text"
+  fieldType?: "textarea" | "text";
 }
 
 export interface ActionOutput {
-  type: TSchema,
+  type: TSchema;
   description?: string;
 }
 
@@ -140,10 +142,9 @@ export interface Workflow {
   description?: string;
   metadata?: Record<string, any>;
 
-  actions: Array<WorkflowAction>
-  edges: Array<WorkflowEdge>
-};
-
+  actions: Array<WorkflowAction>;
+  edges: Array<WorkflowEdge>;
+}
 
 /**
  * WorkflowAction is the representation of an action within a workflow instance.
@@ -173,7 +174,7 @@ export interface WorkflowAction {
    *
    * This will be type checked to match the EngineAction type before
    * save and before execution.
-   * 
+   *
    * Ref inputs for interpolation are "!ref($.<path>)",
    * eg. "!ref($.event.data.email)"
    */
@@ -187,32 +188,32 @@ export interface WorkflowEdge {
   /**
    * The name of the edge to show in the UI
    */
-  name?: string,
+  name?: string;
 
   /**
    * Conditional is a ref (eg. "!ref($.action.ifcheck.result)") which must be met
    * for the edge to be followed.
-   * 
+   *
    * The `conditional` field is automatically set when using the built-in if
    * action.
-   * 
+   *
    */
   conditional?: {
     /**
      * type indicates whether this is the truthy if, the else block, or a
      * "select" case block which must match a given value.
-     * 
+     *
      * for "if", the value will be inteprolated via "!!" to a boolean.
      * for "else", the value is will be evaluated via "!" to a boolean.
      * for "match", the value is will be evaluated via "===" to a boolean.
-     * 
+     *
      * It is expected that "if" blocks are used with json-logic,
      * which create these conditional edges by default - hence the basic
      * boolean logic.
-     * 
+     *
      * This may change in the future; we may add json-logic directly here.
      */
-    type: "if" | "else" | "match",
+    type: "if" | "else" | "match";
     /**
      * The ref to evaluate.  This can use the shorthand: `!ref($.output)` to
      * refer to the previous action's output.
@@ -222,9 +223,8 @@ export interface WorkflowEdge {
      * Value to match against, if type is "match"
      */
     value?: any;
-  },
+  };
 }
-
 
 /**
  * Loader represents a function which takes an Inngest event, then returns
@@ -235,12 +235,12 @@ export interface WorkflowEdge {
  *
  * If an Instance is not found, this should throw an error.
  */
-export type Loader = (event: unknown) => Promise<Workflow>
+export type Loader = (event: any) => Promise<Workflow | null | undefined>;
 
 export type DAG = DirectedGraph<Node, Edge>;
 
 export interface Node {
-  kind: "$action" | "$source",
+  kind: "$action" | "$source";
   id: string;
   action?: WorkflowAction;
 }
@@ -249,7 +249,7 @@ export interface Edge {
   edge: WorkflowEdge;
 }
 
-export interface ActionHandlerArgs {
+export interface ActionHandlerArgs<S = any> {
   /**
    * Event is the event which triggered the workflow.
    */
@@ -259,14 +259,14 @@ export interface ActionHandlerArgs {
    * Step are the step functions from Inngest's SDK, allowing each
    * action to be executed as a durable step function.  This exposes
    * all step APIs: `step.run`, `step.waitForEvent`, `step.sleep`, etc.
-   * 
+   *
    */
-  step: any;
+  step: S;
 
   /**
    * Workflow is the workflow definition.
    */
-  workflow: Workflow
+  workflow: Workflow;
 
   /**
    * WorkflowAction is the action being executed, with fully interpolate
@@ -284,5 +284,5 @@ export interface ActionHandlerArgs {
 export type RunArgs = {
   event: any;
   step: any;
-  workflow?: Workflow
-}
+  workflow?: Workflow;
+};

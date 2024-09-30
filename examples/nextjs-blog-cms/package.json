@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@inngest/workflow-kit": "0.1.2",
+    "@inngest/workflow-kit": "0.1.3-alpha-20240927112743-cfb6053c0cb7347670c83bb0edcd2edaedd11d9c",
     "@mdx-js/mdx": "^3.0.1",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-icons": "^1.3.0",
