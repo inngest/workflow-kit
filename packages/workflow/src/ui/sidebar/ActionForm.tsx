@@ -1,4 +1,5 @@
 import { ActionInput, PublicEngineAction, WorkflowAction } from "../../types";
+import { useProvider } from '../Provider';
 
 type SidebarActionFormProps = {
   workflowAction: WorkflowAction,
@@ -37,12 +38,40 @@ export const InputFormUI = (inputs: Record<string, ActionInput>) => {
   // or previous actions.
   return (
     <>
-      {Object.entries(inputs).map(([key, input]) => (
-        <label key={key}>
-          {input.type.title || key}
-          {input.fieldType === "textarea" ? <textarea /> : <input type="text" />}
+      {Object.entries(inputs).map(([id, input]) => (
+        <label key={id}>
+          {input.type.title}
+
+          <FormUIInputRenderer input={input} id={id} />
         </label>
       ))}
     </>
+  )
+}
+
+const FormUIInputRenderer = ({ id, input }: { id: string, input: ActionInput }) => {
+  const { selectedNode  } = useProvider();
+
+  selectedNode!.data.action.inputs = selectedNode!.data.action.inputs || {};
+
+  if (input.fieldType === "textarea") {
+    return (
+      <textarea
+        defaultValue={selectedNode!.data.action.inputs[id]}
+        onChange={(e) => {
+          selectedNode!.data.action.inputs[id] = e.target.value;
+        }}
+      />
+    )
+  }
+
+  return (
+    <input
+      type="text"
+      defaultValue={selectedNode!.data.action.inputs[id]}
+      onChange={(e) => {
+        selectedNode!.data.action.inputs[id] = e.target.value;
+      }}
+    />
   )
 }

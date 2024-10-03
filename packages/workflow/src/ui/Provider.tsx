@@ -30,7 +30,7 @@ export type ProviderContextType = ProviderProps & {
   sidebarPosition: "right" | "left";
   setSidebarPosition: (p: "right" | "left") => void;
 
-  selectedNode: Node | undefined;
+  selectedNode: Node<any> | undefined;
   setSelectedNode: (n: Node | undefined) => void;
 
   // blankNodeParent represents the parent of a blank node.  The blank node
@@ -63,7 +63,7 @@ export const useOnChange = (): (w: Workflow) => void => {
 
 /**
  * Hook for accessing the workflow we're modifying
- * 
+ *
  */
 export const useWorkflow = (): Workflow | undefined => {
   const ctx = useContext(ProviderContext);
@@ -72,7 +72,7 @@ export const useWorkflow = (): Workflow | undefined => {
 
 /**
  * Hook for accessing the trigger which runs the workflow.
- * 
+ *
  */
 export const useTrigger = (): any => {
   const ctx = useContext(ProviderContext);
@@ -82,7 +82,7 @@ export const useTrigger = (): any => {
 /**
  * Hook for accessing the available actions we can use within
  * the workflow.
- * 
+ *
  */
 export const useAvailableActions = (): PublicEngineAction[] => {
   const ctx = useContext(ProviderContext);
@@ -93,7 +93,7 @@ export const useAvailableActions = (): PublicEngineAction[] => {
 /**
  * Hook for accessing the position of the sidebar.  Only for internal
  * use.
- * 
+ *
  * @returns the position of the sidebar.
  */
 export const useSidebarPosition = (): "right" | "left" => {
