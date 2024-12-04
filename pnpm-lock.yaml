@@ -17,6 +17,9 @@ importers:
 
   packages/workflow:
     dependencies:
+      '@astronautlabs/jsonpath':
+        specifier: ^1.1.1
+        version: 1.1.2
       '@dagrejs/dagre':
         specifier: ^1.1.4
         version: 1.1.4
@@ -38,9 +41,6 @@ importers:
       json-logic-js:
         specifier: ^2.0.5
         version: 2.0.5
-      jsonpath:
-        specifier: ^1.1.1
-        version: 1.1.1
       reactflow:
         specifier: ^11.11.3
         version: 11.11.4(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -114,6 +114,9 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@astronautlabs/jsonpath@1.1.2':
+    resolution: {integrity: sha512-FqL/muoreH7iltYC1EB5Tvox5E8NSOOPGkgns4G+qxRKl6k5dxEVljUjB5NcKESzkqwnUqWjSZkL61XGYOuV+A==}
 
   '@babel/code-frame@7.24.7':
     resolution: {integrity: sha512-BcYH1CVJBO9tvyIZ2jVeXgSIMvGZ2FDRvDdOIVQyuklNKSsx+eppDEBq/g47Ayw+RqNFE+URvOShmf+f/qwAlA==}
@@ -2249,11 +2252,6 @@ packages:
     engines: {node: '>=6.0'}
     hasBin: true
 
-  esprima@1.2.2:
-    resolution: {integrity: sha512-+JpPZam9w5DuJ3Q67SqsMGtiHKENSMRVoxvArfJZK01/BfLEObtZ6orJa/MtoGNR/rfMgp5837T41PAmTwAv/A==}
-    engines: {node: '>=0.4.0'}
-    hasBin: true
-
   esprima@4.0.1:
     resolution: {integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==}
     engines: {node: '>=4'}
@@ -2844,9 +2842,6 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-
-  jsonpath@1.1.1:
-    resolution: {integrity: sha512-l6Cg7jRpixfbgoWgkrl77dgEj8RPvND0wMH6TwQmi9Qs4TFfS9u5cUFnbeKTwj5ga5Y3BTGGNI28k117LJ009w==}
 
   kleur@3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
@@ -3663,9 +3658,6 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  underscore@1.12.1:
-    resolution: {integrity: sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==}
-
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
@@ -3893,6 +3885,10 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
+
+  '@astronautlabs/jsonpath@1.1.2':
+    dependencies:
+      static-eval: 2.0.2
 
   '@babel/code-frame@7.24.7':
     dependencies:
@@ -6411,8 +6407,6 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  esprima@1.2.2: {}
-
   esprima@4.0.1: {}
 
   estraverse@4.3.0: {}
@@ -7225,12 +7219,6 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  jsonpath@1.1.1:
-    dependencies:
-      esprima: 1.2.2
-      static-eval: 2.0.2
-      underscore: 1.12.1
-
   kleur@3.0.3: {}
 
   leven@3.1.0: {}
@@ -8007,8 +7995,6 @@ snapshots:
       mime-types: 2.1.35
 
   typescript@5.6.2: {}
-
-  underscore@1.12.1: {}
 
   undici-types@6.19.8: {}
 
