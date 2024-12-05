@@ -50,17 +50,36 @@ export const InputFormUI = (inputs: Record<string, ActionInput>) => {
 }
 
 const FormUIInputRenderer = ({ id, input }: { id: string, input: ActionInput }) => {
-  const { selectedNode  } = useProvider();
+  const { selectedNode, onChange, workflow } = useProvider();
 
-  selectedNode!.data.action.inputs = selectedNode!.data.action.inputs || {};
+  const action = selectedNode!.data.action;
+  action.inputs = action.inputs || {};
+
+  const updateWorkflowAction = () => {
+    const workflowCopy = {
+      ...workflow
+    };
+
+    workflowCopy.actions = workflow.actions.map(
+      (a) => a.id !== action.id
+        ? a
+        : {
+          ...a,
+          inputs: action.inputs,
+        }
+    );
+
+    onChange(workflowCopy);
+  }
 
   if (input.fieldType === "textarea") {
     return (
       <textarea
-        defaultValue={selectedNode!.data.action.inputs[id]}
+        defaultValue={action.inputs[id]}
         onChange={(e) => {
-          selectedNode!.data.action.inputs[id] = e.target.value;
+          action.inputs[id] = e.target.value;
         }}
+        onBlur={() => updateWorkflowAction()}
       />
     )
   }
@@ -68,10 +87,11 @@ const FormUIInputRenderer = ({ id, input }: { id: string, input: ActionInput }) 
   return (
     <input
       type="text"
-      defaultValue={selectedNode!.data.action.inputs[id]}
+      defaultValue={action.inputs[id]}
       onChange={(e) => {
-        selectedNode!.data.action.inputs[id] = e.target.value;
+        action.inputs[id] = e.target.value;
       }}
+      onBlur={() => updateWorkflowAction()}
     />
   )
 }
