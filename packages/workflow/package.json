@@ -92,6 +92,7 @@
     "preset": "link:@storybook/react-vite/preset",
     "prop-types": "^15.8.1",
     "storybook": "^8.2.9",
-    "ts-jest": "^29.1.5"
+    "ts-jest": "^29.1.5",
+    "typescript": "^5.7.2"
   }
 }
