@@ -59,8 +59,6 @@ export function refs(input: any): Array<{ path: string, ref: string }> {
 export function interpolate(value: any, vars: Record<string, any>) {
   let result = value;
 
-  // TODO: Handle $.result
-
   if (isRef(result)) {
     // Handle pure references immediately.  Remove "!ref(" and ")"
     result = result.replace("!ref(", "")
