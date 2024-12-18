@@ -4,6 +4,7 @@ export {
   type EngineAction,
   type PublicEngineAction,
   type WorkflowAction,
+  type WorkflowEdge,
   type Loader,
   type Workflow,
 } from "./types";
