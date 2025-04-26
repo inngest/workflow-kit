@@ -3,38 +3,42 @@ import { useProvider } from "../Provider";
 import { SidebarWorkflowForm } from "./WorfklowForm";
 import { SidebarFooter } from "./Footer";
 import { ActionList } from "./ActionList";
-import { SidebarActionForm } from "./ActionForm";
+import { InputFormFieldMap, SidebarActionForm } from "./ActionForm";
 import { SidebarHeader } from "./Header";
 import { WorkflowAction } from "../../types";
 
-export type SidebarProps = {
+export type SidebarProps<TValue> = {
   /**
    * The position of the sidebar.  Defaults to "right".
    */
   position?: "right" | "left";
 
   children?: React.ReactNode;
-}
+  inputFormFieldMap?: InputFormFieldMap<TValue>;
+};
 
-export const Sidebar = (props: SidebarProps) => {
+export function Sidebar<TValue>({
+  inputFormFieldMap,
+  ...props
+}: SidebarProps<TValue>) {
   const { setSidebarPosition } = useProvider();
 
   // Set this within context so the parent editor can adjust our
   // flex layouts correctly.
   useEffect(() => {
     setSidebarPosition(props.position === "left" ? "left" : "right");
-  }, [props.position])
+  }, [props.position]);
 
-  let content = props.children || useSidebarContent();
+  let content = props.children || useSidebarContent({ inputFormFieldMap });
 
-  return (
-    <div className="wf-sidebar">
-      {content}
-    </div>
-  )
+  return <div className="wf-sidebar">{content}</div>;
 }
 
-const useSidebarContent = () => {
+function useSidebarContent<TValue>({
+  inputFormFieldMap,
+}: {
+  inputFormFieldMap?: InputFormFieldMap<TValue>;
+}) {
   const { trigger, selectedNode, availableActions } = useProvider();
 
   if (trigger === undefined) {
@@ -47,7 +51,7 @@ const useSidebarContent = () => {
         </div>
         <SidebarFooter />
       </>
-    )
+    );
   }
 
   if (selectedNode === undefined) {
@@ -56,32 +60,32 @@ const useSidebarContent = () => {
         <SidebarWorkflowForm />
         <SidebarFooter />
       </>
-    )
+    );
   }
 
   switch (selectedNode.type) {
     case "action": {
       const workflowAction = selectedNode.data.action as WorkflowAction;
-      const engineAction = availableActions.find((action) => action.kind === workflowAction.kind);
+      const engineAction = availableActions.find(
+        (action) => action.kind === workflowAction.kind,
+      );
 
       return (
         <>
           <SidebarHeader />
-          <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} />
+          <SidebarActionForm
+            workflowAction={workflowAction}
+            engineAction={engineAction}
+            inputFormFieldMap={inputFormFieldMap}
+          />
           <SidebarFooter />
         </>
-      )
+      );
     }
     case "blank": {
-      return (
-        <ActionList actions={availableActions} />
-      )
+      return <ActionList actions={availableActions} />;
     }
   }
 
-  return (
-    <div>
-      {selectedNode?.type}
-    </div>
-  )
+  return <div>{selectedNode?.type}</div>;
 }

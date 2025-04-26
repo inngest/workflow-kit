@@ -8,7 +8,8 @@
     "build": "rm -rf dist && tsc && cp src/ui/ui.css dist/ui/ui.css",
     "test": "jest --logHeapUsage --maxWorkers=8 --coverage --ci --silent=false",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "dev": "tsc --watch"
   },
   "homepage": "https://github.com/inngest/workflow-kit/tree/main/packages/workflow#readme",
   "repository": {
