@@ -1,13 +1,19 @@
-import { Dispatch, SetStateAction } from "react";
+import { useRef, useState } from "react";
 import { ActionInput, PublicEngineAction, WorkflowAction } from "../../types";
 import { useProvider } from "../Provider";
 
-export type InputFormField<TValue> = (props: {
-  defaultValue: TValue;
-  onChange: Dispatch<SetStateAction<TValue>>;
+export type InputFormField<TValue> = ({
+  value,
+  onValueChange,
+  title,
+  description,
+  ...props
+}: {
+  value: TValue;
+  onValueChange: (value: TValue) => void;
   title?: string;
   description?: string;
-  required?: boolean;
+  [key: string]: unknown;
 }) => React.ReactNode;
 
 export type InputFormFieldMap<TValue> = Record<string, InputFormField<TValue>>;
@@ -43,7 +49,7 @@ export function SidebarActionForm<TValue>({
         </p>
       </div>
       <div className="wf-sidebar-form">
-        <span className="wf-sidebar-configure">Configure</span>
+        <div className="wf-sidebar-configure" />
         <InputFormUI<TValue>
           inputs={engineAction.inputs || {}}
           inputFormFieldMap={inputFormFieldMap}
@@ -94,25 +100,21 @@ function FormUIInputRenderer<TValue>({
 
   selectedNode!.data.action.inputs = selectedNode!.data.action.inputs || {};
 
-  if (formField) {
-    return formField({
-      defaultValue: selectedNode!.data.action.inputs[id] as TValue,
-      onChange: (value: SetStateAction<TValue>) => {
-        selectedNode!.data.action.inputs[id] =
-          typeof value === "function"
-            ? (value as (prev: TValue) => TValue)(
-                selectedNode!.data.action.inputs[id] as TValue,
-              )
-            : value;
-      },
-      title: input.type.title,
-      description: input.type.description,
-    });
-  }
+  if (!formField) {
+    if (input.fieldType === "textarea") {
+      return (
+        <textarea
+          defaultValue={selectedNode!.data.action.inputs[id]}
+          onChange={(e) => {
+            selectedNode!.data.action.inputs[id] = e.target.value;
+          }}
+        />
+      );
+    }
 
-  if (input.fieldType === "textarea") {
     return (
-      <textarea
+      <input
+        type="text"
         defaultValue={selectedNode!.data.action.inputs[id]}
         onChange={(e) => {
           selectedNode!.data.action.inputs[id] = e.target.value;
@@ -121,13 +123,19 @@ function FormUIInputRenderer<TValue>({
     );
   }
 
-  return (
-    <input
-      type="text"
-      defaultValue={selectedNode!.data.action.inputs[id]}
-      onChange={(e) => {
-        selectedNode!.data.action.inputs[id] = e.target.value;
-      }}
-    />
+  const [value, setValue] = useState<TValue>(
+    selectedNode!.data.action.inputs[id] as TValue,
   );
+
+  const { title, description, ...props } = input.type;
+  return formField({
+    value,
+    onValueChange: (newValue: TValue) => {
+      setValue(newValue);
+      selectedNode!.data.action.inputs[id] = newValue;
+    },
+    title,
+    description,
+    ...props,
+  });
 }

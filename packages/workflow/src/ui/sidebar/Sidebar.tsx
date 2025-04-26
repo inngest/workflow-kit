@@ -6,6 +6,7 @@ import { ActionList } from "./ActionList";
 import { InputFormFieldMap, SidebarActionForm } from "./ActionForm";
 import { SidebarHeader } from "./Header";
 import { WorkflowAction } from "../../types";
+import { SidebarTriggerForm } from "./Trigger";
 
 export type SidebarProps<TValue> = {
   /**
@@ -15,10 +16,12 @@ export type SidebarProps<TValue> = {
 
   children?: React.ReactNode;
   inputFormFieldMap?: InputFormFieldMap<TValue>;
+  selectTrigger?: React.ReactNode;
 };
 
 export function Sidebar<TValue>({
   inputFormFieldMap,
+  selectTrigger,
   ...props
 }: SidebarProps<TValue>) {
   const { setSidebarPosition } = useProvider();
@@ -29,30 +32,20 @@ export function Sidebar<TValue>({
     setSidebarPosition(props.position === "left" ? "left" : "right");
   }, [props.position]);
 
-  let content = props.children || useSidebarContent({ inputFormFieldMap });
+  let content =
+    props.children || useSidebarContent({ inputFormFieldMap, selectTrigger });
 
   return <div className="wf-sidebar">{content}</div>;
 }
 
 function useSidebarContent<TValue>({
   inputFormFieldMap,
+  selectTrigger,
 }: {
   inputFormFieldMap?: InputFormFieldMap<TValue>;
+  selectTrigger?: React.ReactNode;
 }) {
   const { trigger, selectedNode, availableActions } = useProvider();
-
-  if (trigger === undefined) {
-    // TODO (tonyhb): Allow users to define how triggers are selected,
-    // including trigger loading passed in to the Provider.
-    return (
-      <>
-        <div className="wf-sidebar-content">
-          To get started, select a trigger.
-        </div>
-        <SidebarFooter />
-      </>
-    );
-  }
 
   if (selectedNode === undefined) {
     return (
@@ -84,6 +77,13 @@ function useSidebarContent<TValue>({
     }
     case "blank": {
       return <ActionList actions={availableActions} />;
+    }
+    case "trigger": {
+      return (
+        <SidebarTriggerForm trigger={trigger}>
+          {selectTrigger}
+        </SidebarTriggerForm>
+      );
     }
   }
 
