@@ -3,12 +3,16 @@ import { ActionInput, PublicEngineAction, WorkflowAction } from "../../types";
 import { useProvider } from "../Provider";
 
 export type InputFormField<TValue> = ({
+  nodeId,
+  inputId,
   value,
   onValueChange,
   title,
   description,
   ...props
 }: {
+  nodeId: string;
+  inputId: string;
   value: TValue;
   onValueChange: (value: TValue) => void;
   title?: string;
@@ -129,6 +133,8 @@ function FormUIInputRenderer<TValue>({
 
   const { title, description, ...props } = input.type;
   return formField({
+    nodeId: selectedNode!.id,
+    inputId: id,
     value,
     onValueChange: (newValue: TValue) => {
       setValue(newValue);
