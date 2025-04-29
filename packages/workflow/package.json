@@ -69,7 +69,7 @@
     "graphology": "^0.25.4",
     "graphology-dag": "^0.4.1",
     "json-logic-js": "^2.0.5",
-    "jsonpath": "^1.1.1",
+    "@astronautlabs/jsonpath": "^1.1.1",
     "reactflow": "^11.11.3"
   },
   "devDependencies": {
