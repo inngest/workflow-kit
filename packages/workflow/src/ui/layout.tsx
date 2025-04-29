@@ -162,6 +162,7 @@ export const parseWorkflow = ({ workflow, trigger, blankNodeParent }: parseWorkf
       id: `${edge.from}-${edge.to}`,
       source: edge.from,
       target: edge.to,
+      label: edge.name,
       type: 'smoothstep',
     });
   });
