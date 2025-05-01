@@ -1,4 +1,4 @@
-import jsonpath from "jsonpath";
+import { JSONPath } from "@astronautlabs/jsonpath";
 import { TriggerEvent } from "./types";
 
 /**
@@ -58,8 +58,6 @@ export function refs(input: any): Array<{ path: string, ref: string }> {
  */
 export function interpolate(value: any, vars: Record<string, any>) {
   let result = value;
-
-  // TODO: Handle $.result
 
   if (isRef(result)) {
     // Handle pure references immediately.  Remove "!ref(" and ")"
@@ -136,7 +134,7 @@ function interpolateObject(value: Object, vars: Record<string, any>) {
 
 
 function interpolatedRefValue(path: string, vars: Record<string, any>) {
-  const value = jsonpath.query(vars, path)
+  const value = JSONPath.query(vars, path)
   if (!Array.isArray(value)) {
     return value
   }
