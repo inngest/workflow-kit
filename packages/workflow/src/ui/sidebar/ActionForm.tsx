@@ -1,20 +1,24 @@
-import { useRef, useState } from "react";
-import { ActionInput, PublicEngineAction, WorkflowAction } from "../../types";
+import {
+  ActionInput,
+  PublicEngineAction,
+  Workflow,
+  WorkflowAction,
+} from "../../types";
 import { useProvider } from "../Provider";
+import { useState, useCallback, useMemo } from "react";
+import { Node } from "@xyflow/react";
 
 export type InputFormField<TValue> = ({
-  nodeId,
-  inputId,
   value,
   onValueChange,
+  onBlur,
   title,
   description,
   ...props
 }: {
-  nodeId: string;
-  inputId: string;
   value: TValue;
   onValueChange: (value: TValue) => void;
+  onBlur: () => void;
   title?: string;
   description?: string;
   [key: string]: unknown;
@@ -102,10 +106,45 @@ function FormUIInputRenderer<TValue>({
 }) {
   const { selectedNode, onChange, workflow } = useProvider();
 
-  const action = selectedNode!.data.action;
-  action.inputs = action.inputs || {};
+  const action = useMemo(() => {
+    return selectedNode!.data.action;
+  }, [selectedNode]);
 
-  const updateWorkflowAction = () => {
+  return (
+    <FormUIFieldRenderer
+      key={action.id}
+      id={id}
+      input={input}
+      formField={formField}
+      action={action}
+      onChange={onChange}
+      workflow={workflow}
+    />
+  );
+}
+
+function FormUIFieldRenderer<TValue>({
+  id,
+  input,
+  formField,
+  action,
+  onChange,
+  workflow,
+}: {
+  id: string;
+  input: ActionInput;
+  formField?: InputFormField<TValue>;
+  action: WorkflowAction;
+  onChange: (workflow: Workflow) => void;
+  workflow: Workflow;
+}) {
+  const inputs = useMemo(() => {
+    return workflow.actions.find((a) => a.id === action.id)!.inputs || {};
+  }, [workflow, action]);
+
+  const [value, onValueChange] = useState<TValue>((inputs[id] ?? "") as TValue);
+
+  const onBlur = useCallback(() => {
     const workflowCopy = {
       ...workflow,
     };
@@ -115,53 +154,26 @@ function FormUIInputRenderer<TValue>({
         ? a
         : {
             ...a,
-            inputs: action.inputs,
+            inputs: {
+              ...a.inputs,
+              [id]: value,
+            },
           },
     );
 
     onChange(workflowCopy);
-  };
-
-  if (!formField) {
-    if (input.fieldType === "textarea") {
-      return (
-        <textarea
-          defaultValue={action.inputs[id]}
-          onChange={(e) => {
-            action.inputs[id] = e.target.value;
-          }}
-          onBlur={() => updateWorkflowAction()}
-        />
-      );
-    }
-
-    return (
-      <input
-        type="text"
-        defaultValue={action.inputs[id]}
-        onChange={(e) => {
-          action.inputs[id] = e.target.value;
-        }}
-        onBlur={() => updateWorkflowAction()}
-      />
-    );
-  }
-
-  const [value, setValue] = useState<TValue>(
-    selectedNode!.data.action.inputs[id] as TValue,
-  );
+  }, [value, id, action.id, workflow, onChange]);
 
   const { title, description, ...props } = input.type;
-  return formField({
-    nodeId: selectedNode!.id,
-    inputId: id,
-    value,
-    onValueChange: (newValue: TValue) => {
-      setValue(newValue);
-      selectedNode!.data.action.inputs[id] = newValue;
-    },
-    title,
-    description,
-    ...props,
-  });
+
+  return formField
+    ? formField({
+        value,
+        onValueChange,
+        onBlur,
+        title,
+        description,
+        ...props,
+      })
+    : null;
 }
