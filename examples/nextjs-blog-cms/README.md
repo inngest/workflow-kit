@@ -64,17 +64,23 @@ pnpm --ignore-workspace i
 
 ### 2. Database setup
 
-This project needs a database to store the blog posts and workflows.
+This project needs a database to store the blog posts and workflows using Supabase.
 
 Follow the below steps to get a database up and running with Supabase:
 
-1. Go to [your Supabase Dashboard](https://supabase.com/dashboard/projects) and create a new project
-1. While your database is being created, update your `.env.local` and fill the `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-1. Open the SQL Editor from the left side navigation, and copy the content of the `examples/nextjs-blog-cms/supabase/schema.sql` file
-1. Still in the SQL Editor, create a new snippet and do the same with the `examples/nextjs-blog-cms/supabase/seed.sql` file
-1. Navigate to the Table Editor, you should see two tables: `blog_posts` and `workflows`
+1. Install Supabase CLI
 
-You are all set, your database is ready to be used!
+```
+npm install -g supabase
+```
+
+2. Create a new project
+
+```
+supabase start
+```
+
+3. Copy the `.env.example` file to `.env` and fill the `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` with the values given by Supabase.
 
 ### 3. Starting the application
 
