@@ -105,3 +105,51 @@ test("bfs with a tree single node", async () => {
 
   expect(hits).toEqual(5);
 });
+
+test("bfs with a tree that has multiple paths to the same node", async () => {
+  const a1     = { id: "a1", "kind": "test" };
+  const a2     = { id: "a2", "kind": "test" };
+  const a1b1   = { id: "a1b1", "kind": "test" };
+  const a1b2   = { id: "a1b2", "kind": "test" };
+
+  const dag = newDAG({
+    actions: [a1, a2, a1b1, a1b2],
+    edges: [
+      { from: "$source", to: "a1" },
+      { from: "a1", to: "a1b1" },
+      { from: "a1", to: "a1b2" },
+      { from: "a1b2", to: "a2" },
+      { from: "a1b1", to: "a2" },
+    ],
+  });
+
+  // The tree should be:
+  //     a1
+  //    /  \ 
+  // a1b1  a1b2
+  //    \  /
+  //     a2
+
+  let hits = 0;
+  await bfs(dag, async (n, _e) => {
+    // Assert the order is deterministic, based off of edge ordering.
+    switch (hits) {
+    case 0:
+      expect(n).toEqual(a1);
+      break;
+    case 1:
+      expect(n).toEqual(a1b1);
+      break;
+    case 2:
+      expect(n).toBe(a1b2);
+      break;
+    case 3:
+      expect(n).toBe(a2);
+      break;
+    }
+    hits++;
+  });
+
+  // a2 should not be hit twice
+  expect(hits).toEqual(4);
+});

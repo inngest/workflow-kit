@@ -67,6 +67,7 @@ export const bfs = async (graph: DAG, cb: (node: WorkflowAction, edge: WorkflowE
       nodes.push(node);
       // And we want to do a BFS search down the tree itself.
       queue.push(id);
+      seen.add(id);
     });
 
     // For each child node found, start processing the actions.  `cb` should include Inngest's
