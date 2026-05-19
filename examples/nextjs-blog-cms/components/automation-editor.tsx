@@ -19,8 +19,8 @@ import {
 import { updateWorkflow } from "@/app/actions";
 import { actions } from "@/lib/inngest/workflowActions";
 
-import "@inngest/workflow-kit/ui/ui.css";
-import "@xyflow/react/dist/style.css";
+// import "@inngest/workflow-kit/ui/ui.css";
+// import "@xyflow/react/dist/style.css";
 
 export const AutomationEditor = ({ workflow }: { workflow: Workflow }) => {
   const router = useRouter();

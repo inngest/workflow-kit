@@ -4,7 +4,7 @@ import OpenAI from "openai";
 import { type BlogPost } from "../supabase/types";
 
 import { loadBlogPost } from "../loaders/blog-post";
-import { createClient } from "../supabase/server";
+import { createClient } from "../supabase/service";
 import { actions } from "./workflowActions";
 import { inngest } from "./client";
 
@@ -28,7 +28,7 @@ function addAiPublishingSuggestion(
     : blogPost.ai_publishing_recommendations + `<br/ >` + additionalSuggestion; // otherwise add one
 }
 
-export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
+export const actionsWithHandlers: EngineAction<any>[] = [
   {
     // Add a Table of Contents
     ...actions[0],
@@ -71,8 +71,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       });
 
       await step.run("save-ai-revision", async () => {
-        await supabase
-          .from("blog_posts")
+          await (supabase as any)
+            .from("blog_posts")
           .update({
             markdown_ai_revision: aiRevision,
             status: "under review",
@@ -124,8 +124,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       });
 
       await step.run("save-ai-revision", async () => {
-        await supabase
-          .from("blog_posts")
+  await (supabase as any)
+  .from("blog_posts")
           .update({
             markdown_ai_revision: aiRevision,
             status: "under review",
@@ -146,8 +146,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       );
 
       await step.run("update-blog-post-status", async () => {
-        await supabase
-          .from("blog_posts")
+   await (supabase as any)
+  .from("blog_posts")
           .update({
             status: "needs approval",
           })
@@ -168,8 +168,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       // without action from the user within 1 day, the AI suggestions are discarded
       if (!approval) {
         await step.run("discard-ai-revision", async () => {
-          await supabase
-            .from("blog_posts")
+       await (supabase as any)
+  .from("blog_posts")
             .update({
               markdown_ai_revision: null,
               status: "draft",
@@ -179,8 +179,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
         });
       } else {
         await step.run("apply-ai-revision", async () => {
-          await supabase
-            .from("blog_posts")
+ await (supabase as any)
+  .from("blog_posts")
             .update({
               markdown: blogPost.markdown_ai_revision,
               markdown_ai_revision: null,
@@ -203,8 +203,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       );
 
       await step.run("apply-ai-revision", async () => {
-        await supabase
-          .from("blog_posts")
+        await (supabase as any)
+  .from("blog_posts")
           .update({
             markdown: blogPost.markdown_ai_revision,
             markdown_ai_revision: null,
@@ -261,8 +261,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       );
 
       await step.run("save-ai-recommendations", async () => {
-        await supabase
-          .from("blog_posts")
+       await (supabase as any)
+  .from("blog_posts")
           .update({
             ai_publishing_recommendations: addAiPublishingSuggestion(
               workflowAction,
@@ -320,8 +320,8 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
       });
 
       await step.run("save-ai-recommendations", async () => {
-        await supabase
-          .from("blog_posts")
+      await (supabase as any)
+  .from("blog_posts")
           .update({
             ai_publishing_recommendations: addAiPublishingSuggestion(
               workflowAction,

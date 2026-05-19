@@ -1,4 +1,4 @@
-import { createClient } from "../supabase/server";
+import { createClient } from "../supabase/service";
 import { BlogPost } from "../supabase/types";
 
 export async function loadBlogPost(id: string): Promise<BlogPost> {

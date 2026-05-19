@@ -1,24 +1,25 @@
 import { type Workflow as InngestWorkflow } from "@inngest/workflow-kit";
-import { Database as SourceDatabase } from "./database.types";
 
-// typing `workflows.workflow` Json field
-export type Database = {
-  public: {
-    Tables: Omit<SourceDatabase["public"]["Tables"], "workflows"> & {
-      workflows: Omit<
-        SourceDatabase["public"]["Tables"]["workflows"],
-        "Row"
-      > & {
-        Row: Omit<
-          SourceDatabase["public"]["Tables"]["workflows"]["Row"],
-          "workflow"
-        > & {
-          workflow: InngestWorkflow;
-        };
-      };
-    };
-  };
+export type Workflow = {
+  id: number;
+  name: string;
+  description: string;
+  trigger: string;
+  enabled: boolean;
+  workflow: InngestWorkflow;
 };
 
-export type Workflow = Database["public"]["Tables"]["workflows"]["Row"];
-export type BlogPost = Database["public"]["Tables"]["blog_posts"]["Row"];
+export type BlogPost = {
+  id: string;
+  title: string;
+  subtitle: string;
+  markdown: string;
+  markdown_ai_revision: string | null;
+  ai_publishing_recommendations: string;
+  status: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type Database = any;
+export type Json = any;
