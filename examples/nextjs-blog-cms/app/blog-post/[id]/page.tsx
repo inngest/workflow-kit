@@ -16,8 +16,13 @@ import { mdxComponents } from "@/lib/mdxComponents";
 
 export const revalidate = 0;
 
-export default async function BlogPost({ params }: { params: { id: string } }) {
-  const blogPost = await loadBlogPost(params.id);
+export default async function BlogPost({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const blogPost = await loadBlogPost(id);
 
   if (blogPost) {
     const { default: MDXBlogPostContent } = await evaluate(

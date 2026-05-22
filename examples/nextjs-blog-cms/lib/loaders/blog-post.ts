@@ -2,7 +2,7 @@ import { createClient } from "../supabase/server";
 import { BlogPost } from "../supabase/types";
 
 export async function loadBlogPost(id: string): Promise<BlogPost> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: blogPosts } = await supabase
     .from("blog_posts")
     .select(

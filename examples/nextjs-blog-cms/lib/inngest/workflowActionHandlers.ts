@@ -33,7 +33,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
     // Add a Table of Contents
     ...actions[0],
     handler: async ({ event, step, workflowAction }) => {
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const blogPost = await step.run("load-blog-post", async () =>
         loadBlogPost(event.data.id)
@@ -86,7 +86,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
     // Perform a grammar review
     ...actions[1],
     handler: async ({ event, step, workflowAction }) => {
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const blogPost = await step.run("load-blog-post", async () =>
         loadBlogPost(event.data.id)
@@ -139,7 +139,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
     // Apply changes after approval
     ...actions[2],
     handler: async ({ event, step }) => {
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const blogPost = await step.run("load-blog-post", async () =>
         loadBlogPost(event.data.id)
@@ -196,7 +196,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
     // Apply changes
     ...actions[3],
     handler: async ({ event, step }) => {
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const blogPost = await step.run("load-blog-post", async () =>
         loadBlogPost(event.data.id)
@@ -219,7 +219,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
     // Generate LinkedIn posts
     ...actions[4],
     handler: async ({ event, step, workflowAction }) => {
-      const supabase = createClient();
+      const supabase = await createClient();
 
       const blogPost = await step.run("load-blog-post", async () =>
         loadBlogPost(event.data.id)
@@ -279,7 +279,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
     // Generate Twitter posts
     ...actions[5],
     handler: async ({ event, step, workflowAction }) => {
-      const supabase = createClient();
+      const supabase = await createClient();
       const numberOfTweets = 2;
 
       const blogPost = await step.run("load-blog-post", async () =>
