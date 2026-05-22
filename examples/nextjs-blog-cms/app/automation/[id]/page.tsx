@@ -7,13 +7,14 @@ export const runtime = "edge";
 export default async function Automation({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const supabase = createClient();
+  const { id } = await params;
+  const supabase = await createClient();
   const { data: workflow } = await supabase
     .from("workflows")
     .select("*")
-    .eq("id", params.id!)
+    .eq("id", id!)
     .single();
   if (workflow) {
     return <AutomationEditor workflow={workflow} />;

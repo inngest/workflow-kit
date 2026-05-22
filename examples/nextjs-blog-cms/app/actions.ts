@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { type Workflow } from "@/lib/supabase/types";
 
 export const sendBlogPostToReview = async (id: string) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase
     .from("blog_posts")
     .update({
@@ -32,7 +32,7 @@ export const approveBlogPostAiSuggestions = async (id: string) => {
 };
 
 export const publishBlogPost = async (id: string) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase
     .from("blog_posts")
     .update({
@@ -49,7 +49,7 @@ export const publishBlogPost = async (id: string) => {
   });
 };
 export const updateWorkflow = async (workflow: Workflow) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase
     .from("workflows")
     .update({
@@ -59,7 +59,7 @@ export const updateWorkflow = async (workflow: Workflow) => {
 };
 
 export const toggleWorkflow = async (workflowId: number, enabled: boolean) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase
     .from("workflows")
     .update({

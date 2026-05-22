@@ -6,8 +6,33 @@
     "release": "pnpm run build && changeset publish"
   },
   "dependencies": {
-    "@changesets/cli": "^2.27.8",
+    "@changesets/cli": "^2.31.0",
     "@sinclair/typebox": "^0.33.7"
   },
-  "packageManager": "pnpm@9.4.0"
+  "packageManager": "pnpm@9.4.0",
+  "pnpm": {
+    "overrides": {
+      "vite": "^6.4.2",
+      "next@<14.2.36": "^14.2.36",
+      "esbuild@<0.25.0": "^0.25.12",
+      "cookie@<0.7.0": "^0.7.2",
+      "path-to-regexp@<0.1.12": "^0.1.13",
+      "qs@>=6.7.0 <6.14.2": "^6.14.2",
+      "cross-spawn@<6.0.6": "^6.0.6",
+      "cross-spawn@>=7.0.0 <7.0.5": "^7.0.6",
+      "tmp@<0.2.4": "^0.2.4",
+      "minimatch@<3.1.4": "^3.1.4",
+      "minimatch@>=5.0.0 <5.1.8": "^5.1.8",
+      "brace-expansion@>=1.0.0 <2.0.0": "^1.1.12",
+      "brace-expansion@>=2.0.0 <2.0.2": "^2.0.2",
+      "picomatch@<2.3.2": "^2.3.2",
+      "@babel/runtime@<7.29.2": "^7.29.2",
+      "@babel/helpers@<7.29.2": "^7.29.2",
+      "js-yaml@<4.0.0": "^3.14.2",
+      "postcss@<8.5.10": "^8.5.10",
+      "ws@>=7.0.0 <7.5.10": "^7.5.10",
+      "ws@>=8.0.0 <8.20.1": "^8.20.1",
+      "uuid@<11.1.0": "^11.1.0"
+    }
+  }
 }
