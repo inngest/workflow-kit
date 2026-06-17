@@ -67,7 +67,9 @@ const useSidebarContent = () => {
       return (
         <>
           <SidebarHeader />
-          <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} />
+          {/* Include a key attribute so that the inputs in the action
+          update as the selected node changes. */}
+          <SidebarActionForm workflowAction={workflowAction} engineAction={engineAction} key={`node-${selectedNode.id}`} />
           <SidebarFooter />
         </>
       )
