@@ -153,3 +153,89 @@ test("bfs with a tree that has multiple paths to the same node", async () => {
   // a2 should not be hit twice
   expect(hits).toEqual(4);
 });
+
+test("bfs with conditionals", async () => {
+  const a1     = { id: "a1", "kind": "test" };
+  const a2     = { id: "a2", "kind": "test" };
+  const a3     = { id: "a3", "kind": "test" };
+
+  const dag = newDAG({
+    actions: [a1, a2, a3],
+    edges: [
+      { from: "$source", to: "a1" },
+      { from: "a1", to: "a2", conditional: { type: "if", ref: "!ref($.output)", value: true }},
+      { from: "a1", to: "a3", conditional: { type: "else", ref: "!ref($.output)", value: false }},
+    ],
+  });
+
+  let hits = 0;
+  let visited: string[] = [];
+  await bfs(dag, async (n, _e) => {
+    // Assert the order is deterministic, based off of edge ordering, and that a3 is never encountered.
+    switch (hits) {
+    case 0:
+      expect(n).toEqual(a1);
+      break;
+    case 1:
+      expect(n).toEqual(a2);
+      break;
+    }
+    visited.push(n.id);
+    hits++;
+  }, (edge) => {
+    if (edge.conditional?.type === "if") {
+      return true;
+    }
+    if (edge.conditional?.type === "else") {
+      return false;
+    }
+    return true
+  });
+
+  expect(hits).toEqual(2);
+  expect(visited).toEqual(["a1", "a2"]);
+
+  const a4     = { id: "a4", "kind": "test" };
+  const a5     = { id: "a5", "kind": "test" };
+
+  const dag2 = newDAG({
+    actions: [a1, a2, a3, a4, a5],
+    edges: [
+      { from: "$source", to: "a1" },
+      { from: "a1", to: "a2", conditional: { type: "if", ref: "!ref($.output)", value: true }},
+      { from: "a1", to: "a3", conditional: { type: "else", ref: "!ref($.output)", value: false }},
+      { from: "a2", to: "a4" },
+      { from: "a3", to: "a5" },
+    ],
+  });
+
+  hits = 0;
+  visited = [];
+  await bfs(dag2, async (n, _e) => {
+    // Assert the order is deterministic, based off of edge ordering, and that a3 and a5 are never encountered.
+    switch (hits) {
+      case 0:
+        expect(n).toEqual(a1);
+        break;
+      case 1:
+        expect(n).toEqual(a2);
+        break;
+      case 2:
+        expect(n).toBe(a4);
+        break;
+    }
+    visited.push(n.id);
+    hits++;
+  }, (edge) => {
+    if (edge.conditional?.type === "if") {
+      return true;
+    }
+    if (edge.conditional?.type === "else") {
+      return false;
+    }
+    return true
+  });
+
+  expect(hits).toEqual(3);
+  expect(visited).toEqual(["a1", "a2", "a4"]);
+})

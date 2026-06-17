@@ -43,7 +43,7 @@ export const newDAG = (flow: Workflow): DAG => {
   return g;
 }
 
-export const bfs = async (graph: DAG, cb: (node: WorkflowAction, edge: WorkflowEdge) => Promise<any>): Promise<any> => {
+export const bfs = async (graph: DAG, cb: (node: WorkflowAction, edge: WorkflowEdge) => Promise<any>, conditional?: (edge: WorkflowEdge) => boolean,): Promise<any> => {
   if (graph.order <= 1) {
     // Only the event/source exists; do nothing.
     return;
@@ -62,6 +62,13 @@ export const bfs = async (graph: DAG, cb: (node: WorkflowAction, edge: WorkflowE
       if (seen.has(id)) {
         return;
       }
+      
+      // Check conditional
+      const edge = graph.getEdgeAttributes(next, id);
+      if (conditional && !conditional(edge.edge)) {
+        return;
+      }
+
       // We want to iterate into each action afterwards, outside of this function
       // for async support.
       nodes.push(node);

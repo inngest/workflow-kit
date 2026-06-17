@@ -195,8 +195,34 @@ export class ExecutionState {
   execute = async () => {
     const { event, step, graph, workflow, engine } = this.#opts;
 
-    await bfs(graph, async (action, edge) => {
-      if (edge.conditional) {
+    await bfs(
+      graph, 
+      async (action) => {
+        // Find the base action from the workflow class.  This includes the handler
+        // to invoke.
+        const base = engine.actions[action.kind];
+        if (!base) {
+          throw new Error(`Unable to find workflow action for kind: ${action.kind}`);
+        }
+
+        // Invoke the action directly.
+        //
+        // Note: The handler should use Inngest's step API within handlers, ensuring
+        // that nodes in the workflow execute once, durably.
+        const workflowAction = { ...action, inputs: this.resolveInputs(action) };
+
+        const result = await base.handler({
+          event,
+          step,
+          workflow,
+          workflowAction,
+          state: this.#state,
+        });
+
+        // And set our state.  This may be a previously memoized output.
+        this.#state.set(action.id, result);
+      },
+      (edge) => {
         const { type, ref, value } = edge.conditional || {};
 
         // We allow "!ref($.output)" to refer to the previous action's output.
@@ -208,13 +234,13 @@ export class ExecutionState {
           case "if":
             if (!input) {
               // This doesn't match, so we skip this edge.
-              return;
+              return false;
             }
             break;
           case "else":
             if (!!input) {
               // This doesn't match, so we skip this edge.
-              return;
+              return false;
             }
             break
           case "match":
@@ -222,35 +248,12 @@ export class ExecutionState {
             // values here.
             if (JSON.stringify(input) !== JSON.stringify(value)) {
               // This doesn't match, so we skip this edge.
-              return;
+              return false;
             }
         }
+        return true;
       }
-
-      // Find the base action from the workflow class.  This includes the handler
-      // to invoke.
-      const base = engine.actions[action.kind];
-      if (!base) {
-        throw new Error(`Unable to find workflow action for kind: ${action.kind}`);
-      }
-
-      // Invoke the action directly.
-      //
-      // Note: The handler should use Inngest's step API within handlers, ensuring
-      // that nodes in the workflow execute once, durably.
-      const workflowAction = { ...action, inputs: this.resolveInputs(action) };
-
-      const result = await base.handler({
-        event,
-        step,
-        workflow,
-        workflowAction,
-        state: this.#state,
-      });
-
-      // And set our state.  This may be a previously memoized output.
-      this.#state.set(action.id, result);
-    });
+    );
   }
 
   /**
