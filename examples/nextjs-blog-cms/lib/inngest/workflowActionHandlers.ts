@@ -8,6 +8,10 @@ import { createClient } from "../supabase/server";
 import { actions } from "./workflowActions";
 import { inngest } from "./client";
 
+function getOpenAIModel() {
+  return process.env["OPENAI_MODEL"] || "gpt-5.6-terra";
+}
+
 // helper to ensure that each step of the workflow use
 //  the original content or current AI revision
 function getAIworkingCopy(workflowAction: WorkflowAction, blogPost: BlogPost) {
@@ -54,7 +58,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
         `;
 
         const response = await openai.chat.completions.create({
-          model: process.env["OPENAI_MODEL"] || "gpt-3.5-turbo",
+          model: getOpenAIModel(),
           messages: [
             {
               role: "system",
@@ -107,7 +111,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
         `;
 
         const response = await openai.chat.completions.create({
-          model: process.env["OPENAI_MODEL"] || "gpt-3.5-turbo",
+          model: getOpenAIModel(),
           messages: [
             {
               role: "system",
@@ -243,7 +247,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
           `;
 
           const response = await openai.chat.completions.create({
-            model: process.env["OPENAI_MODEL"] || "gpt-3.5-turbo",
+            model: getOpenAIModel(),
             messages: [
               {
                 role: "system",
@@ -303,7 +307,7 @@ export const actionsWithHandlers: EngineAction<typeof inngest>[] = [
         `;
 
         const response = await openai.chat.completions.create({
-          model: process.env["OPENAI_MODEL"] || "gpt-3.5-turbo",
+          model: getOpenAIModel(),
           messages: [
             {
               role: "system",
